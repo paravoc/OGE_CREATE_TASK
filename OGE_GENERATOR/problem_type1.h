@@ -34,7 +34,7 @@ namespace OGE {
 
     class ProblemType1 {
     private:
-        // Принимаем уже готовое соединение
+  
         sqlite3* db_conn = nullptr;
 
         struct WordItem {

@@ -19,11 +19,9 @@
     <Filter Include="Исходные файлы\include\tasks">
       <UniqueIdentifier>{e56e5e89-9feb-4cb1-a1fe-db6cff45356e}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="OGE_GENERATOR.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
+    <Filter Include="Исходные файлы\src">
+      <UniqueIdentifier>{cd6cb37b-f548-4763-bc9e-fb2c3f300f28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h">
@@ -32,5 +30,16 @@
     <ClInclude Include="problem_type1.h">
       <Filter>Исходные файлы\include\tasks</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="OGE_GENERATOR.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
+    <ClCompile Include="database_manager.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
+    <ClCompile Include="problem_type1.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
