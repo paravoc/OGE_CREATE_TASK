@@ -125,11 +125,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="database_manager.cpp" />
+    <ClCompile Include="html_page_generator.cpp" />
     <ClCompile Include="OGE_GENERATOR.cpp" />
     <ClCompile Include="problem_type1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h" />
+    <ClInclude Include="html_page_generator.h" />
     <ClInclude Include="problem_type1.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

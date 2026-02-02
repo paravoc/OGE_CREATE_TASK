@@ -30,6 +30,9 @@
     <ClInclude Include="problem_type1.h">
       <Filter>Исходные файлы\include\tasks</Filter>
     </ClInclude>
+    <ClInclude Include="html_page_generator.h">
+      <Filter>Исходные файлы\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OGE_GENERATOR.cpp">
@@ -39,6 +42,9 @@
       <Filter>Исходные файлы\src</Filter>
     </ClCompile>
     <ClCompile Include="problem_type1.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
+    <ClCompile Include="html_page_generator.cpp">
       <Filter>Исходные файлы\src</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,3 +1,4 @@
+// problem_type1.h
 #ifndef PROBLEM_TYPE1_H
 #define PROBLEM_TYPE1_H
 
@@ -5,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <sstream>
 
 struct sqlite3;
 
@@ -34,7 +36,6 @@ namespace OGE {
 
     class ProblemType1 {
     private:
-  
         sqlite3* db_conn = nullptr;
 
         struct WordItem {
@@ -57,7 +58,7 @@ namespace OGE {
 
         bool cache_loaded = false;
 
-        // Загрузка из БД через переданное соединение
+        // Загрузка из БД
         bool load_words_from_db(const string& category_filter = "");
         bool load_encodings_from_db();
         bool load_templates_from_db();
@@ -89,6 +90,10 @@ namespace OGE {
         ProblemType1Result generate_addition(const ProblemType1Config& config);
         ProblemType1Result generate_encoding_change(const ProblemType1Config& config);
 
+        // Вспомогательные методы для HTML генерации
+        string escape_html(const string& text) const;
+        string wrap_paragraphs(const string& text) const;
+
     public:
         // Используем объявленные выше структуры
         using Config = ProblemType1Config;
@@ -104,6 +109,13 @@ namespace OGE {
         // Управление кэшем
         void reload_cache();
         bool is_cache_loaded() const { return cache_loaded; }
+
+        // Генерация HTML контента
+        string generate_html_problems(int count, const Config& config);
+        string generate_single_problem_html(const Problem& problem, int problem_number = 1);
+
+        // Генерация JSON данных для JavaScript
+        vector<map<string, string>> generate_problems_json(int count, const Config& config);
 
         // Статистика
         struct Stats {

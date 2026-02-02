@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренировка ОГЭ - 5 задач</title>
+    
+    <!-- Шрифты -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="web/cosmic.css">
+    
+    <style>
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0f;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(45deg, #00ccff, #6d44ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .loading-progress {
+            width: 300px;
+            height: 4px;
+            background: #2d2d5a;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        .loading-progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #6d44ff, #00ccff);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .generation-info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(26, 26, 46, 0.8);
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #c7c7ff;
+            border: 1px solid #2d2d5a;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <!-- Звездное небо -->
+    <div class="stars"></div>
+    <div class="stars2"></div>
+    <div class="stars3"></div>
+    <div class="comet"></div>
+    <div class="nebula"></div>
+    
+    <!-- Экран загрузки -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">COSMIC ОГЭ</div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar" id="loadingBar"></div>
+        </div>
+    </div>
+    
+    <!-- Информация о генерации -->
+    <div class="generation-info">
+        <i class="fas fa-code"></i> Сгенерировано: 02.02.2026 21:01:13
+    </div>
+    
+    <!-- Основной контейнер -->
+    <main class="cosmic-container" id="mainContainer" style="display: none;">
+        <header class="cosmic-header">
+            <div class="title-wrapper">
+                <h1 class="main-title">
+                    <span class="title-word title-word-1">COSMIC</span>
+                    <span class="title-word title-word-2">ОГЭ</span>
+                    <span class="title-word title-word-3">ГЕНЕРАТОР</span>
+                </h1>
+                <div class="title-sub">
+                    <span class="sub-text">СИСТЕМА ТРЕНИРОВКИ</span>
+                    <span class="version">v1.0.0</span>
+                    <div class="pulse-dot"></div>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button class="cosmic-btn cosmic-btn-primary" onclick="problemManager.submitAssignment() >
+                <i class = "fas fa-rocket">< / i>
+                <span>ПРОВЕРИТЬ РЕШЕНИЯ< / span>
+                < / button>
+                <button class = "cosmic-btn cosmic-btn-secondary" onclick = "problemManager.showDetailedStats()>
+                <i class = "fas fa-chart-pie">< / i>
+                <span>СТАТИСТИКА< / span>
+                < / button>
+                < / div>
+                < / header>
+        <section class="cosmic-main">
+            <!-- Панель управления -->
+            <aside class="control-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-sliders-h"></i> УПРАВЛЕНИЕ</h2>
+                    <div class="panel-line"></div>
+                </div>
+                
+                <div class="controls-grid">
+                    <div class="control-item">
+                        <div class="control-label">
+                            <i class="fas fa-filter"></i>
+                            ФИЛЬТРАЦИЯ
+                        </div>
+                        <div class="cosmic-select">
+                            <select id="filterSelect">
+                                <option value="all">Все задачи</option>
+                                <option value="unsolved">Не решённые</option>
+                                <option value="solved">Решённые</option>
+                                <option value="incorrect">С ошибками</option>
+                            </select>
+                            <div class="select-arrow">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Контейнер задач -->
+            <div class="problems-container">
+                <div class="problems-header">
+                    <h2><i class="fas fa-tasks"></i> ЗАДАЧИ</h2>
+                    <div class="counter">
+                        <div class="counter-number" id="counterNumber">5</div>
+                        <div class="counter-text" id="counterText">задач не решено</div>
+                    </div>
+                </div>
+                
+                <!-- Фильтры -->
+                <div class="filter-panel">
+                    <button class="filter-btn active" data-filter="all">Все задачи</button>
+                    <button class="filter-btn" data-filter="unsolved">Не решённые</button>
+                    <button class="filter-btn" data-filter="solved">Решённые</button>
+                    <button class="filter-btn" data-filter="incorrect">С ошибками</button>
+                </div>
+                
+                <!-- Задачи --><article class="cosmic-problem" data-id="1" data-type="type1">
+        <div class="problem-header">
+            <div class="problem-id">
+                <span class="id-number">#1</span>
+                <span class="id-type">ТИП 1</span>
+            </div>
+            <div class="problem-meta">
+                <span class="meta-item">
+                    <i class="fas fa-microchip"></i>
+                    КОИ-8
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-brain"></i>
+                    Задача на кодирование
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    5 мин
+                </span>
+            </div>
+            <button class="problem-expand">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        
+        <div class="problem-content" style="max-height: 0; opacity: 0; overflow: hidden;">
+            <div class="problem-text">
+                В кодировке КОИ-8 кодировка для русского алфавита.<br><br>Андрей написал текст (в нем нет лишних пробелов):<br><br>«Амазонка, Нева, Нил, Обь, Лена, Енисей, Днепр — города».<br><br>Ученик вычеркнул из списка название одного из элементов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.<br><br>При этом размер нового предложения в данной кодировке оказался на 6 байтов меньше, чем размер исходного предложения.<br><br>Напишите в ответе вычеркнутое название.
+            </div>
+            
+            <div class="problem-actions">
+                <div class="answer-field">
+                    <input type="text" 
+                           placeholder="Введите ваш ответ..." 
+                           class="cosmic-input">
+                    <button class="cosmic-btn cosmic-btn-check">
+                        <i class="fas fa-check"></i>
+                        ПРОВЕРИТЬ
+                    </button>
+                </div>
+                
+                <div class="solution-controls">
+                    <button class="show-solution-btn">
+                        <i class="fas fa-eye"></i>
+                        ПОКАЗАТЬ РЕШЕНИЕ
+                    </button>
+                    <button class="hide-solution-btn" style="display: none;">
+                        <i class="fas fa-eye-slash"></i>
+                        СКРЫТЬ РЕШЕНИЕ
+                    </button>
+                </div>
+            </div>
+            
+            <div class="problem-solution hidden">
+                <div class="solution-header">
+                    <h3><i class="fas fa-cogs"></i> РЕШЕНИЕ</h3>
+                </div>
+                <div class="solution-content">
+                    <p>РЕШЕНИЕ:</p>
+<p>1. Исходный текст: «Амазонка, Нева, Нил, Обь, Лена, Енисей, Днепр — города»</p>
+<p>2. Измененный текст: «Амазонка, Нева, Нил, Обь, Енисей, Днепр — города»</p>
+<p>3. Разница в размере: 6 байт</p>
+<p>4. В кодировке КОИ-8 1 символ = 8 бит = 1 байт</p>
+<p>5. Удалено символов: 6 байт / (8 бит/8) = 6 символов</p>
+<p>6. Слово &quot;Лена&quot; содержит 4 символов</p>
+<p>7. Также удалено 2 лишних знаков препинания/пробелов</p>
+<p>ОТВЕТ: Лена</p>
+
+                    <p class="answer-final">ОТВЕТ: <strong>Лена</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="problem-footer">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Не решено</span>
+            </div>
+            <div class="problem-stats">
+                <span><i class="fas fa-database"></i> Разница: 6 байт</span>
+            </div>
+        </div>
+    </article><article class="cosmic-problem" data-id="2" data-type="type1">
+        <div class="problem-header">
+            <div class="problem-id">
+                <span class="id-number">#2</span>
+                <span class="id-type">ТИП 1</span>
+            </div>
+            <div class="problem-meta">
+                <span class="meta-item">
+                    <i class="fas fa-microchip"></i>
+                    UTF-32
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-brain"></i>
+                    Задача на кодирование
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    5 мин
+                </span>
+            </div>
+            <button class="problem-expand">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        
+        <div class="problem-content" style="max-height: 0; opacity: 0; overflow: hidden;">
+            <div class="problem-text">
+                В кодировке UTF-32 32-битная кодировка Unicode.<br><br>Андрей написал текст (в нем нет лишних пробелов):<br><br>«Список: Кама, Нева, Волга, Днепр, Нил, Обь».<br><br>Ученик вычеркнул из списка название одного из элементов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.<br><br>При этом размер нового предложения в данной кодировке оказался на 24 байта меньше, чем размер исходного предложения.<br><br>Напишите в ответе вычеркнутое название.
+            </div>
+            
+            <div class="problem-actions">
+                <div class="answer-field">
+                    <input type="text" 
+                           placeholder="Введите ваш ответ..." 
+                           class="cosmic-input">
+                    <button class="cosmic-btn cosmic-btn-check">
+                        <i class="fas fa-check"></i>
+                        ПРОВЕРИТЬ
+                    </button>
+                </div>
+                
+                <div class="solution-controls">
+                    <button class="show-solution-btn">
+                        <i class="fas fa-eye"></i>
+                        ПОКАЗАТЬ РЕШЕНИЕ
+                    </button>
+                    <button class="hide-solution-btn" style="display: none;">
+                        <i class="fas fa-eye-slash"></i>
+                        СКРЫТЬ РЕШЕНИЕ
+                    </button>
+                </div>
+            </div>
+            
+            <div class="problem-solution hidden">
+                <div class="solution-header">
+                    <h3><i class="fas fa-cogs"></i> РЕШЕНИЕ</h3>
+                </div>
+                <div class="solution-content">
+                    <p>РЕШЕНИЕ:</p>
+<p>1. Исходный текст: «Список: Кама, Нева, Волга, Днепр, Нил, Обь»</p>
+<p>2. Измененный текст: «Список: Кама, Волга, Днепр, Нил, Обь»</p>
+<p>3. Разница в размере: 24 байт</p>
+<p>4. В кодировке UTF-32 1 символ = 32 бит = 4 байт</p>
+<p>5. Удалено символов: 24 байт / (32 бит/8) = 6 символов</p>
+<p>6. Слово &quot;Нева&quot; содержит 4 символов</p>
+<p>7. Также удалено 2 лишних знаков препинания/пробелов</p>
+<p>ОТВЕТ: Нева</p>
+
+                    <p class="answer-final">ОТВЕТ: <strong>Нева</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="problem-footer">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Не решено</span>
+            </div>
+            <div class="problem-stats">
+                <span><i class="fas fa-database"></i> Разница: 24 байт</span>
+            </div>
+        </div>
+    </article><article class="cosmic-problem" data-id="3" data-type="type1">
+        <div class="problem-header">
+            <div class="problem-id">
+                <span class="id-number">#3</span>
+                <span class="id-type">ТИП 1</span>
+            </div>
+            <div class="problem-meta">
+                <span class="meta-item">
+                    <i class="fas fa-microchip"></i>
+                    КОИ-8
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-brain"></i>
+                    Задача на кодирование
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    5 мин
+                </span>
+            </div>
+            <button class="problem-expand">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        
+        <div class="problem-content" style="max-height: 0; opacity: 0; overflow: hidden;">
+            <div class="problem-text">
+                В кодировке КОИ-8 кодировка для русского алфавита.<br><br>Андрей написал текст (в нем нет лишних пробелов):<br><br>«Нева, Нил, Дон, Амазонка — города».<br><br>Ученик вычеркнул из списка название одного из элементов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.<br><br>При этом размер нового предложения в данной кодировке оказался на 6 байтов меньше, чем размер исходного предложения.<br><br>Напишите в ответе вычеркнутое название.
+            </div>
+            
+            <div class="problem-actions">
+                <div class="answer-field">
+                    <input type="text" 
+                           placeholder="Введите ваш ответ..." 
+                           class="cosmic-input">
+                    <button class="cosmic-btn cosmic-btn-check">
+                        <i class="fas fa-check"></i>
+                        ПРОВЕРИТЬ
+                    </button>
+                </div>
+                
+                <div class="solution-controls">
+                    <button class="show-solution-btn">
+                        <i class="fas fa-eye"></i>
+                        ПОКАЗАТЬ РЕШЕНИЕ
+                    </button>
+                    <button class="hide-solution-btn" style="display: none;">
+                        <i class="fas fa-eye-slash"></i>
+                        СКРЫТЬ РЕШЕНИЕ
+                    </button>
+                </div>
+            </div>
+            
+            <div class="problem-solution hidden">
+                <div class="solution-header">
+                    <h3><i class="fas fa-cogs"></i> РЕШЕНИЕ</h3>
+                </div>
+                <div class="solution-content">
+                    <p>РЕШЕНИЕ:</p>
+<p>1. Исходный текст: «Нева, Нил, Дон, Амазонка — города»</p>
+<p>2. Измененный текст: «Нил, Дон, Амазонка — города»</p>
+<p>3. Разница в размере: 6 байт</p>
+<p>4. В кодировке КОИ-8 1 символ = 8 бит = 1 байт</p>
+<p>5. Удалено символов: 6 байт / (8 бит/8) = 6 символов</p>
+<p>6. Слово &quot;Нева&quot; содержит 4 символов</p>
+<p>7. Также удалено 2 лишних знаков препинания/пробелов</p>
+<p>ОТВЕТ: Нева</p>
+
+                    <p class="answer-final">ОТВЕТ: <strong>Нева</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="problem-footer">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Не решено</span>
+            </div>
+            <div class="problem-stats">
+                <span><i class="fas fa-database"></i> Разница: 6 байт</span>
+            </div>
+        </div>
+    </article><article class="cosmic-problem" data-id="4" data-type="type1">
+        <div class="problem-header">
+            <div class="problem-id">
+                <span class="id-number">#4</span>
+                <span class="id-type">ТИП 1</span>
+            </div>
+            <div class="problem-meta">
+                <span class="meta-item">
+                    <i class="fas fa-microchip"></i>
+                    UTF-32
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-brain"></i>
+                    Задача на кодирование
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    5 мин
+                </span>
+            </div>
+            <button class="problem-expand">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        
+        <div class="problem-content" style="max-height: 0; opacity: 0; overflow: hidden;">
+            <div class="problem-text">
+                В кодировке UTF-32 32-битная кодировка Unicode.<br><br>Андрей написал текст (в нем нет лишних пробелов):<br><br>«Нил, Енисей, Обь, Дон, Амазонка, Лена являются крупнейшими».<br><br>Ученик вычеркнул из списка название одного из элементов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.<br><br>При этом размер нового предложения в данной кодировке оказался на 20 байтов меньше, чем размер исходного предложения.<br><br>Напишите в ответе вычеркнутое название.
+            </div>
+            
+            <div class="problem-actions">
+                <div class="answer-field">
+                    <input type="text" 
+                           placeholder="Введите ваш ответ..." 
+                           class="cosmic-input">
+                    <button class="cosmic-btn cosmic-btn-check">
+                        <i class="fas fa-check"></i>
+                        ПРОВЕРИТЬ
+                    </button>
+                </div>
+                
+                <div class="solution-controls">
+                    <button class="show-solution-btn">
+                        <i class="fas fa-eye"></i>
+                        ПОКАЗАТЬ РЕШЕНИЕ
+                    </button>
+                    <button class="hide-solution-btn" style="display: none;">
+                        <i class="fas fa-eye-slash"></i>
+                        СКРЫТЬ РЕШЕНИЕ
+                    </button>
+                </div>
+            </div>
+            
+            <div class="problem-solution hidden">
+                <div class="solution-header">
+                    <h3><i class="fas fa-cogs"></i> РЕШЕНИЕ</h3>
+                </div>
+                <div class="solution-content">
+                    <p>РЕШЕНИЕ:</p>
+<p>1. Исходный текст: «Нил, Енисей, Обь, Дон, Амазонка, Лена являются крупнейшими»</p>
+<p>2. Измененный текст: «Нил, Енисей, Дон, Амазонка, Лена являются крупнейшими»</p>
+<p>3. Разница в размере: 20 байт</p>
+<p>4. В кодировке UTF-32 1 символ = 32 бит = 4 байт</p>
+<p>5. Удалено символов: 20 байт / (32 бит/8) = 5 символов</p>
+<p>6. Слово &quot;Обь&quot; содержит 3 символов</p>
+<p>7. Также удалено 2 лишних знаков препинания/пробелов</p>
+<p>ОТВЕТ: Обь</p>
+
+                    <p class="answer-final">ОТВЕТ: <strong>Обь</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="problem-footer">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Не решено</span>
+            </div>
+            <div class="problem-stats">
+                <span><i class="fas fa-database"></i> Разница: 20 байт</span>
+            </div>
+        </div>
+    </article><article class="cosmic-problem" data-id="5" data-type="type1">
+        <div class="problem-header">
+            <div class="problem-id">
+                <span class="id-number">#5</span>
+                <span class="id-type">ТИП 1</span>
+            </div>
+            <div class="problem-meta">
+                <span class="meta-item">
+                    <i class="fas fa-microchip"></i>
+                    Windows-1251
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-brain"></i>
+                    Задача на кодирование
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    5 мин
+                </span>
+            </div>
+            <button class="problem-expand">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        
+        <div class="problem-content" style="max-height: 0; opacity: 0; overflow: hidden;">
+            <div class="problem-text">
+                В кодировке Windows-1251 кодировка Windows для кириллицы.<br><br>Андрей написал текст (в нем нет лишних пробелов):<br><br>«Волга, Енисей, Обь, Амазонка — горы».<br><br>Ученик вычеркнул из списка название одного из элементов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.<br><br>При этом размер нового предложения в данной кодировке оказался на 10 байтов меньше, чем размер исходного предложения.<br><br>Напишите в ответе вычеркнутое название.
+            </div>
+            
+            <div class="problem-actions">
+                <div class="answer-field">
+                    <input type="text" 
+                           placeholder="Введите ваш ответ..." 
+                           class="cosmic-input">
+                    <button class="cosmic-btn cosmic-btn-check">
+                        <i class="fas fa-check"></i>
+                        ПРОВЕРИТЬ
+                    </button>
+                </div>
+                
+                <div class="solution-controls">
+                    <button class="show-solution-btn">
+                        <i class="fas fa-eye"></i>
+                        ПОКАЗАТЬ РЕШЕНИЕ
+                    </button>
+                    <button class="hide-solution-btn" style="display: none;">
+                        <i class="fas fa-eye-slash"></i>
+                        СКРЫТЬ РЕШЕНИЕ
+                    </button>
+                </div>
+            </div>
+            
+            <div class="problem-solution hidden">
+                <div class="solution-header">
+                    <h3><i class="fas fa-cogs"></i> РЕШЕНИЕ</h3>
+                </div>
+                <div class="solution-content">
+                    <p>РЕШЕНИЕ:</p>
+<p>1. Исходный текст: «Волга, Енисей, Обь, Амазонка — горы»</p>
+<p>2. Измененный текст: «Волга, Енисей, Обь — горы»</p>
+<p>3. Разница в размере: 10 байт</p>
+<p>4. В кодировке Windows-1251 1 символ = 8 бит = 1 байт</p>
+<p>5. Удалено символов: 10 байт / (8 бит/8) = 10 символов</p>
+<p>6. Слово &quot;Амазонка&quot; содержит 8 символов</p>
+<p>7. Также удалено 2 лишних знаков препинания/пробелов</p>
+<p>ОТВЕТ: Амазонка</p>
+
+                    <p class="answer-final">ОТВЕТ: <strong>Амазонка</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="problem-footer">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Не решено</span>
+            </div>
+            <div class="problem-stats">
+                <span><i class="fas fa-database"></i> Разница: 10 байт</span>
+            </div>
+        </div>
+    </article>
+                <!-- Панель сдачи -->
+                <div class="submission-panel">
+                    <div class="submission-stats">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="statsSolved">0</div>
+                                <div class="stat-label">Решено</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="statsAccuracy">0%</div>
+                                <div class="stat-label">Точность</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="submission-actions">
+                        <button class="cosmic-btn cosmic-btn-submit" onclick="problemManager.submitAssignment() >
+                <i class = "fas fa-paper-plane">< / i>
+                СДАТЬ ЗАДАНИЕ
+                < / button>
+                < / div>
+                < / div>
+                < / div>
+
+                <!--Панель статистики-->
+                <aside class = "stats-panel">
+                <div class = "stats-header">
+                <h2><i class = "fas fa-chart-line">< / i> СТАТИСТИКА< / h2>
+                <div class = "stats-line">< / div>
+                < / div>
+
+                <div class = "stats-content">
+                <div class = "stat-item">
+                <div class = "stat-icon">
+                <i class = "fas fa-hashtag">< / i>
+                < / div>
+                <div class = "stat-info">
+                <div class = "stat-value">5< / div>
+                <div class = "stat-label">Всего задач< / div>
+                    < / div>
+                    < / div>
+                    < / div>
+                    < / aside>
+                    < / section>
+        <footer class="cosmic-footer">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3><i class="fas fa-info-circle"></i> О СИСТЕМЕ</h3>
+                    <p>Сгенерировано C++ генератором задач ОГЭ. Всего задач: 5</p>
+                    <div class="system-status">
+                        <i class="fas fa-circle"></i>
+                        <span>СИСТЕМА АКТИВНА</span>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3><i class="fas fa-cogs"></i> ТЕХНОЛОГИИ</h3>
+                    <ul>
+                        <li>C++ генерация задач</li>
+                        <li>SQLite база данных</li>
+                        <li>JavaScript интерфейс</li>
+                        <li>HTML5 & CSS3</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3><i class="fas fa-code"></i> СГЕНЕРИРОВАНО</h3>
+                    <p>02.02.2026 21:01:13</p>
+                    <p>Версия: v1.0.0</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="scanline"></div>
+                <p>&copy; 2024 Cosmic OГЭ Generator</p>
+                <div class="terminal-text">Система загружена. Готов к работе...</div>
+            </div>
+        </footer>
+    </main>
+    
+    <!-- JavaScript -->
+    <script src="web/cosmic.js"></script>
+    
+    <!-- Встроенные данные задач -->
+<script>
+// Данные задач, сгенерированные C++
+const problemsData = [
+  {
+    "id": "1",
+    "type": "1",
+    "bits_per_char": "8",
+    "correct_answer": "Лена",
+    "encoding": "UTF-8",
+    "id": "1",
+    "modified_size": "27",
+    "original_size": "33",
+    "problem_text": "В кодировке UTF-8 универсальная кодировка.\n\nАндрей написал текст (в нем нет лишних пробелов):\n\n«Обь, Лена, Амазонка, Волга — горы».\n\nУченик вычеркнул из списка название одного из элементов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 6 байтов меньше, чем размер исходного предложения.\n\nНапишите в ответе вычеркнутое название.",
+    "scenario": "removal",
+    "size_difference": "6",
+    "solution_explanation": "РЕШЕНИЕ:\n\n1. Исходный текст: «Обь, Лена, Амазонка, Волга — горы»\n2. Измененный текст: «Обь, Амазонка, Волга — горы»\n\n3. Разница в размере: 6 байт\n4. В кодировке UTF-8 1 символ = 8 бит = 1 байт\n\n5. Удалено символов: 6 байт / (8 бит/8) = 6 символов\n\n6. Слово \"Лена\" содержит 4 символов\n7. Также удалено 2 лишних знаков препинания/пробелов\n\nОТВЕТ: Лена",
+    "type": "1",
+    "word_count": "4",
+    "solved": false,
+    "userAnswer": "",
+    "answerChecked": false,
+    "difficulty": 2
+  },
+  {
+    "id": "2",
+    "type": "1",
+    "bits_per_char": "8",
+    "correct_answer": "Нил",
+    "encoding": "КОИ-8",
+    "id": "2",
+    "modified_size": "53",
+    "original_size": "58",
+    "problem_text": "В кодировке КОИ-8 кодировка для русского алфавита.\n\nАндрей написал текст (в нем нет лишних пробелов):\n\n«Обь, Нева, Днепр, Амазонка, Нил, Кама являются крупнейшими».\n\nУченик вычеркнул из списка название одного из элементов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 5 байтов меньше, чем размер исходного предложения.\n\nНапишите в ответе вычеркнутое название.",
+    "scenario": "removal",
+    "size_difference": "5",
+    "solution_explanation": "РЕШЕНИЕ:\n\n1. Исходный текст: «Обь, Нева, Днепр, Амазонка, Нил, Кама являются крупнейшими»\n2. Измененный текст: «Обь, Нева, Днепр, Амазонка, Кама являются крупнейшими»\n\n3. Разница в размере: 5 байт\n4. В кодировке КОИ-8 1 символ = 8 бит = 1 байт\n\n5. Удалено символов: 5 байт / (8 бит/8) = 5 символов\n\n6. Слово \"Нил\" содержит 3 символов\n7. Также удалено 2 лишних знаков препинания/пробелов\n\nОТВЕТ: Нил",
+    "type": "1",
+    "word_count": "6",
+    "solved": false,
+    "userAnswer": "",
+    "answerChecked": false,
+    "difficulty": 2
+  },
+  {
+    "id": "3",
+    "type": "1",
+    "bits_per_char": "8",
+    "correct_answer": "Нил",
+    "encoding": "Windows-1251",
+    "id": "3",
+    "modified_size": "25",
+    "original_size": "30",
+    "problem_text": "В кодировке Windows-1251 кодировка Windows для кириллицы.\n\nАндрей написал текст (в нем нет лишних пробелов):\n\n«Нева, Нил, Днепр, Волга — реки».\n\nУченик вычеркнул из списка название одного из элементов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 5 байтов меньше, чем размер исходного предложения.\n\nНапишите в ответе вычеркнутое название.",
+    "scenario": "removal",
+    "size_difference": "5",
+    "solution_explanation": "РЕШЕНИЕ:\n\n1. Исходный текст: «Нева, Нил, Днепр, Волга — реки»\n2. Измененный текст: «Нева, Днепр, Волга — реки»\n\n3. Разница в размере: 5 байт\n4. В кодировке Windows-1251 1 символ = 8 бит = 1 байт\n\n5. Удалено символов: 5 байт / (8 бит/8) = 5 символов\n\n6. Слово \"Нил\" содержит 3 символов\n7. Также удалено 2 лишних знаков препинания/пробелов\n\nОТВЕТ: Нил",
+    "type": "1",
+    "word_count": "4",
+    "solved": false,
+    "userAnswer": "",
+    "answerChecked": false,
+    "difficulty": 2
+  },
+  {
+    "id": "4",
+    "type": "1",
+    "bits_per_char": "7",
+    "correct_answer": "Кама",
+    "encoding": "ASCII",
+    "id": "4",
+    "modified_size": "28",
+    "original_size": "33",
+    "problem_text": "В кодировке ASCII американская стандартная кодировка.\n\nАндрей написал текст (в нем нет лишних пробелов):\n\n«Список: Кама, Енисей, Нева, Лена, Обь».\n\nУченик вычеркнул из списка название одного из элементов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 5 байтов меньше, чем размер исходного предложения.\n\nНапишите в ответе вычеркнутое название.",
+    "scenario": "removal",
+    "size_difference": "5",
+    "solution_explanation": "РЕШЕНИЕ:\n\n1. Исходный текст: «Список: Кама, Енисей, Нева, Лена, Обь»\n2. Измененный текст: «Список: Енисей, Нева, Лена, Обь»\n\n3. Разница в размере: 5 байт\n4. В кодировке ASCII 1 символ = 7 бит = 0.875 байт\n\n5. Удалено символов: 5 байт / (7 бит/8) = 6 символов\n\n6. Слово \"Кама\" содержит 4 символов\n7. Также удалено 2 лишних знаков препинания/пробелов\n\nОТВЕТ: Кама",
+    "type": "1",
+    "word_count": "5",
+    "solved": false,
+    "userAnswer": "",
+    "answerChecked": false,
+    "difficulty": 2
+  },
+  {
+    "id": "5",
+    "type": "1",
+    "bits_per_char": "8",
+    "correct_answer": "Амазонка",
+    "encoding": "UTF-8",
+    "id": "5",
+    "modified_size": "43",
+    "original_size": "53",
+    "problem_text": "В кодировке UTF-8 универсальная кодировка.\n\nАндрей написал текст (в нем нет лишних пробелов):\n\n«Список: Амазонка, Днепр, Лена, Обь, Нил, Нева, Енисей».\n\nУченик вычеркнул из списка название одного из элементов. Заодно он вычеркнул ставшие лишними запятые и пробелы — два пробела не должны идти подряд.\n\nПри этом размер нового предложения в данной кодировке оказался на 10 байтов меньше, чем размер исходного предложения.\n\nНапишите в ответе вычеркнутое название.",
+    "scenario": "removal",
+    "size_difference": "10",
+    "solution_explanation": "РЕШЕНИЕ:\n\n1. Исходный текст: «Список: Амазонка, Днепр, Лена, Обь, Нил, Нева, Енисей»\n2. Измененный текст: «Список: Днепр, Лена, Обь, Нил, Нева, Енисей»\n\n3. Разница в размере: 10 байт\n4. В кодировке UTF-8 1 символ = 8 бит = 1 байт\n\n5. Удалено символов: 10 байт / (8 бит/8) = 10 символов\n\n6. Слово \"Амазонка\" содержит 8 символов\n7. Также удалено 2 лишних знаков препинания/пробелов\n\nОТВЕТ: Амазонка",
+    "type": "1",
+    "word_count": "7",
+    "solved": false,
+    "userAnswer": "",
+    "answerChecked": false,
+    "difficulty": 2
+  }
+];
+
+// Автозагрузка данных при инициализации
+window.addEventListener('load', function() {
+  setTimeout(() => {
+    if (window.problemManager && problemsData.length > 0) {
+      window.problemManager.loadProblemsFromServer(problemsData);
+    }
+  }, 1000);
+});
+</script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Плавная загрузка
+            setTimeout(() => {
+                const loadingBar = document.getElementById('loadingBar');
+                loadingBar.style.width = '100%';
+                
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loadingScreen').style.display = 'none';
+                        document.getElementById('mainContainer').style.display = 'block';
+                    }, 500);
+                }, 300);
+            }, 500);
+            
+            // Инициализация менеджера задач
+            window.problemManager = new CosmicProblemManager();
+        });
+    </script>
+</body>
+</html>

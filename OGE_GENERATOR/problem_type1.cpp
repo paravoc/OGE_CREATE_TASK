@@ -604,3 +604,179 @@ string ProblemType1Result::to_html() const {
     ss << "</div>";
     return ss.str();
 }
+
+string ProblemType1::escape_html(const string& text) const {
+    string result;
+    result.reserve(text.length());
+
+    for (char c : text) {
+        switch (c) {
+        case '&':  result += "&amp;";  break;
+        case '<':  result += "&lt;";   break;
+        case '>':  result += "&gt;";   break;
+        case '"':  result += "&quot;"; break;
+        case '\'': result += "&#39;";  break;
+        case '\n': result += "<br>";   break;
+        default:   result += c;        break;
+        }
+    }
+
+    return result;
+}
+
+// Обернуть текст в параграфы
+string ProblemType1::wrap_paragraphs(const string& text) const {
+    stringstream input(text);
+    stringstream output;
+    string line;
+
+    while (getline(input, line, '\n')) {
+        if (!line.empty()) {
+            output << "<p>" << escape_html(line) << "</p>\n";
+        }
+    }
+
+    return output.str();
+}
+
+// Генерация HTML для нескольких задач
+string ProblemType1::generate_html_problems(int count, const Config& config) {
+    stringstream html;
+
+    for (int i = 0; i < count; i++) {
+        auto problem = generate(config);
+        html << generate_single_problem_html(problem, i + 1);
+    }
+
+    return html.str();
+}
+
+// Генерация HTML для одной задачи
+string ProblemType1::generate_single_problem_html(const Problem& problem, int problem_number) {
+    stringstream html;
+
+    // Получаем метаданные
+    string encoding = "UTF-8";
+    string size_diff = "0";
+
+    auto it_encoding = problem.meta.find("encoding");
+    if (it_encoding != problem.meta.end()) {
+        encoding = it_encoding->second;
+    }
+
+    auto it_size = problem.meta.find("size_difference");
+    if (it_size != problem.meta.end()) {
+        size_diff = it_size->second;
+    }
+
+    // Экранируем текст
+    string escaped_text = escape_html(problem.problem_text);
+    string escaped_solution = wrap_paragraphs(problem.solution_explanation);
+    string escaped_answer = escape_html(problem.correct_answer);
+
+    // Генерируем HTML
+    html << R"(<article class="cosmic-problem" data-id=")" << problem_number
+        << R"(" data-type="type1">
+        <div class="problem-header">
+            <div class="problem-id">
+                <span class="id-number">#)" << problem_number << R"(</span>
+                <span class="id-type">ТИП 1</span>
+            </div>
+            <div class="problem-meta">
+                <span class="meta-item">
+                    <i class="fas fa-microchip"></i>
+                    )" << encoding << R"(
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-brain"></i>
+                    Задача на кодирование
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    5 мин
+                </span>
+            </div>
+            <button class="problem-expand">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        
+        <div class="problem-content" style="max-height: 0; opacity: 0; overflow: hidden;">
+            <div class="problem-text">
+                )" << escaped_text << R"(
+            </div>
+            
+            <div class="problem-actions">
+                <div class="answer-field">
+                    <input type="text" 
+                           placeholder="Введите ваш ответ..." 
+                           class="cosmic-input">
+                    <button class="cosmic-btn cosmic-btn-check">
+                        <i class="fas fa-check"></i>
+                        ПРОВЕРИТЬ
+                    </button>
+                </div>
+                
+                <div class="solution-controls">
+                    <button class="show-solution-btn">
+                        <i class="fas fa-eye"></i>
+                        ПОКАЗАТЬ РЕШЕНИЕ
+                    </button>
+                    <button class="hide-solution-btn" style="display: none;">
+                        <i class="fas fa-eye-slash"></i>
+                        СКРЫТЬ РЕШЕНИЕ
+                    </button>
+                </div>
+            </div>
+            
+            <div class="problem-solution hidden">
+                <div class="solution-header">
+                    <h3><i class="fas fa-cogs"></i> РЕШЕНИЕ</h3>
+                </div>
+                <div class="solution-content">
+                    )" << escaped_solution << R"(
+                    <p class="answer-final">ОТВЕТ: <strong>)"
+        << escaped_answer << R"(</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="problem-footer">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Не решено</span>
+            </div>
+            <div class="problem-stats">
+                <span><i class="fas fa-database"></i> Разница: )" << size_diff
+        << R"( байт</span>
+            </div>
+        </div>
+    </article>)";
+
+    return html.str();
+}
+
+// Генерация JSON данных для JavaScript
+vector<map<string, string>> ProblemType1::generate_problems_json(int count, const Config& config) {
+    vector<map<string, string>> problems;
+
+    for (int i = 0; i < count; i++) {
+        auto problem = generate(config);
+        map<string, string> problem_json;
+
+        problem_json["id"] = to_string(i + 1);
+        problem_json["type"] = "1";
+        problem_json["problem_text"] = problem.problem_text;
+        problem_json["correct_answer"] = problem.correct_answer;
+        problem_json["solution_explanation"] = problem.solution_explanation;
+
+        // Добавляем все метаданные
+        for (const auto& [key, value] : problem.meta) {
+            problem_json[key] = value;
+        }
+
+        problems.push_back(problem_json);
+    }
+
+    return problems;
+}
