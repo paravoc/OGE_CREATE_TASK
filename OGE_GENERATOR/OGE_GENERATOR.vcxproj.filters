@@ -13,10 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Исходные файлы\include">
+      <UniqueIdentifier>{f7c9f84d-26cd-43ac-81d0-2cf8dab3e007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\include\tasks">
+      <UniqueIdentifier>{e56e5e89-9feb-4cb1-a1fe-db6cff45356e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OGE_GENERATOR.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="database_manager.h">
+      <Filter>Исходные файлы\include</Filter>
+    </ClInclude>
+    <ClInclude Include="problem_type1.h">
+      <Filter>Исходные файлы\include\tasks</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
