@@ -1,0 +1,1850 @@
+/* ===== КОСМИЧЕСКИЙ ГЕНЕРАТОР ЗАДАЧ - СТИЛИ ===== */
+
+/* Сброс и базовые стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Космическая цветовая палитра */
+    --cosmic-black: #0a0a0f;
+    --deep-space: #12121f;
+    --void: #1a1a2e;
+    --nebula-blue: #16213e;
+    --star-white: #e6e6ff;
+    --starlight: #c7c7ff;
+    --cosmic-purple: #6d44ff;
+    --neon-blue: #00ccff;
+    --quantum-teal: #00ffcc;
+    --plasma-pink: #ff00cc;
+    --supernova: #ffcc00;
+    --dark-matter: #0d0d14;
+    --event-horizon: #2d2d5a;
+    
+    /* Градиенты */
+    --gradient-space: linear-gradient(135deg, var(--deep-space), var(--void));
+    --gradient-nebula: linear-gradient(45deg, var(--cosmic-purple), var(--neon-blue));
+    --gradient-stars: linear-gradient(180deg, transparent 0%, var(--event-horizon) 100%);
+    
+    /* Тени */
+    --shadow-glow: 0 0 20px rgba(0, 204, 255, 0.3);
+    --shadow-neon: 0 0 30px rgba(109, 68, 255, 0.5);
+    --shadow-deep: 0 10px 30px rgba(0, 0, 0, 0.7);
+    
+    /* Анимации */
+    --pulse: pulse 2s infinite;
+    --float: float 6s ease-in-out infinite;
+    --glitch: glitch 0.3s infinite;
+}
+
+body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--cosmic-black);
+    color: var(--star-white);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Фоновые космические эффекты */
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 90px 40px, #ddd, rgba(0,0,0,0));
+    background-size: 200px 200px;
+    animation: twinkle 8s infinite;
+    z-index: -3;
+}
+
+.stars2 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(1px 1px at 150px 200px, #ccc, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 300px 100px, #aaa, rgba(0,0,0,0));
+    background-size: 300px 300px;
+    animation: twinkle 12s infinite reverse;
+    z-index: -2;
+}
+
+.stars3 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(3px 3px at 500px 300px, var(--neon-blue), rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 800px 150px, var(--cosmic-purple), rgba(0,0,0,0));
+    background-size: 500px 500px;
+    animation: twinkle 15s infinite;
+    z-index: -1;
+}
+
+.comet {
+    position: fixed;
+    top: 20%;
+    right: -100px;
+    width: 300px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--quantum-teal));
+    transform: rotate(-45deg);
+    filter: blur(1px);
+    animation: comet 25s linear infinite;
+    z-index: -1;
+}
+
+.nebula {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, 
+        rgba(109, 68, 255, 0.1) 0%,
+        rgba(0, 204, 255, 0.05) 30%,
+        transparent 70%);
+    filter: blur(60px);
+    animation: nebula-pulse 20s infinite alternate;
+    z-index: -2;
+}
+
+/* Основной контейнер */
+.cosmic-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Заголовок */
+.cosmic-header {
+    background: rgba(26, 26, 46, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--event-horizon);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-deep);
+}
+
+.cosmic-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-nebula);
+    animation: border-glow 3s infinite alternate;
+}
+
+.title-wrapper {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.main-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.title-word {
+    display: inline-block;
+    position: relative;
+    margin: 0 0.5rem;
+}
+
+.title-word-1 {
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+    animation: var(--float);
+}
+
+.title-word-2 {
+    color: var(--cosmic-purple);
+    text-shadow: 0 0 10px var(--cosmic-purple);
+    animation: var(--float) 0.5s infinite alternate;
+}
+
+.title-word-3 {
+    color: var(--quantum-teal);
+    text-shadow: 0 0 10px var(--quantum-teal);
+    animation: var(--float) 1s infinite alternate;
+}
+
+.title-sub {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 300;
+    letter-spacing: 3px;
+}
+
+.sub-text {
+    color: var(--starlight);
+}
+
+.version {
+    background: var(--gradient-nebula);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    animation: version-pulse 4s infinite;
+}
+
+.pulse-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--quantum-teal);
+    border-radius: 50%;
+    animation: var(--pulse);
+}
+
+.header-actions {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+/* Кнопки */
+.cosmic-btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.cosmic-btn i {
+    font-size: 1.2rem;
+}
+
+.cosmic-btn-primary {
+    background: var(--gradient-nebula);
+    color: var(--star-white);
+    box-shadow: var(--shadow-glow);
+}
+
+.cosmic-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(109, 68, 255, 0.4);
+}
+
+.cosmic-btn-secondary {
+    background: transparent;
+    color: var(--starlight);
+    border: 2px solid var(--event-horizon);
+}
+
+.cosmic-btn-secondary:hover {
+    border-color: var(--neon-blue);
+    color: var(--neon-blue);
+}
+
+.cosmic-btn-generate {
+    background: linear-gradient(45deg, var(--plasma-pink), var(--supernova));
+    color: var(--deep-space);
+    font-weight: 800;
+    padding: 1.2rem 3rem;
+    width: 100%;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(255, 0, 204, 0.3);
+}
+
+.cosmic-btn-generate:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(255, 0, 204, 0.5);
+}
+
+.btn-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.cosmic-btn-primary:hover .btn-glow {
+    left: 100%;
+}
+
+/* Основное содержимое */
+.cosmic-main {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* Панель управления */
+.control-panel {
+    background: rgba(18, 18, 31, 0.8);
+    border: 1px solid var(--event-horizon);
+    border-radius: 15px;
+    padding: 1.5rem;
+    backdrop-filter: blur(5px);
+}
+
+.panel-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--event-horizon);
+}
+
+.panel-header h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.3rem;
+    color: var(--neon-blue);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.panel-line {
+    height: 2px;
+    background: var(--gradient-nebula);
+    margin-top: 0.5rem;
+    border-radius: 2px;
+}
+
+.controls-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.control-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.control-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--starlight);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cosmic-select {
+    position: relative;
+}
+
+.cosmic-select select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid var(--event-horizon);
+    border-radius: 8px;
+    color: var(--star-white);
+    font-family: 'Exo 2', sans-serif;
+    font-size: 1rem;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.cosmic-select select:focus {
+    outline: none;
+    border-color: var(--neon-blue);
+    box-shadow: var(--shadow-glow);
+}
+
+.select-arrow {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--neon-blue);
+    pointer-events: none;
+}
+
+.difficulty-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.diff-btn {
+    flex: 1;
+    padding: 0.6rem;
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid var(--event-horizon);
+    border-radius: 6px;
+    color: var(--starlight);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.diff-btn:hover {
+    border-color: var(--neon-blue);
+    color: var(--neon-blue);
+}
+
+.diff-btn.active {
+    background: var(--gradient-nebula);
+    color: var(--star-white);
+    border-color: transparent;
+}
+
+.cosmic-slider {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(26, 26, 46, 0.8);
+    border-radius: 3px;
+    outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--gradient-nebula);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: var(--shadow-glow);
+}
+
+.slider-value {
+    text-align: center;
+    font-weight: 600;
+    color: var(--quantum-teal);
+}
+
+/* Контейнер задач */
+.problems-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.problems-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: rgba(26, 26, 46, 0.6);
+    border-radius: 12px;
+    border: 1px solid var(--event-horizon);
+}
+
+.problems-header h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    color: var(--star-white);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.counter-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--quantum-teal);
+    text-shadow: 0 0 10px var(--quantum-teal);
+}
+
+.counter-text {
+    font-size: 0.8rem;
+    color: var(--starlight);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Карточка задачи */
+.cosmic-problem {
+    background: rgba(18, 18, 31, 0.8);
+    border: 1px solid var(--event-horizon);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.cosmic-problem::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-nebula);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+}
+
+.cosmic-problem.active::before {
+    transform: scaleX(1);
+}
+
+.cosmic-problem:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-deep);
+}
+
+.problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    background: rgba(26, 26, 46, 0.6);
+    border-bottom: 1px solid var(--event-horizon);
+}
+
+.problem-id {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.id-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--star-white);
+}
+
+.id-type {
+    font-size: 0.8rem;
+    background: var(--cosmic-purple);
+    padding: 0.2rem 0.8rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    align-self: flex-start;
+}
+
+.problem-meta {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--starlight);
+}
+
+.meta-item i {
+    color: var(--neon-blue);
+}
+
+.problem-expand {
+    background: transparent;
+    border: none;
+    color: var(--neon-blue);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.problem-expand:hover {
+    background: rgba(0, 204, 255, 0.1);
+    transform: rotate(180deg);
+}
+
+.problem-content {
+    padding: 1.5rem;
+}
+
+.problem-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.highlight {
+    color: var(--quantum-teal);
+    font-weight: 600;
+    text-shadow: 0 0 5px var(--quantum-teal);
+}
+
+.quote {
+    color: var(--starlight);
+    font-style: italic;
+    margin: 1rem 0;
+}
+
+.cosmic-quote {
+    border-left: 4px solid var(--cosmic-purple);
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    background: rgba(109, 68, 255, 0.1);
+    border-radius: 0 8px 8px 0;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    position: relative;
+}
+
+.cosmic-quote::before {
+    content: '"';
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    font-size: 4rem;
+    color: rgba(109, 68, 255, 0.2);
+    font-family: serif;
+}
+
+.question {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--neon-blue);
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--event-horizon);
+}
+
+.problem-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.answer-field {
+    display: flex;
+    gap: 1rem;
+}
+
+.cosmic-input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    background: rgba(26, 26, 46, 0.8);
+    border: 2px solid var(--event-horizon);
+    border-radius: 10px;
+    color: var(--star-white);
+    font-family: 'Exo 2', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.cosmic-input:focus {
+    outline: none;
+    border-color: var(--neon-blue);
+    box-shadow: var(--shadow-glow);
+}
+
+.cosmic-input::placeholder {
+    color: rgba(230, 230, 255, 0.5);
+}
+
+.cosmic-btn-check {
+    background: var(--gradient-nebula);
+    color: var(--star-white);
+    padding: 1rem 2rem;
+    white-space: nowrap;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 0.8rem;
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid var(--event-horizon);
+    border-radius: 8px;
+    color: var(--starlight);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.hint-btn:hover {
+    border-color: var(--supernova);
+    color: var(--supernova);
+}
+
+.solution-btn:hover {
+    border-color: var(--quantum-teal);
+    color: var(--quantum-teal);
+}
+
+.save-btn:hover {
+    border-color: var(--plasma-pink);
+    color: var(--plasma-pink);
+}
+
+.problem-solution {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(26, 26, 46, 0.6);
+    border-radius: 10px;
+    border: 1px solid var(--event-horizon);
+}
+
+.solution-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--event-horizon);
+}
+
+.solution-header h3 {
+    color: var(--quantum-teal);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-family: 'Orbitron', monospace;
+}
+
+.solution-content {
+    line-height: 1.6;
+}
+
+.solution-content p {
+    margin: 0.5rem 0;
+}
+
+.answer-final {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--supernova);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--event-horizon);
+}
+
+.problem-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: rgba(18, 18, 31, 0.8);
+    border-top: 1px solid var(--event-horizon);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    background: #ff4444;
+    border-radius: 50%;
+    animation: var(--pulse);
+}
+
+.problem-stats {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--starlight);
+}
+
+.problem-stats i {
+    margin-right: 0.3rem;
+}
+
+/* Панель статистики */
+.stats-panel {
+    background: rgba(18, 18, 31, 0.8);
+    border: 1px solid var(--event-horizon);
+    border-radius: 15px;
+    padding: 1.5rem;
+}
+
+.stats-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--event-horizon);
+}
+
+.stats-header h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.3rem;
+    color: var(--neon-blue);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.stats-line {
+    height: 2px;
+    background: var(--gradient-nebula);
+    margin-top: 0.5rem;
+    border-radius: 2px;
+}
+
+.stats-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(26, 26, 46, 0.6);
+    border-radius: 10px;
+    border: 1px solid var(--event-horizon);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateX(5px);
+    border-color: var(--neon-blue);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-nebula);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--star-white);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--starlight);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.progress-ring {
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.progress-bg {
+    fill: none;
+    stroke: rgba(26, 26, 46, 0.8);
+    stroke-width: 8;
+}
+
+.progress-bar {
+    fill: none;
+    stroke: url(#gradient);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 339;
+    stroke-dashoffset: 339;
+    animation: progress-animation 2s ease-out forwards;
+}
+
+.progress-text {
+    fill: var(--star-white);
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.progress-label {
+    margin-top: 0.5rem;
+    color: var(--starlight);
+    font-size: 0.9rem;
+}
+
+/* Футер */
+.cosmic-footer {
+    background: rgba(10, 10, 15, 0.9);
+    border: 1px solid var(--event-horizon);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 3rem;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h3 {
+    font-family: 'Orbitron', monospace;
+    color: var(--neon-blue);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.footer-section p {
+    color: var(--starlight);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--quantum-teal);
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section li {
+    color: var(--starlight);
+    padding: 0.3rem 0;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.footer-section li::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    color: var(--neon-blue);
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-link {
+    width: 40px;
+    height: 40px;
+    background: rgba(26, 26, 46, 0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--starlight);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background: var(--gradient-nebula);
+    color: var(--star-white);
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--event-horizon);
+    position: relative;
+}
+
+.scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--quantum-teal), transparent);
+    animation: scanline 3s linear infinite;
+}
+
+.terminal-text {
+    font-family: 'Courier New', monospace;
+    color: var(--quantum-teal);
+    margin-top: 1rem;
+    animation: typing 3s steps(40) infinite;
+}
+
+/* Модальное окно */
+.cosmic-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 15, 0.9);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: rgba(26, 26, 46, 0.95);
+    border: 1px solid var(--event-horizon);
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: var(--shadow-neon);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--event-horizon);
+}
+
+.modal-header h2 {
+    color: var(--neon-blue);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    color: var(--starlight);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--neon-blue);
+}
+
+/* Анимации */
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+@keyframes comet {
+    0% {
+        transform: rotate(-45deg) translateX(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(-45deg) translateX(-1000px);
+        opacity: 0;
+    }
+}
+
+@keyframes nebula-pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.3;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.6;
+    }
+}
+
+@keyframes border-glow {
+    0%, 100% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes version-pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px var(--neon-blue);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px var(--neon-blue);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+    }
+    20% {
+        transform: translate(-2px, 2px);
+    }
+    40% {
+        transform: translate(-2px, -2px);
+    }
+    60% {
+        transform: translate(2px, 2px);
+    }
+    80% {
+        transform: translate(2px, -2px);
+    }
+    100% {
+        transform: translate(0);
+    }
+}
+
+@keyframes progress-animation {
+    to {
+        stroke-dashoffset: 85;
+    }
+}
+
+@keyframes scanline {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes typing {
+    0%, 90%, 100% {
+        width: 0;
+    }
+    30%, 60% {
+        width: 100%;
+    }
+}
+
+/* Утилиты */
+.hidden {
+    display: none !important;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+    .cosmic-main {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .cosmic-container {
+        padding: 1rem;
+    }
+    
+    .main-title {
+        font-size: 2rem;
+    }
+    
+    .header-actions {
+        flex-direction: column;
+    }
+    
+    .problem-header, 
+    .problem-footer {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .problem-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .answer-field {
+        flex-direction: column;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+
+/* SVG градиент для прогресс-бара */
+svg defs {
+    position: absolute;
+    height: 0;
+    width: 0;
+}
+
+/* ===== ДОПОЛНЕНИЯ К СУЩЕСТВУЮЩЕМУ CSS ===== */
+
+/* Навигация по задачам (как в DeepSeek) */
+.problems-navigation {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    z-index: 100;
+    background: rgba(18, 18, 31, 0.9);
+    padding: 1.5rem 1rem;
+    border-radius: 15px;
+    border: 1px solid var(--event-horizon);
+    backdrop-filter: blur(10px);
+}
+
+.nav-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--event-horizon);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-dot:hover {
+    background: var(--neon-blue);
+    transform: scale(1.3);
+}
+
+.nav-dot.active {
+    background: var(--quantum-teal);
+    box-shadow: 0 0 10px var(--quantum-teal);
+}
+
+.nav-dot.solved {
+    background: #00ff88;
+}
+
+.nav-dot.incorrect {
+    background: #ff4444;
+}
+
+.nav-dot .nav-tooltip {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(26, 26, 46, 0.95);
+    color: var(--star-white);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--event-horizon);
+}
+
+.nav-dot:hover .nav-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Состояния задач */
+.cosmic-problem.solved {
+    border-color: #00ff88;
+}
+
+.cosmic-problem.solved::before {
+    background: linear-gradient(45deg, #00ff88, #00ccff);
+}
+
+.cosmic-problem.incorrect {
+    border-color: #ff4444;
+}
+
+.cosmic-problem.incorrect::before {
+    background: linear-gradient(45deg, #ff4444, #ff8800);
+}
+
+.cosmic-problem.reviewing {
+    border-color: var(--supernova);
+}
+
+.cosmic-problem.reviewing::before {
+    background: linear-gradient(45deg, var(--supernova), var(--plasma-pink));
+}
+
+/* Индикаторы состояния */
+.status-dot.solved {
+    background: #00ff88 !important;
+}
+
+.status-dot.incorrect {
+    background: #ff4444 !important;
+}
+
+.status-dot.reviewing {
+    background: var(--supernova) !important;
+    animation: pulse 1s infinite;
+}
+
+/* Контролы решения */
+.solution-controls {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--event-horizon);
+}
+
+.solution-controls button {
+    flex: 1;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.show-solution-btn {
+    background: rgba(0, 204, 255, 0.1);
+    color: var(--neon-blue);
+    border: 1px solid var(--neon-blue) !important;
+}
+
+.show-solution-btn:hover {
+    background: var(--neon-blue);
+    color: var(--deep-space);
+}
+
+.hide-solution-btn {
+    background: rgba(255, 204, 0, 0.1);
+    color: var(--supernova);
+    border: 1px solid var(--supernova) !important;
+}
+
+.hide-solution-btn:hover {
+    background: var(--supernova);
+    color: var(--deep-space);
+}
+
+/* Панель фильтрации */
+.filter-panel {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(26, 26, 46, 0.6);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--event-horizon);
+}
+
+.filter-btn {
+    padding: 0.6rem 1.2rem;
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid var(--event-horizon);
+    border-radius: 8px;
+    color: var(--starlight);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    border-color: var(--neon-blue);
+    color: var(--neon-blue);
+}
+
+.filter-btn.active {
+    background: var(--gradient-nebula);
+    color: var(--star-white);
+    border-color: transparent;
+}
+
+/* Анимации для решения */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes correctAnswer {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Стили для правильного/неправильного ответа */
+.answer-correct {
+    animation: correctAnswer 0.5s ease;
+    border-color: #00ff88 !important;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3) !important;
+}
+
+.answer-incorrect {
+    animation: shake 0.5s ease;
+    border-color: #ff4444 !important;
+    box-shadow: 0 0 15px rgba(255, 68, 68, 0.3) !important;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Мобильная адаптация навигации */
+@media (max-width: 1200px) {
+    .problems-navigation {
+        position: fixed;
+        bottom: 1rem;
+        top: auto;
+        right: 50%;
+        transform: translateX(50%);
+        flex-direction: row;
+        padding: 1rem 1.5rem;
+    }
+    
+    .nav-dot .nav-tooltip {
+        top: -40px;
+        right: 50%;
+        transform: translateX(50%);
+    }
+}
+/* ===== СТИЛИ ДЛЯ ПАНЕЛИ СДАЧИ ===== */
+
+.submission-panel {
+    background: rgba(26, 26, 46, 0.8);
+    border: 1px solid var(--event-horizon);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.submission-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.submission-stats .stat-item {
+    background: rgba(18, 18, 31, 0.6);
+    border: 1px solid var(--event-horizon);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.submission-stats .stat-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--neon-blue);
+}
+
+.submission-stats .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--gradient-nebula);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.submission-stats .stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--star-white);
+    margin-bottom: 0.5rem;
+}
+
+.submission-stats .stat-label {
+    color: var(--starlight);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.submission-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.cosmic-btn-submit {
+    background: linear-gradient(45deg, var(--quantum-teal), var(--neon-blue));
+    color: var(--deep-space);
+    font-weight: 800;
+    padding: 1.2rem 2.5rem;
+}
+
+.cosmic-btn-review {
+    background: rgba(26, 26, 46, 0.8);
+    border: 2px solid var(--cosmic-purple);
+    color: var(--cosmic-purple);
+    font-weight: 600;
+    padding: 1.2rem 2.5rem;
+}
+
+.cosmic-btn-submit:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
+}
+
+.cosmic-btn-review:hover {
+    background: var(--cosmic-purple);
+    color: var(--star-white);
+}
+
+/* ===== СТИЛИ ДЛЯ МОДАЛЬНЫХ ОКОН С РЕЗУЛЬТАТАМИ ===== */
+
+.result-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.result-item {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: rgba(26, 26, 46, 0.6);
+}
+
+.result-total {
+    border: 2px solid var(--quantum-teal);
+}
+
+.result-accuracy {
+    border: 2px solid var(--neon-blue);
+}
+
+.result-grade {
+    border: 2px solid var(--supernova);
+}
+
+.result-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+}
+
+.result-total .result-value {
+    color: var(--quantum-teal);
+}
+
+.result-accuracy .result-value {
+    color: var(--neon-blue);
+}
+
+.result-grade .result-value {
+    color: var(--supernova);
+}
+
+.result-label {
+    color: var(--starlight);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.result-details {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(26, 26, 46, 0.6);
+    border-radius: 12px;
+    border: 1px solid var(--event-horizon);
+}
+
+.result-details h3 {
+    color: var(--neon-blue);
+    margin-bottom: 1rem;
+    font-family: 'Orbitron', monospace;
+}
+
+.result-details ul {
+    list-style: none;
+}
+
+.result-details li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    margin: 0.3rem 0;
+    background: rgba(18, 18, 31, 0.8);
+    border-radius: 8px;
+}
+
+.problem-status.solved {
+    color: #00ff88;
+}
+
+.problem-status.unsolved {
+    color: #ff4444;
+}
+
+.result-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+/* ===== СТАТИСТИКА ===== */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: rgba(26, 26, 46, 0.6);
+    border: 1px solid var(--event-horizon);
+}
+
+.stat-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+}
+
+.stat-card-icon.solved {
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+    border: 2px solid #00ff88;
+}
+
+.stat-card-icon.incorrect {
+    background: rgba(255, 68, 68, 0.1);
+    color: #ff4444;
+    border: 2px solid #ff4444;
+}
+
+.stat-card-icon.unsolved {
+    background: rgba(0, 204, 255, 0.1);
+    color: var(--neon-blue);
+    border: 2px solid var(--neon-blue);
+}
+
+.stat-card h3 {
+    color: var(--starlight);
+    margin-bottom: 0.5rem;
+}
+
+.stat-card-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 900;
+    margin: 0.5rem 0;
+}
+
+.stat-card-percent {
+    color: var(--starlight);
+    font-size: 0.9rem;
+}
+
+.time-stats {
+    margin-top: 2rem;
+}
+
+.time-stats h3 {
+    color: var(--neon-blue);
+    margin-bottom: 1rem;
+    font-family: 'Orbitron', monospace;
+}
+
+.time-bar {
+    margin: 1rem 0;
+}
+
+.time-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    color: var(--starlight);
+}
+
+.time-progress {
+    height: 10px;
+    background: rgba(26, 26, 46, 0.8);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.time-fill {
+    height: 100%;
+    background: var(--gradient-nebula);
+    border-radius: 5px;
+    transition: width 1s ease;
+}
+
+.time-value {
+    text-align: right;
+    color: var(--starlight);
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+/* ===== СООБЩЕНИЕ ПРИ ОТСУТСТВИИ ЗАДАЧ ===== */
+
+.empty-message {
+    text-align: center;
+    padding: 3rem;
+    background: rgba(26, 26, 46, 0.6);
+    border-radius: 15px;
+    border: 2px dashed var(--event-horizon);
+    margin: 2rem 0;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    color: var(--neon-blue);
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-message h3 {
+    color: var(--star-white);
+    margin-bottom: 0.5rem;
+}
+
+.empty-message p {
+    color: var(--starlight);
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+
+@media (max-width: 768px) {
+    .submission-stats,
+    .result-stats,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .submission-actions,
+    .result-actions {
+        flex-direction: column;
+    }
+    
+    .result-details li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
