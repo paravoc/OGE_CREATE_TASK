@@ -20,7 +20,7 @@ int main() {
     OGE::ProblemType1::Config config;
     config.allow_removal = true;
     config.word_count_min = 4;
-    config.word_count_max = 7;
+    config.word_count_max = 15;
     config.word_category = "реки";
 
     // 5. Генерируем задачу
