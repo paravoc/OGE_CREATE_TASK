@@ -488,10 +488,266 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
 }
 // Генерация задачи на изменение кодировки
 ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Config& config) {
-    // Пока не реализовано
     ProblemType1Result result;
-    result.problem_text = "Задача на изменение кодировки (в разработке)";
-    result.correct_answer = "0";
+
+    static default_random_engine rng(random_device{}());
+
+    // 1. Выбираем две разные кодировки с РАЗНЫМ размером символа
+    vector<EncodingInfo> encodings = encodings_cache;
+
+    if (encodings.size() < 2) {
+        result.problem_text = "Недостаточно данных о кодировках в БД";
+        result.correct_answer = "0";
+        return result;
+    }
+
+    // Фильтруем кодировки, чтобы они были разного размера
+    vector<pair<EncodingInfo, EncodingInfo>> valid_pairs;
+
+    for (size_t i = 0; i < encodings.size(); i++) {
+        for (size_t j = i + 1; j < encodings.size(); j++) {
+            if (encodings[i].bits_per_char != encodings[j].bits_per_char) {
+                valid_pairs.push_back({ encodings[i], encodings[j] });
+            }
+        }
+    }
+
+    if (valid_pairs.empty()) {
+        // Если нет пар с разным размером, создаем пару вручную
+        EncodingInfo source, target;
+        source.name = "КОИ-8";
+        source.bits_per_char = 8;
+        source.description = "кодировка для русского алфавита";
+
+        target.name = "UTF-16";
+        target.bits_per_char = 16;
+        target.description = "16-битная кодировка Unicode";
+
+        valid_pairs.push_back({ source, target });
+    }
+
+    // Выбираем случайную пару
+    int pair_index = uniform_int_distribution<>(0, (int)valid_pairs.size() - 1)(rng);
+    const EncodingInfo& source_encoding = valid_pairs[pair_index].first;
+    const EncodingInfo& target_encoding = valid_pairs[pair_index].second;
+
+    // Убедимся, что source меньше target для упрощения задач
+    bool source_is_smaller = (source_encoding.bits_per_char < target_encoding.bits_per_char);
+    const EncodingInfo& smaller_encoding = source_is_smaller ? source_encoding : target_encoding;
+    const EncodingInfo& larger_encoding = source_is_smaller ? target_encoding : source_encoding;
+
+    int small_bytes_per_char = smaller_encoding.bits_per_char / 8;
+    int large_bytes_per_char = larger_encoding.bits_per_char / 8;
+    int bytes_diff = large_bytes_per_char - small_bytes_per_char;
+
+    // 2. Выбираем текст (несколько слов)
+    vector<string> selected_words;
+    vector<WordItem> available = words_cache;
+    shuffle(available.begin(), available.end(), rng);
+
+    int word_count = config.word_count_min +
+        uniform_int_distribution<>(0, config.word_count_max - config.word_count_min)(rng);
+
+    for (const auto& word_item : available) {
+        if (selected_words.size() >= word_count) break;
+        selected_words.push_back(word_item.word);
+    }
+
+    // 3. Выбираем шаблон
+    size_t template_idx = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
+    string prefix = prefixes_cache[template_idx];
+    string suffix = suffixes_cache[template_idx];
+    string delimiter = delimiters_cache[template_idx];
+
+    // 4. Строим текст
+    string text = build_text(selected_words, prefix, suffix, delimiter);
+    int text_length = text.length();
+
+    // 5. Рассчитываем размеры
+    int small_size = calculate_size(text, smaller_encoding.bits_per_char);
+    int large_size = calculate_size(text, larger_encoding.bits_per_char);
+    int size_diff = large_size - small_size; // всегда положительно
+
+    // 6. Определяем тип задачи
+    int task_type = uniform_int_distribution<>(1, 4)(rng);
+
+    stringstream problem_ss;
+    string correct_answer;
+    stringstream solution_ss;
+
+    switch (task_type) {
+    case 1: {
+        // Тип 1: Известны размеры в двух кодировках, найти длину текста
+        problem_ss << "Текст в кодировке " << smaller_encoding.name
+            << " имеет размер " << small_size << " байт.\n\n";
+
+        problem_ss << "Тот же текст в кодировке " << larger_encoding.name
+            << " имеет размер " << large_size << " байт.\n\n";
+
+        problem_ss << "Сколько символов в этом тексте?";
+
+        correct_answer = to_string(text_length);
+
+        solution_ss << "РЕШЕНИЕ:\n\n";
+        solution_ss << "1. В кодировке " << smaller_encoding.name
+            << ": 1 символ = " << small_bytes_per_char << " байт\n";
+        solution_ss << "2. В кодировке " << larger_encoding.name
+            << ": 1 символ = " << large_bytes_per_char << " байт\n\n";
+
+        solution_ss << "3. Пусть N - количество символов\n";
+        solution_ss << "   Тогда: N × " << small_bytes_per_char << " = " << small_size << "\n";
+        solution_ss << "   Или:   N × " << large_bytes_per_char << " = " << large_size << "\n\n";
+
+        solution_ss << "4. Решаем: N = " << small_size << " / " << small_bytes_per_char
+            << " = " << text_length << "\n";
+        solution_ss << "   Проверка: " << text_length << " × " << large_bytes_per_char
+            << " = " << large_size << "\n\n";
+
+        solution_ss << "ОТВЕТ: " << text_length;
+        break;
+    }
+
+    case 2: {
+        // Тип 2: Известен размер в одной кодировке и длина текста, найти размер в другой
+        problem_ss << "Текст содержит " << text_length << " символов.\n\n";
+
+        problem_ss << "В кодировке " << smaller_encoding.name
+            << " его размер составляет " << small_size << " байт.\n\n";
+
+        problem_ss << "Каков будет размер этого текста в кодировке "
+            << larger_encoding.name << "?";
+
+        correct_answer = to_string(large_size);
+
+        solution_ss << "РЕШЕНИЕ:\n\n";
+        solution_ss << "1. Текст: " << text_length << " символов\n";
+        solution_ss << "2. " << smaller_encoding.name << ": "
+            << small_bytes_per_char << " байт/символ\n";
+        solution_ss << "3. " << larger_encoding.name << ": "
+            << large_bytes_per_char << " байт/символ\n\n";
+
+        solution_ss << "4. Размер в " << larger_encoding.name << ":\n";
+        solution_ss << "   " << text_length << " × " << large_bytes_per_char
+            << " = " << large_size << " байт\n\n";
+
+        solution_ss << "5. Проверка через разницу:\n";
+        solution_ss << "   Разница на 1 символ: " << large_bytes_per_char << " - "
+            << small_bytes_per_char << " = " << bytes_diff << " байт\n";
+        solution_ss << "   Общая разница: " << text_length << " × " << bytes_diff
+            << " = " << size_diff << " байт\n";
+        solution_ss << "   Новый размер: " << small_size << " + " << size_diff
+            << " = " << large_size << " байт\n\n";
+
+        solution_ss << "ОТВЕТ: " << large_size;
+        break;
+    }
+
+    case 3: {
+        // Тип 3: Известна разница в размерах и одна кодировка, найти другую
+        // Показываем разницу и спрашиваем, как изменился размер одного символа
+
+        int char_diff = large_bytes_per_char - small_bytes_per_char;
+
+        problem_ss << "Текст перекодировали из " << smaller_encoding.name
+            << " в " << larger_encoding.name << ".\n\n";
+
+        problem_ss << "При этом размер текста увеличился на " << size_diff
+            << " байт.\n\n";
+
+        problem_ss << "На сколько байт увеличился размер ОДНОГО символа "
+            << "при такой перекодировке?";
+
+        correct_answer = to_string(char_diff);
+
+        solution_ss << "РЕШЕНИЕ:\n\n";
+        solution_ss << "1. Разница в размере всего текста: " << size_diff << " байт\n";
+        solution_ss << "2. " << smaller_encoding.name << ": "
+            << small_bytes_per_char << " байт/символ\n";
+        solution_ss << "3. " << larger_encoding.name << ": "
+            << large_bytes_per_char << " байт/символ\n\n";
+
+        solution_ss << "4. Разница на 1 символ:\n";
+        solution_ss << "   " << large_bytes_per_char << " - " << small_bytes_per_char
+            << " = " << char_diff << " байт\n\n";
+
+        solution_ss << "5. Количество символов в тексте:\n";
+        solution_ss << "   " << size_diff << " / " << char_diff
+            << " = " << text_length << " символов\n\n";
+
+        solution_ss << "ОТВЕТ: " << char_diff;
+        break;
+    }
+
+    case 4: {
+        // Тип 4: Обратная задача - найти исходный размер
+        problem_ss << "Текст перекодировали из " << smaller_encoding.name
+            << " в " << larger_encoding.name << ".\n\n";
+
+        problem_ss << "После перекодировки размер текста составляет "
+            << large_size << " байт.\n\n";
+
+        problem_ss << "Каков был размер этого текста в исходной кодировке "
+            << smaller_encoding.name << "?";
+
+        correct_answer = to_string(small_size);
+
+        solution_ss << "РЕШЕНИЕ:\n\n";
+        solution_ss << "1. Новая кодировка: " << larger_encoding.name
+            << " (" << large_bytes_per_char << " байт/символ)\n";
+        solution_ss << "2. Исходная кодировка: " << smaller_encoding.name
+            << " (" << small_bytes_per_char << " байт/символ)\n";
+        solution_ss << "3. Новый размер: " << large_size << " байт\n\n";
+
+        solution_ss << "4. Находим количество символов:\n";
+        solution_ss << "   N = " << large_size << " / " << large_bytes_per_char
+            << " = " << text_length << " символов\n\n";
+
+        solution_ss << "5. Исходный размер:\n";
+        solution_ss << "   " << text_length << " × " << small_bytes_per_char
+            << " = " << small_size << " байт\n\n";
+
+        solution_ss << "6. Проверка разницы:\n";
+        solution_ss << "   Разница: " << large_size << " - " << small_size
+            << " = " << size_diff << " байт\n";
+        solution_ss << "   На 1 символ: " << large_bytes_per_char << " - "
+            << small_bytes_per_char << " = " << bytes_diff << " байт\n";
+        solution_ss << "   Общая: " << text_length << " × " << bytes_diff
+            << " = " << size_diff << " байт ✓\n\n";
+
+        solution_ss << "ОТВЕТ: " << small_size;
+        break;
+    }
+    }
+
+    // 7. Добавляем описание кодировок для ясности
+    stringstream final_problem;
+    final_problem << "В кодировке " << smaller_encoding.name << " "
+        << smaller_encoding.description << " ("
+        << small_bytes_per_char << " байт на символ).\n\n";
+
+    final_problem << "В кодировке " << larger_encoding.name << " "
+        << larger_encoding.description << " ("
+        << large_bytes_per_char << " байт на символ).\n\n";
+
+    final_problem << problem_ss.str();
+
+    // 8. Заполняем результат
+    result.problem_text = final_problem.str();
+    result.correct_answer = correct_answer;
+    result.solution_explanation = solution_ss.str();
+
+    // 9. Метаданные
+    result.meta["encoding_source"] = smaller_encoding.name;
+    result.meta["encoding_target"] = larger_encoding.name;
+    result.meta["source_bytes_per_char"] = to_string(small_bytes_per_char);
+    result.meta["target_bytes_per_char"] = to_string(large_bytes_per_char);
+    result.meta["text_length"] = to_string(text_length);
+    result.meta["source_size"] = to_string(small_size);
+    result.meta["target_size"] = to_string(large_size);
+    result.meta["size_difference"] = to_string(size_diff);
+    result.meta["scenario"] = "encoding_change";
+    result.meta["task_type"] = to_string(task_type);
+
     return result;
 }
 
