@@ -21,13 +21,15 @@ int main() {
         // 3. Конфигурация
         OGE::ProblemType1::Config config;
         config.allow_removal = true;
+        config.allow_addition = true;
+        config.allow_encoding_change = true;
         config.word_count_min = 3;
-        config.word_count_max = 30;
+        config.word_count_max = 10;
 
         // 4. Собираем данные задач
         std::vector<std::map<std::string, std::string>> problems_data;
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             auto problem = generator.generate(config);
 
             std::map<std::string, std::string> problem_data;
@@ -42,7 +44,7 @@ int main() {
         // 5. Используем HtmlPageGenerator для создания ANSI HTML
         OGE::PageConfig page_config;
         page_config.title = "Задачи на кодирование";
-        page_config.total_problems = 100;
+        page_config.total_problems = 10;
 
         OGE::HtmlPageGenerator html_gen(page_config);
 
