@@ -291,8 +291,7 @@ ProblemType1::Scenario ProblemType1::select_scenario(const ProblemType1Config& c
     return available_scenarios[dist(rng)];
 }
 
-// Генерация задачи на удаление слова
-// САМАЯ ПРОСТАЯ ВЕРСИЯ
+
 ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& config) {
     ProblemType1Result result;
 

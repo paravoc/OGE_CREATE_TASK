@@ -82,12 +82,15 @@ namespace OGE {
         string generate_ansi_page(const vector<map<string, string>>& problems) {
             stringstream html;
 
+            string page_id = to_string(time(nullptr));
+
             html << "<!DOCTYPE html>\n";
             html << "<html lang=\"ru\">\n";
             html << "<head>\n";
             html << "    <title>" << config.title << "</title>\n";
             html << "    <link rel=\"stylesheet\" href=\"web/style.css\">\n";
             html << "</head>\n";
+            html << "<body data-page-id=\"" << page_id << "\">\n";
             html << "<body>\n";
 
             // Заголовок и информация
