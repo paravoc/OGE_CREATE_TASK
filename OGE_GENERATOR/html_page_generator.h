@@ -82,19 +82,24 @@ namespace OGE {
         string generate_ansi_page(const vector<map<string, string>>& problems) {
             stringstream html;
 
-            // Для ANSI НЕ используем charset=UTF-8, вместо этого windows-1251 или ничего
             html << "<!DOCTYPE html>\n";
             html << "<html lang=\"ru\">\n";
             html << "<head>\n";
-            html << "    <meta charset=\"windows-1251\">\n";  // ИЛИ просто убрать эту строку
-            html << "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=windows-1251\">\n";
             html << "    <title>" << config.title << "</title>\n";
+            html << "    <link rel=\"stylesheet\" href=\"web/style.css\">\n";
             html << "</head>\n";
             html << "<body>\n";
 
-            // Заголовок
+            // Заголовок и информация
             html << "    <h1>" << config.title << "</h1>\n";
-            html << "    <p>Всего задач: " << problems.size() << "</p>\n";
+            html << "    <div class=\"info-bar\">\n";
+            html << "        <div class=\"stats\">Всего задач: <span>" << problems.size() << "</span></div>\n";
+            html << "        <div class=\"timestamp\">Сгенерировано: " << format_time(config.generation_time) << "</div>\n";
+            html << "    </div>\n";
+
+            html << "    <div class=\"progress-container\">\n";
+            html << "        <div class=\"progress-bar\"></div>\n";
+            html << "    </div>\n";
             html << "    <hr>\n";
 
             // Задачи
@@ -105,14 +110,29 @@ namespace OGE {
                 string solution_text = problem.count("solution_explanation") ? problem.at("solution_explanation") : "";
                 string correct_answer = problem.count("correct_answer") ? problem.at("correct_answer") : "";
 
-                html << "    <h2>Задача #" << (i + 1) << "</h2>\n";
-                html << "    <p>" << nl2br(escape_html(problem_text)) << "</p>\n";
-                html << "    <p><b>Ответ:</b> " << escape_html(correct_answer) << "</p>\n";
-                html << "    <hr>\n";
+                html << "    <div class=\"problem-container\" data-problem-index=\"" << i << "\">\n";
+                html << "        <h2>Задача #" << (i + 1) << "</h2>\n";
+                html << "        <div class=\"problem-text\">" << nl2br(escape_html(problem_text)) << "</div>\n";
+
+                html << "        <div class=\"answer-section\">\n";
+                html << "            <label class=\"answer-label\">Ваш ответ:</label>\n";
+                html << "            <input type=\"text\" class=\"answer-input\" placeholder=\"Введите ваш ответ здесь...\">\n";
+                html << "            <div class=\"button-group\">\n";
+                html << "                <button class=\"check-btn\">Проверить</button>\n";
+                html << "                <button class=\"reset-btn\">Сбросить</button>\n";
+                html << "                <button class=\"show-answer-btn\">Показать ответ</button>\n";
+                html << "            </div>\n";
+                html << "            <div class=\"result-message\"></div>\n";
+                html << "        </div>\n";
+
+                html << "        <div class=\"correct-answer\">\n";
+                html << "            <span class=\"correct-answer-label\">Правильный ответ:</span> " << escape_html(correct_answer) << "\n";
+                html << "        </div>\n";
+
+                html << "    </div>\n";
             }
 
-            // Подвал
-            html << "    <p><i>Сгенерировано: " << format_time(config.generation_time) << "</i></p>\n";
+            html << "    <script src=\"web/scripts.js\"></script>\n";
             html << "</body>\n";
             html << "</html>\n";
 
@@ -214,7 +234,7 @@ namespace OGE {
 
         // Генерация и сохранение в ANSI
         bool generate_and_save_ansi(const vector<map<string, string>>& problems) {
-            string html = generate_simple_ansi_page(problems);  // или generate_for_ansi
+            string html = generate_ansi_page(problems);  // или generate_for_ansi
             return save_ansi_to_file(html);
         }
     };
