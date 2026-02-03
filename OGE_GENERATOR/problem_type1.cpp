@@ -292,75 +292,64 @@ ProblemType1::Scenario ProblemType1::select_scenario(const ProblemType1Config& c
 }
 
 // Генерация задачи на удаление слова
+// САМАЯ ПРОСТАЯ ВЕРСИЯ
 ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& config) {
     ProblemType1Result result;
 
-    // Выбираем случайную кодировку
+    // 1. Выбираем кодировку
     const auto& encoding = select_random_encoding();
+    int bytes_per_char = encoding.bits_per_char / 8;
 
-    // Выбираем слова
-    vector<string> selected_words;
-    vector<WordItem> available_words;
-
-    // Фильтруем слова по категории если нужно
-    if (config.word_category.empty()) {
-        available_words = words_cache;
-    }
-    else {
-        for (const auto& word : words_cache) {
-            if (word.category == config.word_category) {
-                available_words.push_back(word);
-            }
-        }
-    }
-
-    if (available_words.size() < config.word_count_min) {
-        throw runtime_error("Недостаточно слов в выбранной категории");
-    }
-
-    // Выбираем случайные слова
     static default_random_engine rng(random_device{}());
-    shuffle(available_words.begin(), available_words.end(), rng);
 
-    int word_count = config.word_count_min +
-        uniform_int_distribution<>(0, config.word_count_max - config.word_count_min)(rng);
-    word_count = min(word_count, static_cast<int>(available_words.size()));
+    // 2. Выбираем главное слово
+    const WordItem& main_word_item = select_random_word();
+    string main_word = main_word_item.word;
+    int main_word_length = main_word_item.length;
 
-    for (int i = 0; i < word_count; i++) {
-        selected_words.push_back(available_words[i].word);
+    // 3. Выбираем другие слова (без такой же длины)
+    vector<string> selected_words;
+    selected_words.push_back(main_word);
+
+    int additional_words = config.word_count_min +
+        uniform_int_distribution<>(0, config.word_count_max - config.word_count_min)(rng) - 1;
+
+    // Берем слова с разными длинами
+    vector<WordItem> available = words_cache;
+    shuffle(available.begin(), available.end(), rng);
+
+    for (const auto& word_item : available) {
+        if (selected_words.size() >= additional_words + 1) break;
+        if (word_item.word == main_word) continue;
+        if (word_item.length == main_word_length) continue; // ПРОПУСКАЕМ слова такой же длины!
+
+        selected_words.push_back(word_item.word);
     }
 
-    // Выбираем шаблон
+    // 4. Шаблон и текст
     size_t template_index = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
     string prefix = prefixes_cache[template_index];
     string suffix = suffixes_cache[template_index];
     string delimiter = delimiters_cache[template_index];
 
-    // Строим исходный текст
     string original_text = build_text(selected_words, prefix, suffix, delimiter);
+    string modified_text = modify_text(original_text, main_word, delimiter, true);
 
-    // Выбираем слово для удаления
-    size_t word_to_remove_index = uniform_int_distribution<size_t>(0, selected_words.size() - 1)(rng);
-    string word_to_remove = selected_words[word_to_remove_index];
-
-    // Создаем модифицированный текст
-    string modified_text = modify_text(original_text, word_to_remove, delimiter, true);
-
-    // Рассчитываем разницу в размере
+    // 5. Расчет разницы
     int original_size = calculate_size(original_text, encoding.bits_per_char);
     int modified_size = calculate_size(modified_text, encoding.bits_per_char);
     int size_diff = original_size - modified_size;
 
-    // Формируем текст задачи
+    // 6. Формируем результат
     result.problem_text = format_problem_text(encoding.name, encoding.description,
         original_text, size_diff, true);
 
-    result.correct_answer = word_to_remove;
+    result.correct_answer = main_word;
     result.solution_explanation = create_solution_explanation(original_text, modified_text,
         encoding.name, encoding.bits_per_char,
-        size_diff, word_to_remove, true);
+        size_diff, main_word, true);
 
-    // Заполняем метаданные
+    // 7. Метаданные
     result.meta["encoding"] = encoding.name;
     result.meta["bits_per_char"] = to_string(encoding.bits_per_char);
     result.meta["original_size"] = to_string(original_size);
@@ -371,7 +360,6 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
 
     return result;
 }
-
 // Генерация задачи на добавление слова
 ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& config) {
     // Похоже на generate_removal, но с добавлением
