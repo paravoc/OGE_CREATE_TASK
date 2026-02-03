@@ -16,7 +16,7 @@ namespace OGE {
 
     struct PageConfig {
         string title = "Задачи на кодирование";
-        string output_file = "задачи.html";
+        string output_file = "site/задачи.html";
         int total_problems = 0;
         time_t generation_time = 0;
     };

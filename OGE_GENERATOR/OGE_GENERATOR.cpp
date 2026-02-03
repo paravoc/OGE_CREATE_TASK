@@ -22,7 +22,7 @@ int main() {
         OGE::ProblemType1::Config config;
         config.allow_removal = true;
         config.word_count_min = 3;
-        config.word_count_max = 6;
+        config.word_count_max = 30;
 
         // 4. Собираем данные задач
         std::vector<std::map<std::string, std::string>> problems_data;
