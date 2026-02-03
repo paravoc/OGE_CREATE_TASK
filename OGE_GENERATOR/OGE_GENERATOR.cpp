@@ -23,7 +23,7 @@ int main() {
         config.allow_removal = true;
         config.allow_addition = true;
         config.allow_encoding_change = true;
-        config.word_count_min = 3;
+        config.word_count_min = 7;
         config.word_count_max = 10;
 
         // 4. Собираем данные задач

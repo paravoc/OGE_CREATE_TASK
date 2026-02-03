@@ -1,4 +1,4 @@
-#include "problem_type1.h"
+п»ї#include "problem_type1.h"
 #include <sqlite3.h>
 #include <random>
 #include <sstream>
@@ -10,7 +10,7 @@
 using namespace std;
 using namespace OGE;
 
-// Вспомогательная функция для выполнения SQL запроса
+// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅР°СЏ С„СѓРЅРєС†РёСЏ РґР»СЏ РІС‹РїРѕР»РЅРµРЅРёСЏ SQL Р·Р°РїСЂРѕСЃР°
 static vector<vector<string>> sql_query(sqlite3* db, const string& sql) {
     vector<vector<string>> results;
 
@@ -36,13 +36,13 @@ static vector<vector<string>> sql_query(sqlite3* db, const string& sql) {
     return results;
 }
 
-// Конструктор
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 ProblemType1::ProblemType1(sqlite3* connection) : db_conn(connection) {
-    // Инициализируем кэш
+    // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РєСЌС€
     reload_cache();
 }
 
-// Загрузка слов из БД
+// Р—Р°РіСЂСѓР·РєР° СЃР»РѕРІ РёР· Р‘Р”
 bool ProblemType1::load_words_from_db(const string& category_filter) {
     words_cache.clear();
 
@@ -66,7 +66,7 @@ bool ProblemType1::load_words_from_db(const string& category_filter) {
     return !words_cache.empty();
 }
 
-// Загрузка кодировок из БД
+// Р—Р°РіСЂСѓР·РєР° РєРѕРґРёСЂРѕРІРѕРє РёР· Р‘Р”
 bool ProblemType1::load_encodings_from_db() {
     encodings_cache.clear();
 
@@ -86,7 +86,7 @@ bool ProblemType1::load_encodings_from_db() {
     return !encodings_cache.empty();
 }
 
-// Загрузка шаблонов из БД
+// Р—Р°РіСЂСѓР·РєР° С€Р°Р±Р»РѕРЅРѕРІ РёР· Р‘Р”
 bool ProblemType1::load_templates_from_db() {
     prefixes_cache.clear();
     suffixes_cache.clear();
@@ -106,14 +106,14 @@ bool ProblemType1::load_templates_from_db() {
     return !prefixes_cache.empty();
 }
 
-// Перезагрузка всего кэша
+// РџРµСЂРµР·Р°РіСЂСѓР·РєР° РІСЃРµРіРѕ РєСЌС€Р°
 void ProblemType1::reload_cache() {
     cache_loaded = load_words_from_db() &&
         load_encodings_from_db() &&
         load_templates_from_db();
 }
 
-// Выбор случайного элемента
+// Р’С‹Р±РѕСЂ СЃР»СѓС‡Р°Р№РЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 const string& ProblemType1::select_random(const vector<string>& items) {
     static default_random_engine rng(random_device{}());
     static string empty_string;
@@ -144,7 +144,7 @@ const ProblemType1::EncodingInfo& ProblemType1::select_random_encoding() {
     return encodings_cache[dist(rng)];
 }
 
-// Построение текста из слов
+// РџРѕСЃС‚СЂРѕРµРЅРёРµ С‚РµРєСЃС‚Р° РёР· СЃР»РѕРІ
 string ProblemType1::build_text(const vector<string>& words,
     const string& prefix,
     const string& suffix,
@@ -170,33 +170,33 @@ string ProblemType1::build_text(const vector<string>& words,
     return ss.str();
 }
 
-// Расчет размера текста в байтах
+// Р Р°СЃС‡РµС‚ СЂР°Р·РјРµСЂР° С‚РµРєСЃС‚Р° РІ Р±Р°Р№С‚Р°С…
 int ProblemType1::calculate_size(const string& text, int bits_per_char) const {
     if (text.empty()) return 0;
 
-    // Для 7-битного ASCII нужен специальный расчет
+    // Р”Р»СЏ 7-Р±РёС‚РЅРѕРіРѕ ASCII РЅСѓР¶РµРЅ СЃРїРµС†РёР°Р»СЊРЅС‹Р№ СЂР°СЃС‡РµС‚
     if (bits_per_char == 7) {
         return static_cast<int>(ceil(text.length() * 7.0 / 8.0));
     }
 
-    // Для 8, 16, 32 бит - просто делим на 8
+    // Р”Р»СЏ 8, 16, 32 Р±РёС‚ - РїСЂРѕСЃС‚Рѕ РґРµР»РёРј РЅР° 8
     int bytes_per_char = bits_per_char / 8;
     return text.length() * bytes_per_char;
 }
 
-// Модификация текста (удаление или добавление слова)
+// РњРѕРґРёС„РёРєР°С†РёСЏ С‚РµРєСЃС‚Р° (СѓРґР°Р»РµРЅРёРµ РёР»Рё РґРѕР±Р°РІР»РµРЅРёРµ СЃР»РѕРІР°)
 string ProblemType1::modify_text(const string& text,
     const string& target_word,
     const string& delimiter,
     bool is_removal) const {
     if (is_removal) {
-        // Удаление слова
+        // РЈРґР°Р»РµРЅРёРµ СЃР»РѕРІР°
         string result = text;
 
-        // Ищем слово с учетом разделителей
+        // РС‰РµРј СЃР»РѕРІРѕ СЃ СѓС‡РµС‚РѕРј СЂР°Р·РґРµР»РёС‚РµР»РµР№
         size_t pos = result.find(target_word);
         while (pos != string::npos) {
-            // Проверяем границы слова
+            // РџСЂРѕРІРµСЂСЏРµРј РіСЂР°РЅРёС†С‹ СЃР»РѕРІР°
             bool left_ok = (pos == 0) ||
                 (result[pos - 1] == delimiter[0] || result[pos - 1] == ' ');
             bool right_ok = (pos + target_word.length() == result.length()) ||
@@ -204,15 +204,15 @@ string ProblemType1::modify_text(const string& text,
                     result[pos + target_word.length()] == ' ');
 
             if (left_ok && right_ok) {
-                // Удаляем слово
+                // РЈРґР°Р»СЏРµРј СЃР»РѕРІРѕ
                 result.erase(pos, target_word.length());
 
-                // Удаляем разделитель перед словом если есть
+                // РЈРґР°Р»СЏРµРј СЂР°Р·РґРµР»РёС‚РµР»СЊ РїРµСЂРµРґ СЃР»РѕРІРѕРј РµСЃР»Рё РµСЃС‚СЊ
                 if (pos > 0 && result.substr(pos - delimiter.length(), delimiter.length()) == delimiter) {
                     result.erase(pos - delimiter.length(), delimiter.length());
                 }
 
-                // Удаляем разделитель после слова если есть
+                // РЈРґР°Р»СЏРµРј СЂР°Р·РґРµР»РёС‚РµР»СЊ РїРѕСЃР»Рµ СЃР»РѕРІР° РµСЃР»Рё РµСЃС‚СЊ
                 if (pos < result.length() && result.substr(pos, delimiter.length()) == delimiter) {
                     result.erase(pos, delimiter.length());
                 }
@@ -222,23 +222,23 @@ string ProblemType1::modify_text(const string& text,
             pos = result.find(target_word, pos + 1);
         }
 
-        // Чистка лишних пробелов
+        // Р§РёСЃС‚РєР° Р»РёС€РЅРёС… РїСЂРѕР±РµР»РѕРІ
         size_t space_pos;
         while ((space_pos = result.find("  ")) != string::npos) {
             result.erase(space_pos, 1);
         }
 
-        // Убираем пробелы перед запятыми
+        // РЈР±РёСЂР°РµРј РїСЂРѕР±РµР»С‹ РїРµСЂРµРґ Р·Р°РїСЏС‚С‹РјРё
         while ((space_pos = result.find(" ,")) != string::npos) {
             result.erase(space_pos, 1);
         }
 
-        // Убираем пробелы после запятых если их много
+        // РЈР±РёСЂР°РµРј РїСЂРѕР±РµР»С‹ РїРѕСЃР»Рµ Р·Р°РїСЏС‚С‹С… РµСЃР»Рё РёС… РјРЅРѕРіРѕ
         while ((space_pos = result.find(",  ")) != string::npos) {
             result.erase(space_pos + 1, 1);
         }
 
-        // Обрезаем пробелы по краям
+        // РћР±СЂРµР·Р°РµРј РїСЂРѕР±РµР»С‹ РїРѕ РєСЂР°СЏРј
         size_t start = result.find_first_not_of(" \t\n\r");
         size_t end = result.find_last_not_of(" \t\n\r");
 
@@ -249,7 +249,7 @@ string ProblemType1::modify_text(const string& text,
         return result;
     }
     else {
-        // Добавление слова (просто добавляем в конец с разделителем)
+        // Р”РѕР±Р°РІР»РµРЅРёРµ СЃР»РѕРІР° (РїСЂРѕСЃС‚Рѕ РґРѕР±Р°РІР»СЏРµРј РІ РєРѕРЅРµС† СЃ СЂР°Р·РґРµР»РёС‚РµР»РµРј)
         if (text.empty()) return target_word;
 
         string result = text;
@@ -263,9 +263,9 @@ string ProblemType1::modify_text(const string& text,
     }
 }
 
-// Выбор сценария на основе конфигурации
+// Р’С‹Р±РѕСЂ СЃС†РµРЅР°СЂРёСЏ РЅР° РѕСЃРЅРѕРІРµ РєРѕРЅС„РёРіСѓСЂР°С†РёРё
 ProblemType1::Scenario ProblemType1::select_scenario(const ProblemType1Config& config) const {
-    // Если только один сценарий доступен - возвращаем его
+    // Р•СЃР»Рё С‚РѕР»СЊРєРѕ РѕРґРёРЅ СЃС†РµРЅР°СЂРёР№ РґРѕСЃС‚СѓРїРµРЅ - РІРѕР·РІСЂР°С‰Р°РµРј РµРіРѕ
     if (config.allow_removal && !config.allow_addition && !config.allow_encoding_change) {
         return Scenario::REMOVAL;
     }
@@ -276,14 +276,14 @@ ProblemType1::Scenario ProblemType1::select_scenario(const ProblemType1Config& c
         return Scenario::ENCODING_CHANGE;
     }
 
-    // Случайный выбор из доступных сценариев
+    // РЎР»СѓС‡Р°Р№РЅС‹Р№ РІС‹Р±РѕСЂ РёР· РґРѕСЃС‚СѓРїРЅС‹С… СЃС†РµРЅР°СЂРёРµРІ
     vector<Scenario> available_scenarios;
     if (config.allow_removal) available_scenarios.push_back(Scenario::REMOVAL);
     if (config.allow_addition) available_scenarios.push_back(Scenario::ADDITION);
     if (config.allow_encoding_change) available_scenarios.push_back(Scenario::ENCODING_CHANGE);
 
     if (available_scenarios.empty()) {
-        return Scenario::REMOVAL; // По умолчанию
+        return Scenario::REMOVAL; // РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
     }
 
     static default_random_engine rng(random_device{}());
@@ -295,37 +295,37 @@ ProblemType1::Scenario ProblemType1::select_scenario(const ProblemType1Config& c
 ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& config) {
     ProblemType1Result result;
 
-    // 1. Выбираем кодировку
+    // 1. Р’С‹Р±РёСЂР°РµРј РєРѕРґРёСЂРѕРІРєСѓ
     const auto& encoding = select_random_encoding();
     int bytes_per_char = encoding.bits_per_char / 8;
 
     static default_random_engine rng(random_device{}());
 
-    // 2. Выбираем главное слово
+    // 2. Р’С‹Р±РёСЂР°РµРј РіР»Р°РІРЅРѕРµ СЃР»РѕРІРѕ
     const WordItem& main_word_item = select_random_word();
     string main_word = main_word_item.word;
     int main_word_length = main_word_item.length;
 
-    // 3. Выбираем другие слова (без такой же длины)
+    // 3. Р’С‹Р±РёСЂР°РµРј РґСЂСѓРіРёРµ СЃР»РѕРІР° (Р±РµР· С‚Р°РєРѕР№ Р¶Рµ РґР»РёРЅС‹)
     vector<string> selected_words;
     selected_words.push_back(main_word);
 
     int additional_words = config.word_count_min +
         uniform_int_distribution<>(0, config.word_count_max - config.word_count_min)(rng) - 1;
 
-    // Берем слова с разными длинами
+    // Р‘РµСЂРµРј СЃР»РѕРІР° СЃ СЂР°Р·РЅС‹РјРё РґР»РёРЅР°РјРё
     vector<WordItem> available = words_cache;
     shuffle(available.begin(), available.end(), rng);
 
     for (const auto& word_item : available) {
         if (selected_words.size() >= additional_words + 1) break;
         if (word_item.word == main_word) continue;
-        if (word_item.length == main_word_length) continue; // ПРОПУСКАЕМ слова такой же длины!
+        if (word_item.length == main_word_length) continue; // РџР РћРџРЈРЎРљРђР•Рњ СЃР»РѕРІР° С‚Р°РєРѕР№ Р¶Рµ РґР»РёРЅС‹!
 
         selected_words.push_back(word_item.word);
     }
 
-    // 4. Шаблон и текст
+    // 4. РЁР°Р±Р»РѕРЅ Рё С‚РµРєСЃС‚
     size_t template_index = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
     string prefix = prefixes_cache[template_index];
     string suffix = suffixes_cache[template_index];
@@ -334,12 +334,12 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
     string original_text = build_text(selected_words, prefix, suffix, delimiter);
     string modified_text = modify_text(original_text, main_word, delimiter, true);
 
-    // 5. Расчет разницы
+    // 5. Р Р°СЃС‡РµС‚ СЂР°Р·РЅРёС†С‹
     int original_size = calculate_size(original_text, encoding.bits_per_char);
     int modified_size = calculate_size(modified_text, encoding.bits_per_char);
     int size_diff = original_size - modified_size;
 
-    // 6. Формируем результат
+    // 6. Р¤РѕСЂРјРёСЂСѓРµРј СЂРµР·СѓР»СЊС‚Р°С‚
     result.problem_text = format_problem_text(encoding.name, encoding.description,
         original_text, size_diff, true);
 
@@ -348,7 +348,7 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
         encoding.name, encoding.bits_per_char,
         size_diff, main_word, true);
 
-    // 7. Метаданные
+    // 7. РњРµС‚Р°РґР°РЅРЅС‹Рµ
     result.meta["encoding"] = encoding.name;
     result.meta["bits_per_char"] = to_string(encoding.bits_per_char);
     result.meta["original_size"] = to_string(original_size);
@@ -359,31 +359,148 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
 
     return result;
 }
-// Генерация задачи на добавление слова
+// Р“РµРЅРµСЂР°С†РёСЏ Р·Р°РґР°С‡Рё РЅР° РґРѕР±Р°РІР»РµРЅРёРµ СЃР»РѕРІР°
+// Р“РµРЅРµСЂР°С†РёСЏ Р·Р°РґР°С‡Рё РЅР° РґРѕР±Р°РІР»РµРЅРёРµ СЃР»РѕРІР°
 ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& config) {
-    // Похоже на generate_removal, но с добавлением
-    // Пока не реализовано полностью
     ProblemType1Result result;
-    result.problem_text = "Задача на добавление слова (в разработке)";
-    result.correct_answer = "word";
+
+    // 1. Р’С‹Р±РёСЂР°РµРј РєРѕРґРёСЂРѕРІРєСѓ
+    const auto& encoding = select_random_encoding();
+    int bytes_per_char = encoding.bits_per_char / 8;
+
+    static default_random_engine rng(random_device{}());
+
+    // 2. Р’С‹Р±РёСЂР°РµРј РіР»Р°РІРЅРѕРµ СЃР»РѕРІРѕ (РєРѕС‚РѕСЂРѕРµ Р±СѓРґРµС‚ РґРѕР±Р°РІР»РµРЅРѕ)
+    const WordItem& main_word_item = select_random_word();
+    string main_word = main_word_item.word;
+    int main_word_length = main_word_item.length;
+
+    // 3. Р’С‹Р±РёСЂР°РµРј РґСЂСѓРіРёРµ СЃР»РѕРІР° РґР»СЏ РРЎРҐРћР”РќРћР“Рћ С‚РµРєСЃС‚Р°
+    vector<string> original_words; // РЎР»РѕРІР° РІ РёСЃС…РѕРґРЅРѕРј С‚РµРєСЃС‚Рµ (Р‘Р•Р— РґРѕР±Р°РІР»РµРЅРЅРѕРіРѕ)
+    original_words.push_back(main_word);
+
+    // Р‘РµСЂРµРј СЃР»РѕРІР° СЃ СЂР°Р·РЅС‹РјРё РґР»РёРЅР°РјРё (РЅРµ СЂР°РІРЅС‹РјРё РґР»РёРЅРµ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ СЃР»РѕРІР°)
+    vector<WordItem> available = words_cache;
+    shuffle(available.begin(), available.end(), rng);
+
+    int original_count = config.word_count_min +
+        uniform_int_distribution<>(0, config.word_count_max - config.word_count_min)(rng);
+
+    for (const auto& word_item : available) {
+        if (original_words.size() >= original_count) break;
+        if (word_item.word == main_word) continue; // РќРµ РґРѕР±Р°РІР»СЏРµРј РЅР°С€Рµ СЃР»РѕРІРѕ
+        if (word_item.length == main_word_length) continue; // РџСЂРѕРїСѓСЃРєР°РµРј СЃР»РѕРІР° С‚Р°РєРѕР№ Р¶Рµ РґР»РёРЅС‹!
+
+        original_words.push_back(word_item.word);
+    }
+
+    // 4. Р’С‹Р±РёСЂР°РµРј С€Р°Р±Р»РѕРЅ
+    size_t template_index = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
+    string prefix = prefixes_cache[template_index];
+    string suffix = suffixes_cache[template_index];
+    string delimiter = delimiters_cache[template_index];
+
+    // 5. РЎС‚СЂРѕРёРј РРЎРҐРћР”РќР«Р™ С‚РµРєСЃС‚ (Р±РµР· РґРѕР±Р°РІР»РµРЅРЅРѕРіРѕ СЃР»РѕРІР°)
+    string original_text = build_text(original_words, prefix, suffix, delimiter);
+
+    // 6. Р Р°СЃСЃС‡РёС‚С‹РІР°РµРј СЂР°Р·РјРµСЂ РёСЃС…РѕРґРЅРѕРіРѕ С‚РµРєСЃС‚Р°
+    int original_size = calculate_size(original_text, encoding.bits_per_char);
+
+    // 7. Р’С‹Р±РёСЂР°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ СЂР°Р·РґРµР»РёС‚РµР»РµР№ РґР»СЏ РґРѕР±Р°РІР»РµРЅРЅРѕРіРѕ СЃР»РѕРІР°
+    int delimiter_chars = 2; // 1 РёР»Рё 2 СЃРёРјРІРѕР»Р°
+    int total_added_chars = main_word_length + delimiter_chars;
+    int added_size = total_added_chars * bytes_per_char;
+
+    // 8. Р Р°СЃСЃС‡РёС‚С‹РІР°РµРј РЅРѕРІС‹Р№ СЂР°Р·РјРµСЂ
+    int new_size = original_size + added_size;
+
+    // 9. Р¤РѕСЂРјРёСЂСѓРµРј С‚РµРєСЃС‚ Р·Р°РґР°С‡Рё
+    stringstream problem_ss;
+    problem_ss << "Р’ РєРѕРґРёСЂРѕРІРєРµ " << encoding.name << " " << encoding.description << ".\n\n";
+
+    problem_ss << "РђРЅРґСЂРµР№ РЅР°РїРёСЃР°Р» С‚РµРєСЃС‚ (РІ РЅРµРј РЅРµС‚ Р»РёС€РЅРёС… РїСЂРѕР±РµР»РѕРІ):\n\n";
+    problem_ss << "В«" << original_text << "В».\n\n";  // в†ђ РџРћРљРђР—Р«Р’РђР•Рњ РРЎРҐРћР”РќР«Р™ РўР•РљРЎРў
+
+    problem_ss << "РЈС‡РµРЅРёРє РґРѕР±Р°РІРёР» РІ СЃРїРёСЃРѕРє РЅР°Р·РІР°РЅРёРµ РµС‰С‘ РѕРґРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°. ";
+    problem_ss << "Р—Р°РѕРґРЅРѕ РѕРЅ РґРѕР±Р°РІРёР» РЅРµРѕР±С…РѕРґРёРјС‹Рµ Р·Р°РїСЏС‚С‹Рµ Рё РїСЂРѕР±РµР»С‹ вЂ” ";
+    problem_ss << "РґРІР° РїСЂРѕР±РµР»Р° РЅРµ РґРѕР»Р¶РЅС‹ РёРґС‚Рё РїРѕРґСЂСЏРґ.\n\n";
+
+    problem_ss << "РџСЂРё СЌС‚РѕРј СЂР°Р·РјРµСЂ РЅРѕРІРѕРіРѕ РїСЂРµРґР»РѕР¶РµРЅРёСЏ РІ РґР°РЅРЅРѕР№ РєРѕРґРёСЂРѕРІРєРµ ";
+    problem_ss << "РѕРєР°Р·Р°Р»СЃСЏ РЅР° " << added_size << " Р±Р°Р№С‚";
+
+    // РџСЂР°РІРёР»СЊРЅРѕРµ СЃРєР»РѕРЅРµРЅРёРµ
+    if (added_size % 10 == 1 && added_size % 100 != 11) {
+        problem_ss << " Р±РѕР»СЊС€Рµ";
+    }
+    else if (added_size % 10 >= 2 && added_size % 10 <= 4 &&
+        (added_size % 100 < 10 || added_size % 100 >= 20)) {
+        problem_ss << "Р° Р±РѕР»СЊС€Рµ";
+    }
+    else {
+        problem_ss << "РѕРІ Р±РѕР»СЊС€Рµ";
+    }
+
+    problem_ss << ", С‡РµРј СЂР°Р·РјРµСЂ РёСЃС…РѕРґРЅРѕРіРѕ РїСЂРµРґР»РѕР¶РµРЅРёСЏ.\n\n";
+    problem_ss << "РќР°РїРёС€РёС‚Рµ РІ РѕС‚РІРµС‚Рµ РґРѕР±Р°РІР»РµРЅРЅРѕРµ РЅР°Р·РІР°РЅРёРµ.";
+
+    // 10. Р¤РѕСЂРјРёСЂСѓРµРј РѕР±СЉСЏСЃРЅРµРЅРёРµ СЂРµС€РµРЅРёСЏ
+    stringstream solution_ss;
+    solution_ss << "Р Р•РЁР•РќРР•:\n\n";
+    solution_ss << "1. РСЃС…РѕРґРЅС‹Р№ С‚РµРєСЃС‚: В«" << original_text << "В»\n";
+    solution_ss << "2. Р Р°Р·РЅРёС†Р° РІ СЂР°Р·РјРµСЂРµ: " << new_size << " - " << original_size
+        << " = " << added_size << " Р±Р°Р№С‚\n";
+    solution_ss << "3. Р’ РєРѕРґРёСЂРѕРІРєРµ " << encoding.name << " 1 СЃРёРјРІРѕР» = "
+        << bytes_per_char << " Р±Р°Р№С‚\n";
+    solution_ss << "4. Р”РѕР±Р°РІР»РµРЅРѕ СЃРёРјРІРѕР»РѕРІ: " << added_size << " / " << bytes_per_char
+        << " = " << total_added_chars << " СЃРёРјРІРѕР»РѕРІ\n\n";
+
+    solution_ss << "5. РР· " << total_added_chars << " СЃРёРјРІРѕР»РѕРІ:\n";
+    solution_ss << "   - РЎР»РѕРІРѕ: " << main_word_length << " СЃРёРјРІРѕР»РѕРІ\n";
+    solution_ss << "   - Р Р°Р·РґРµР»РёС‚РµР»Рё: " << delimiter_chars << " СЃРёРјРІРѕР»Р°\n\n";
+
+    solution_ss << "6. Р’ РёСЃС…РѕРґРЅРѕРј С‚РµРєСЃС‚Рµ СЃР»РѕРІР° РёРјРµСЋС‚ РґР»РёРЅС‹:\n";
+    for (const auto& word : original_words) {
+        solution_ss << "   - " << word << ": " << word.length() << " СЃРёРјРІРѕР»РѕРІ\n";
+    }
+    solution_ss << "\n";
+
+    solution_ss << "7. Р”РѕР±Р°РІР»РµРЅРЅРѕРµ СЃР»РѕРІРѕ РґРѕР»Р¶РЅРѕ РёРјРµС‚СЊ РґР»РёРЅСѓ " << main_word_length << " СЃРёРјРІРѕР»РѕРІ\n";
+    solution_ss << "   (РІ РёСЃС…РѕРґРЅРѕРј С‚РµРєСЃС‚Рµ РЅРµС‚ СЃР»РѕРІ С‚Р°РєРѕР№ РґР»РёРЅС‹)\n\n";
+
+    solution_ss << "РћРўР’Р•Рў: " << main_word;
+
+    // 11. Р—Р°РїРѕР»РЅСЏРµРј СЂРµР·СѓР»СЊС‚Р°С‚
+    result.problem_text = problem_ss.str();
+    result.correct_answer = main_word;
+    result.solution_explanation = solution_ss.str();
+
+    // 12. РњРµС‚Р°РґР°РЅРЅС‹Рµ
+    result.meta["encoding"] = encoding.name;
+    result.meta["original_size"] = to_string(original_size);
+    result.meta["new_size"] = to_string(new_size);
+    result.meta["size_difference"] = to_string(added_size);
+    result.meta["added_word_length"] = to_string(main_word_length);
+    result.meta["delimiter_chars"] = to_string(delimiter_chars);
+    result.meta["scenario"] = "addition";
+    result.meta["original_word_count"] = to_string(original_words.size());
+
     return result;
 }
-
-// Генерация задачи на изменение кодировки
+// Р“РµРЅРµСЂР°С†РёСЏ Р·Р°РґР°С‡Рё РЅР° РёР·РјРµРЅРµРЅРёРµ РєРѕРґРёСЂРѕРІРєРё
 ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Config& config) {
-    // Пока не реализовано
+    // РџРѕРєР° РЅРµ СЂРµР°Р»РёР·РѕРІР°РЅРѕ
     ProblemType1Result result;
-    result.problem_text = "Задача на изменение кодировки (в разработке)";
+    result.problem_text = "Р—Р°РґР°С‡Р° РЅР° РёР·РјРµРЅРµРЅРёРµ РєРѕРґРёСЂРѕРІРєРё (РІ СЂР°Р·СЂР°Р±РѕС‚РєРµ)";
     result.correct_answer = "0";
     return result;
 }
 
-// Основной метод генерации
+// РћСЃРЅРѕРІРЅРѕР№ РјРµС‚РѕРґ РіРµРЅРµСЂР°С†РёРё
 ProblemType1Result ProblemType1::generate(const Config& config) {
     if (!cache_loaded) {
         reload_cache();
         if (!cache_loaded) {
-            throw runtime_error("Не удалось загрузить данные из БД");
+            throw runtime_error("РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ РґР°РЅРЅС‹Рµ РёР· Р‘Р”");
         }
     }
 
@@ -401,7 +518,7 @@ ProblemType1Result ProblemType1::generate(const Config& config) {
     }
 }
 
-// Генерация пакета задач
+// Р“РµРЅРµСЂР°С†РёСЏ РїР°РєРµС‚Р° Р·Р°РґР°С‡
 vector<ProblemType1::Problem> ProblemType1::generate_batch(int count, const Config& config) {
     vector<Problem> problems;
 
@@ -412,13 +529,13 @@ vector<ProblemType1::Problem> ProblemType1::generate_batch(int count, const Conf
     return problems;
 }
 
-// Получение статистики
+// РџРѕР»СѓС‡РµРЅРёРµ СЃС‚Р°С‚РёСЃС‚РёРєРё
 ProblemType1::Stats ProblemType1::get_stats() const {
     Stats stats;
     stats.total_words = static_cast<int>(words_cache.size());
     stats.total_encodings = static_cast<int>(encodings_cache.size());
 
-    // Группируем слова по категориям
+    // Р“СЂСѓРїРїРёСЂСѓРµРј СЃР»РѕРІР° РїРѕ РєР°С‚РµРіРѕСЂРёСЏРј
     for (const auto& word : words_cache) {
         stats.words_by_category[word.category]++;
     }
@@ -426,24 +543,24 @@ ProblemType1::Stats ProblemType1::get_stats() const {
     return stats;
 }
 
-// Проверка ответа
+// РџСЂРѕРІРµСЂРєР° РѕС‚РІРµС‚Р°
 bool ProblemType1::check_answer(const string& user_answer,
     const string& correct_answer) {
     string user_lower = user_answer;
     string correct_lower = correct_answer;
 
-    // Приводим к нижнему регистру
+    // РџСЂРёРІРѕРґРёРј Рє РЅРёР¶РЅРµРјСѓ СЂРµРіРёСЃС‚СЂСѓ
     transform(user_lower.begin(), user_lower.end(), user_lower.begin(), ::tolower);
     transform(correct_lower.begin(), correct_lower.end(), correct_lower.begin(), ::tolower);
 
-    // Убираем лишние пробелы
+    // РЈР±РёСЂР°РµРј Р»РёС€РЅРёРµ РїСЂРѕР±РµР»С‹
     user_lower.erase(remove_if(user_lower.begin(), user_lower.end(), ::isspace), user_lower.end());
     correct_lower.erase(remove_if(correct_lower.begin(), correct_lower.end(), ::isspace), correct_lower.end());
 
     return user_lower == correct_lower;
 }
 
-// Вычисление разницы в размере
+// Р’С‹С‡РёСЃР»РµРЅРёРµ СЂР°Р·РЅРёС†С‹ РІ СЂР°Р·РјРµСЂРµ
 int ProblemType1::compute_size_difference(const string& text1,
     const string& text2,
     int bits_per_char) {
@@ -463,7 +580,7 @@ int ProblemType1::compute_size_difference(const string& text1,
     return size1 - size2;
 }
 
-// Форматирование текста задачи
+// Р¤РѕСЂРјР°С‚РёСЂРѕРІР°РЅРёРµ С‚РµРєСЃС‚Р° Р·Р°РґР°С‡Рё
 string ProblemType1::format_problem_text(const string& encoding_name,
     const string& encoding_desc,
     const string& original_text,
@@ -471,48 +588,48 @@ string ProblemType1::format_problem_text(const string& encoding_name,
     bool is_removal) {
     stringstream ss;
 
-    ss << "В кодировке " << encoding_name << " " << encoding_desc << ".\n\n";
-    ss << "Андрей написал текст (в нем нет лишних пробелов):\n\n";
-    ss << "«" << original_text << "».\n\n";
+    ss << "Р’ РєРѕРґРёСЂРѕРІРєРµ " << encoding_name << " " << encoding_desc << ".\n\n";
+    ss << "РђРЅРґСЂРµР№ РЅР°РїРёСЃР°Р» С‚РµРєСЃС‚ (РІ РЅРµРј РЅРµС‚ Р»РёС€РЅРёС… РїСЂРѕР±РµР»РѕРІ):\n\n";
+    ss << "В«" << original_text << "В».\n\n";
 
     if (is_removal) {
-        ss << "Ученик вычеркнул из списка название одного из элементов. ";
+        ss << "РЈС‡РµРЅРёРє РІС‹С‡РµСЂРєРЅСѓР» РёР· СЃРїРёСЃРєР° РЅР°Р·РІР°РЅРёРµ РѕРґРЅРѕРіРѕ РёР· СЌР»РµРјРµРЅС‚РѕРІ. ";
     }
     else {
-        ss << "Ученик добавил в список название ещё одного элемента. ";
+        ss << "РЈС‡РµРЅРёРє РґРѕР±Р°РІРёР» РІ СЃРїРёСЃРѕРє РЅР°Р·РІР°РЅРёРµ РµС‰С‘ РѕРґРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°. ";
     }
 
-    ss << "Заодно он вычеркнул ставшие лишними запятые и пробелы — ";
-    ss << "два пробела не должны идти подряд.\n\n";
+    ss << "Р—Р°РѕРґРЅРѕ РѕРЅ РІС‹С‡РµСЂРєРЅСѓР» СЃС‚Р°РІС€РёРµ Р»РёС€РЅРёРјРё Р·Р°РїСЏС‚С‹Рµ Рё РїСЂРѕР±РµР»С‹ вЂ” ";
+    ss << "РґРІР° РїСЂРѕР±РµР»Р° РЅРµ РґРѕР»Р¶РЅС‹ РёРґС‚Рё РїРѕРґСЂСЏРґ.\n\n";
 
-    ss << "При этом размер нового предложения в данной кодировке ";
-    ss << "оказался на " << size_diff << " байт";
+    ss << "РџСЂРё СЌС‚РѕРј СЂР°Р·РјРµСЂ РЅРѕРІРѕРіРѕ РїСЂРµРґР»РѕР¶РµРЅРёСЏ РІ РґР°РЅРЅРѕР№ РєРѕРґРёСЂРѕРІРєРµ ";
+    ss << "РѕРєР°Р·Р°Р»СЃСЏ РЅР° " << size_diff << " Р±Р°Р№С‚";
 
-    // Правильное склонение
+    // РџСЂР°РІРёР»СЊРЅРѕРµ СЃРєР»РѕРЅРµРЅРёРµ
     if (size_diff % 10 == 1 && size_diff % 100 != 11) {
-        ss << " меньше";
+        ss << " РјРµРЅСЊС€Рµ";
     }
     else if (size_diff % 10 >= 2 && size_diff % 10 <= 4 &&
         (size_diff % 100 < 10 || size_diff % 100 >= 20)) {
-        ss << "а меньше";
+        ss << "Р° РјРµРЅСЊС€Рµ";
     }
     else {
-        ss << "ов меньше";
+        ss << "РѕРІ РјРµРЅСЊС€Рµ";
     }
 
-    ss << ", чем размер исходного предложения.\n\n";
+    ss << ", С‡РµРј СЂР°Р·РјРµСЂ РёСЃС…РѕРґРЅРѕРіРѕ РїСЂРµРґР»РѕР¶РµРЅРёСЏ.\n\n";
 
     if (is_removal) {
-        ss << "Напишите в ответе вычеркнутое название.";
+        ss << "РќР°РїРёС€РёС‚Рµ РІ РѕС‚РІРµС‚Рµ РІС‹С‡РµСЂРєРЅСѓС‚РѕРµ РЅР°Р·РІР°РЅРёРµ.";
     }
     else {
-        ss << "Напишите в ответе добавленное название.";
+        ss << "РќР°РїРёС€РёС‚Рµ РІ РѕС‚РІРµС‚Рµ РґРѕР±Р°РІР»РµРЅРЅРѕРµ РЅР°Р·РІР°РЅРёРµ.";
     }
 
     return ss.str();
 }
 
-// Создание объяснения решения
+// РЎРѕР·РґР°РЅРёРµ РѕР±СЉСЏСЃРЅРµРЅРёСЏ СЂРµС€РµРЅРёСЏ
 string ProblemType1::create_solution_explanation(const string& original_text,
     const string& modified_text,
     const string& encoding_name,
@@ -522,12 +639,12 @@ string ProblemType1::create_solution_explanation(const string& original_text,
     bool is_removal) {
     stringstream ss;
 
-    ss << "РЕШЕНИЕ:\n\n";
-    ss << "1. Исходный текст: «" << original_text << "»\n";
-    ss << "2. Измененный текст: «" << modified_text << "»\n\n";
-    ss << "3. Разница в размере: " << size_diff << " байт\n";
-    ss << "4. В кодировке " << encoding_name << " 1 символ = "
-        << bits_per_char << " бит = " << (bits_per_char / 8.0) << " байт\n\n";
+    ss << "Р Р•РЁР•РќРР•:\n\n";
+    ss << "1. РСЃС…РѕРґРЅС‹Р№ С‚РµРєСЃС‚: В«" << original_text << "В»\n";
+    ss << "2. РР·РјРµРЅРµРЅРЅС‹Р№ С‚РµРєСЃС‚: В«" << modified_text << "В»\n\n";
+    ss << "3. Р Р°Р·РЅРёС†Р° РІ СЂР°Р·РјРµСЂРµ: " << size_diff << " Р±Р°Р№С‚\n";
+    ss << "4. Р’ РєРѕРґРёСЂРѕРІРєРµ " << encoding_name << " 1 СЃРёРјРІРѕР» = "
+        << bits_per_char << " Р±РёС‚ = " << (bits_per_char / 8.0) << " Р±Р°Р№С‚\n\n";
 
     int removed_chars = 0;
     if (bits_per_char == 7) {
@@ -537,26 +654,26 @@ string ProblemType1::create_solution_explanation(const string& original_text,
         removed_chars = size_diff * 8 / bits_per_char;
     }
 
-    ss << "5. Удалено символов: " << size_diff << " байт / ("
-        << bits_per_char << " бит/8) = " << removed_chars << " символов\n\n";
+    ss << "5. РЈРґР°Р»РµРЅРѕ СЃРёРјРІРѕР»РѕРІ: " << size_diff << " Р±Р°Р№С‚ / ("
+        << bits_per_char << " Р±РёС‚/8) = " << removed_chars << " СЃРёРјРІРѕР»РѕРІ\n\n";
 
     if (is_removal) {
-        ss << "6. Слово \"" << target_word << "\" содержит "
-            << target_word.length() << " символов\n";
+        ss << "6. РЎР»РѕРІРѕ \"" << target_word << "\" СЃРѕРґРµСЂР¶РёС‚ "
+            << target_word.length() << " СЃРёРјРІРѕР»РѕРІ\n";
 
         int extra_chars = removed_chars - target_word.length();
         if (extra_chars > 0) {
-            ss << "7. Также удалено " << extra_chars
-                << " лишних знаков препинания/пробелов\n";
+            ss << "7. РўР°РєР¶Рµ СѓРґР°Р»РµРЅРѕ " << extra_chars
+                << " Р»РёС€РЅРёС… Р·РЅР°РєРѕРІ РїСЂРµРїРёРЅР°РЅРёСЏ/РїСЂРѕР±РµР»РѕРІ\n";
         }
 
-        ss << "\nОТВЕТ: " << target_word;
+        ss << "\nРћРўР’Р•Рў: " << target_word;
     }
 
     return ss.str();
 }
 
-// Методы ProblemType1Result
+// РњРµС‚РѕРґС‹ ProblemType1Result
 string ProblemType1Result::to_json() const {
     stringstream ss;
     ss << "{\n";
@@ -584,10 +701,10 @@ string ProblemType1Result::to_html() const {
     ss << "    <p>" << problem_text << "</p>\n";
     ss << "  </div>\n";
     ss << "  <div class=\"solution\" style=\"display: none;\">\n";
-    ss << "    <p><strong>Решение:</strong><br>\n";
+    ss << "    <p><strong>Р РµС€РµРЅРёРµ:</strong><br>\n";
     ss << "    " << solution_explanation << "</p>\n";
     ss << "  </div>\n";
-    ss << "  <button class=\"show-solution\">Показать решение</button>\n";
+    ss << "  <button class=\"show-solution\">РџРѕРєР°Р·Р°С‚СЊ СЂРµС€РµРЅРёРµ</button>\n";
     ss << "</div>";
     return ss.str();
 }
@@ -611,7 +728,7 @@ string ProblemType1::escape_html(const string& text) const {
     return result;
 }
 
-// Обернуть текст в параграфы
+// РћР±РµСЂРЅСѓС‚СЊ С‚РµРєСЃС‚ РІ РїР°СЂР°РіСЂР°С„С‹
 string ProblemType1::wrap_paragraphs(const string& text) const {
     stringstream input(text);
     stringstream output;
@@ -626,7 +743,7 @@ string ProblemType1::wrap_paragraphs(const string& text) const {
     return output.str();
 }
 
-// Генерация HTML для нескольких задач
+// Р“РµРЅРµСЂР°С†РёСЏ HTML РґР»СЏ РЅРµСЃРєРѕР»СЊРєРёС… Р·Р°РґР°С‡
 string ProblemType1::generate_html_problems(int count, const Config& config) {
     stringstream html;
 
@@ -638,11 +755,11 @@ string ProblemType1::generate_html_problems(int count, const Config& config) {
     return html.str();
 }
 
-// Генерация HTML для одной задачи
+// Р“РµРЅРµСЂР°С†РёСЏ HTML РґР»СЏ РѕРґРЅРѕР№ Р·Р°РґР°С‡Рё
 string ProblemType1::generate_single_problem_html(const Problem& problem, int problem_number) {
     stringstream html;
 
-    // Получаем метаданные
+    // РџРѕР»СѓС‡Р°РµРј РјРµС‚Р°РґР°РЅРЅС‹Рµ
     string encoding = "UTF-8";
     string size_diff = "0";
 
@@ -656,18 +773,18 @@ string ProblemType1::generate_single_problem_html(const Problem& problem, int pr
         size_diff = it_size->second;
     }
 
-    // Экранируем текст
+    // Р­РєСЂР°РЅРёСЂСѓРµРј С‚РµРєСЃС‚
     string escaped_text = escape_html(problem.problem_text);
     string escaped_solution = wrap_paragraphs(problem.solution_explanation);
     string escaped_answer = escape_html(problem.correct_answer);
 
-    // Генерируем HTML
+    // Р“РµРЅРµСЂРёСЂСѓРµРј HTML
     html << R"(<article class="cosmic-problem" data-id=")" << problem_number
         << R"(" data-type="type1">
         <div class="problem-header">
             <div class="problem-id">
                 <span class="id-number">#)" << problem_number << R"(</span>
-                <span class="id-type">ТИП 1</span>
+                <span class="id-type">РўРРџ 1</span>
             </div>
             <div class="problem-meta">
                 <span class="meta-item">
@@ -676,11 +793,11 @@ string ProblemType1::generate_single_problem_html(const Problem& problem, int pr
                 </span>
                 <span class="meta-item">
                     <i class="fas fa-brain"></i>
-                    Задача на кодирование
+                    Р—Р°РґР°С‡Р° РЅР° РєРѕРґРёСЂРѕРІР°РЅРёРµ
                 </span>
                 <span class="meta-item">
                     <i class="fas fa-clock"></i>
-                    5 мин
+                    5 РјРёРЅ
                 </span>
             </div>
             <button class="problem-expand">
@@ -696,33 +813,33 @@ string ProblemType1::generate_single_problem_html(const Problem& problem, int pr
             <div class="problem-actions">
                 <div class="answer-field">
                     <input type="text" 
-                           placeholder="Введите ваш ответ..." 
+                           placeholder="Р’РІРµРґРёС‚Рµ РІР°С€ РѕС‚РІРµС‚..." 
                            class="cosmic-input">
                     <button class="cosmic-btn cosmic-btn-check">
                         <i class="fas fa-check"></i>
-                        ПРОВЕРИТЬ
+                        РџР РћР’Р•Р РРўР¬
                     </button>
                 </div>
                 
                 <div class="solution-controls">
                     <button class="show-solution-btn">
                         <i class="fas fa-eye"></i>
-                        ПОКАЗАТЬ РЕШЕНИЕ
+                        РџРћРљРђР—РђРўР¬ Р Р•РЁР•РќРР•
                     </button>
                     <button class="hide-solution-btn" style="display: none;">
                         <i class="fas fa-eye-slash"></i>
-                        СКРЫТЬ РЕШЕНИЕ
+                        РЎРљР Р«РўР¬ Р Р•РЁР•РќРР•
                     </button>
                 </div>
             </div>
             
             <div class="problem-solution hidden">
                 <div class="solution-header">
-                    <h3><i class="fas fa-cogs"></i> РЕШЕНИЕ</h3>
+                    <h3><i class="fas fa-cogs"></i> Р Р•РЁР•РќРР•</h3>
                 </div>
                 <div class="solution-content">
                     )" << escaped_solution << R"(
-                    <p class="answer-final">ОТВЕТ: <strong>)"
+                    <p class="answer-final">РћРўР’Р•Рў: <strong>)"
         << escaped_answer << R"(</strong></p>
                 </div>
             </div>
@@ -731,11 +848,11 @@ string ProblemType1::generate_single_problem_html(const Problem& problem, int pr
         <div class="problem-footer">
             <div class="status-indicator">
                 <div class="status-dot"></div>
-                <span>Не решено</span>
+                <span>РќРµ СЂРµС€РµРЅРѕ</span>
             </div>
             <div class="problem-stats">
-                <span><i class="fas fa-database"></i> Разница: )" << size_diff
-        << R"( байт</span>
+                <span><i class="fas fa-database"></i> Р Р°Р·РЅРёС†Р°: )" << size_diff
+        << R"( Р±Р°Р№С‚</span>
             </div>
         </div>
     </article>)";
@@ -743,7 +860,7 @@ string ProblemType1::generate_single_problem_html(const Problem& problem, int pr
     return html.str();
 }
 
-// Генерация JSON данных для JavaScript
+// Р“РµРЅРµСЂР°С†РёСЏ JSON РґР°РЅРЅС‹С… РґР»СЏ JavaScript
 vector<map<string, string>> ProblemType1::generate_problems_json(int count, const Config& config) {
     vector<map<string, string>> problems;
 
@@ -757,7 +874,7 @@ vector<map<string, string>> ProblemType1::generate_problems_json(int count, cons
         problem_json["correct_answer"] = problem.correct_answer;
         problem_json["solution_explanation"] = problem.solution_explanation;
 
-        // Добавляем все метаданные
+        // Р”РѕР±Р°РІР»СЏРµРј РІСЃРµ РјРµС‚Р°РґР°РЅРЅС‹Рµ
         for (const auto& [key, value] : problem.meta) {
             problem_json[key] = value;
         }
