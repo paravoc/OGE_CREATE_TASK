@@ -1,4 +1,4 @@
-// html_page_generator.h - исправленная версия
+п»ї// html_page_generator.h - РёСЃРїСЂР°РІР»РµРЅРЅР°СЏ РІРµСЂСЃРёСЏ
 #pragma once
 #ifndef HTML_PAGE_GENERATOR_H
 #define HTML_PAGE_GENERATOR_H
@@ -15,7 +15,7 @@ using namespace std;
 namespace OGE {
 
     struct PageConfig {
-        string title = "Космический Генератор Задач ОГЭ";
+        string title = "РљРѕСЃРјРёС‡РµСЃРєРёР№ Р“РµРЅРµСЂР°С‚РѕСЂ Р—Р°РґР°С‡ РћР“Р­";
         string version = "v1.0.0";
         string output_file = "generated_page.html";
         string css_file = "cosmic.css";
@@ -28,7 +28,7 @@ namespace OGE {
     private:
         PageConfig config;
 
-        // Вспомогательные функции
+        // Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё
         string escape_js_string(const string& str) const {
             string result;
             result.reserve(str.length());
@@ -48,26 +48,12 @@ namespace OGE {
             return result;
         }
 
-        string get_current_time() const {
-            time_t now = time(nullptr);
-            struct tm time_info;
-
-            // Используем безопасную версию localtime_s
-            if (localtime_s(&time_info, &now) != 0) {
-                return "Ошибка времени";
-            }
-
-            char buf[100];
-            strftime(buf, sizeof(buf), "%d.%m.%Y %H:%M:%S", &time_info);
-            return string(buf);
-        }
-
         string format_time(time_t t) const {
             struct tm time_info;
 
-            // Используем безопасную версию localtime_s
+            // РСЃРїРѕР»СЊР·СѓРµРј Р±РµР·РѕРїР°СЃРЅСѓСЋ РІРµСЂСЃРёСЋ localtime_s
             if (localtime_s(&time_info, &t) != 0) {
-                return "Ошибка времени";
+                return "РћС€РёР±РєР° РІСЂРµРјРµРЅРё";
             }
 
             char buf[100];
@@ -82,363 +68,366 @@ namespace OGE {
             }
         }
 
-        // ... остальной код остается без изменений ...
-
-        // В методе generate_full_page замените get_current_time() на format_time()
-
-        // Генерация полной HTML страницы
+        // Р“РµРЅРµСЂР°С†РёСЏ РїРѕР»РЅРѕР№ HTML СЃС‚СЂР°РЅРёС†С‹
         string generate_full_page(const vector<string>& problems_html,
             const vector<map<string, string>>& problems_json = {}) {
             stringstream html;
 
-            // Начало документа
-            html << R"(<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>)" << config.title << R"(</title>
-    
-    <!-- Шрифты -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Стили -->
-    <link rel="stylesheet" href=")" << config.css_file << R"(">
-    
-    <style>
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0a0a0f;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-        
-        .loading-logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 3rem;
-            margin-bottom: 2rem;
-            background: linear-gradient(45deg, #00ccff, #6d44ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .loading-progress {
-            width: 300px;
-            height: 4px;
-            background: #2d2d5a;
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 1rem;
-        }
-        
-        .loading-progress-bar {
-            height: 100%;
-            background: linear-gradient(45deg, #6d44ff, #00ccff);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        .generation-info {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(26, 26, 46, 0.8);
-            padding: 0.8rem 1.2rem;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            color: #c7c7ff;
-            border: 1px solid #2d2d5a;
-            z-index: 100;
-        }
-    </style>
-</head>
-<body>
-    <!-- Звездное небо -->
-    <div class="stars"></div>
-    <div class="stars2"></div>
-    <div class="stars3"></div>
-    <div class="comet"></div>
-    <div class="nebula"></div>
-    
-    <!-- Экран загрузки -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-logo">COSMIC ОГЭ</div>
-        <div class="loading-progress">
-            <div class="loading-progress-bar" id="loadingBar"></div>
-        </div>
-    </div>
-    
-    <!-- Информация о генерации -->
-    <div class="generation-info">
-        <i class="fas fa-code"></i> Сгенерировано: )" << format_time(config.generation_time) << R"(
-    </div>
-    
-    <!-- Основной контейнер -->
-    <main class="cosmic-container" id="mainContainer" style="display: none;">)";
+            // РќР°С‡Р°Р»Рѕ РґРѕРєСѓРјРµРЅС‚Р°
+            html << "<!DOCTYPE html>\n";
+            html << "<html lang=\"ru\">\n";
+            html << "<head>\n";
+            html << "    <meta charset=\"UTF-8\">\n";
+            html << "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
+            html << "    <title>" << config.title << "</title>\n";
+            html << "    \n";
+            html << "    <!-- РЁСЂРёС„С‚С‹ -->\n";
+            html << "    <link href=\"https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700;800&display=swap\" rel=\"stylesheet\">\n";
+            html << "    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">\n";
+            html << "    \n";
+            html << "    <!-- РЎС‚РёР»Рё -->\n";
+            html << "    <link rel=\"stylesheet\" href=\"" << config.css_file << "\">\n";
+            html << "    \n";
+            html << "    <style>\n";
+            html << "        .loading-screen {\n";
+            html << "            position: fixed;\n";
+            html << "            top: 0;\n";
+            html << "            left: 0;\n";
+            html << "            width: 100%;\n";
+            html << "            height: 100%;\n";
+            html << "            background: #0a0a0f;\n";
+            html << "            display: flex;\n";
+            html << "            flex-direction: column;\n";
+            html << "            align-items: center;\n";
+            html << "            justify-content: center;\n";
+            html << "            z-index: 9999;\n";
+            html << "            transition: opacity 0.5s ease;\n";
+            html << "        }\n";
+            html << "        \n";
+            html << "        .loading-logo {\n";
+            html << "            font-family: 'Orbitron', monospace;\n";
+            html << "            font-size: 3rem;\n";
+            html << "            margin-bottom: 2rem;\n";
+            html << "            background: linear-gradient(45deg, #00ccff, #6d44ff);\n";
+            html << "            -webkit-background-clip: text;\n";
+            html << "            -webkit-text-fill-color: transparent;\n";
+            html << "        }\n";
+            html << "        \n";
+            html << "        .loading-progress {\n";
+            html << "            width: 300px;\n";
+            html << "            height: 4px;\n";
+            html << "            background: #2d2d5a;\n";
+            html << "            border-radius: 2px;\n";
+            html << "            overflow: hidden;\n";
+            html << "            margin-top: 1rem;\n";
+            html << "        }\n";
+            html << "        \n";
+            html << "        .loading-progress-bar {\n";
+            html << "            height: 100%;\n";
+            html << "            background: linear-gradient(45deg, #6d44ff, #00ccff);\n";
+            html << "            width: 0%;\n";
+            html << "            transition: width 0.3s ease;\n";
+            html << "        }\n";
+            html << "        \n";
+            html << "        .generation-info {\n";
+            html << "            position: fixed;\n";
+            html << "            bottom: 20px;\n";
+            html << "            right: 20px;\n";
+            html << "            background: rgba(26, 26, 46, 0.8);\n";
+            html << "            padding: 0.8rem 1.2rem;\n";
+            html << "            border-radius: 10px;\n";
+            html << "            font-size: 0.8rem;\n";
+            html << "            color: #c7c7ff;\n";
+            html << "            border: 1px solid #2d2d5a;\n";
+            html << "            z-index: 100;\n";
+            html << "        }\n";
+            html << "    </style>\n";
+            html << "</head>\n";
+            html << "<body>\n";
+            html << "    <!-- Р—РІРµР·РґРЅРѕРµ РЅРµР±Рѕ -->\n";
+            html << "    <div class=\"stars\"></div>\n";
+            html << "    <div class=\"stars2\"></div>\n";
+            html << "    <div class=\"stars3\"></div>\n";
+            html << "    <div class=\"comet\"></div>\n";
+            html << "    <div class=\"nebula\"></div>\n";
+            html << "    \n";
+            html << "    <!-- Р­РєСЂР°РЅ Р·Р°РіСЂСѓР·РєРё -->\n";
+            html << "    <div class=\"loading-screen\" id=\"loadingScreen\">\n";
+            html << "        <div class=\"loading-logo\">COSMIC РћР“Р­</div>\n";
+            html << "        <div class=\"loading-progress\">\n";
+            html << "            <div class=\"loading-progress-bar\" id=\"loadingBar\"></div>\n";
+            html << "        </div>\n";
+            html << "    </div>\n";
+            html << "    \n";
+            html << "    <!-- РРЅС„РѕСЂРјР°С†РёСЏ Рѕ РіРµРЅРµСЂР°С†РёРё -->\n";
+            html << "    <div class=\"generation-info\">\n";
+            html << "        <i class=\"fas fa-code\"></i> РЎРіРµРЅРµСЂРёСЂРѕРІР°РЅРѕ: " << format_time(config.generation_time) << "\n";
+            html << "    </div>\n";
+            html << "    \n";
+            html << "    <!-- РћСЃРЅРѕРІРЅРѕР№ РєРѕРЅС‚РµР№РЅРµСЂ -->\n";
+            html << "    <main class=\"cosmic-container\" id=\"mainContainer\" style=\"display: none;\">\n";
 
-            // Шапка
+            // РЁР°РїРєР°
             html << generate_header();
 
-            // Основной контент с задачами
-            html << R"(
-        <section class="cosmic-main">
-            <!-- Панель управления -->
-            <aside class="control-panel">
-                <div class="panel-header">
-                    <h2><i class="fas fa-sliders-h"></i> УПРАВЛЕНИЕ</h2>
-                    <div class="panel-line"></div>
-                </div>
-                
-                <div class="controls-grid">
-                    <div class="control-item">
-                        <div class="control-label">
-                            <i class="fas fa-filter"></i>
-                            ФИЛЬТРАЦИЯ
-                        </div>
-                        <div class="cosmic-select">
-                            <select id="filterSelect">
-                                <option value="all">Все задачи</option>
-                                <option value="unsolved">Не решённые</option>
-                                <option value="solved">Решённые</option>
-                                <option value="incorrect">С ошибками</option>
-                            </select>
-                            <div class="select-arrow">
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-            
-            <!-- Контейнер задач -->
-            <div class="problems-container">
-                <div class="problems-header">
-                    <h2><i class="fas fa-tasks"></i> ЗАДАЧИ</h2>
-                    <div class="counter">
-                        <div class="counter-number" id="counterNumber">)"
-                << config.total_problems << R"(</div>
-                        <div class="counter-text" id="counterText">задач не решено</div>
-                    </div>
-                </div>
-                
-                <!-- Фильтры -->
-                <div class="filter-panel">
-                    <button class="filter-btn active" data-filter="all">Все задачи</button>
-                    <button class="filter-btn" data-filter="unsolved">Не решённые</button>
-                    <button class="filter-btn" data-filter="solved">Решённые</button>
-                    <button class="filter-btn" data-filter="incorrect">С ошибками</button>
-                </div>
-                
-                <!-- Задачи -->)";
+            // РћСЃРЅРѕРІРЅРѕР№ РєРѕРЅС‚РµРЅС‚ СЃ Р·Р°РґР°С‡Р°РјРё
+            html << "        <section class=\"cosmic-main\">\n";
+            html << "            <!-- РџР°РЅРµР»СЊ СѓРїСЂР°РІР»РµРЅРёСЏ -->\n";
+            html << "            <aside class=\"control-panel\">\n";
+            html << "                <div class=\"panel-header\">\n";
+            html << "                    <h2><i class=\"fas fa-sliders-h\"></i> РЈРџР РђР’Р›Р•РќРР•</h2>\n";
+            html << "                    <div class=\"panel-line\"></div>\n";
+            html << "                </div>\n";
+            html << "                \n";
+            html << "                <div class=\"controls-grid\">\n";
+            html << "                    <div class=\"control-item\">\n";
+            html << "                        <div class=\"control-label\">\n";
+            html << "                            <i class=\"fas fa-filter\"></i>\n";
+            html << "                            Р¤РР›Р¬РўР РђР¦РРЇ\n";
+            html << "                        </div>\n";
+            html << "                        <div class=\"cosmic-select\">\n";
+            html << "                            <select id=\"filterSelect\">\n";
+            html << "                                <option value=\"all\">Р’СЃРµ Р·Р°РґР°С‡Рё</option>\n";
+            html << "                                <option value=\"unsolved\">РќРµ СЂРµС€С‘РЅРЅС‹Рµ</option>\n";
+            html << "                                <option value=\"solved\">Р РµС€С‘РЅРЅС‹Рµ</option>\n";
+            html << "                                <option value=\"incorrect\">РЎ РѕС€РёР±РєР°РјРё</option>\n";
+            html << "                            </select>\n";
+            html << "                            <div class=\"select-arrow\">\n";
+            html << "                                <i class=\"fas fa-chevron-down\"></i>\n";
+            html << "                            </div>\n";
+            html << "                        </div>\n";
+            html << "                    </div>\n";
+            html << "                </div>\n";
+            html << "            </aside>\n";
+            html << "            \n";
+            html << "            <!-- РљРѕРЅС‚РµР№РЅРµСЂ Р·Р°РґР°С‡ -->\n";
+            html << "            <div class=\"problems-container\">\n";
+            html << "                <div class=\"problems-header\">\n";
+            html << "                    <h2><i class=\"fas fa-tasks\"></i> Р—РђР”РђР§Р</h2>\n";
+            html << "                    <div class=\"counter\">\n";
+            html << "                        <div class=\"counter-number\" id=\"counterNumber\">"
+                << config.total_problems << "</div>\n";
+            html << "                        <div class=\"counter-text\" id=\"counterText\">Р·Р°РґР°С‡ РЅРµ СЂРµС€РµРЅРѕ</div>\n";
+            html << "                    </div>\n";
+            html << "                </div>\n";
+            html << "                \n";
+            html << "                <!-- Р¤РёР»СЊС‚СЂС‹ -->\n";
+            html << "                <div class=\"filter-panel\">\n";
+            html << "                    <button class=\"filter-btn active\" data-filter=\"all\">Р’СЃРµ Р·Р°РґР°С‡Рё</button>\n";
+            html << "                    <button class=\"filter-btn\" data-filter=\"unsolved\">РќРµ СЂРµС€С‘РЅРЅС‹Рµ</button>\n";
+            html << "                    <button class=\"filter-btn\" data-filter=\"solved\">Р РµС€С‘РЅРЅС‹Рµ</button>\n";
+            html << "                    <button class=\"filter-btn\" data-filter=\"incorrect\">РЎ РѕС€РёР±РєР°РјРё</button>\n";
+            html << "                </div>\n";
+            html << "                \n";
+            html << "                <!-- Р—Р°РґР°С‡Рё -->\n";
 
-            // Вставляем задачи
+            // Р’СЃС‚Р°РІР»СЏРµРј Р·Р°РґР°С‡Рё
             for (const auto& problem_html : problems_html) {
                 html << problem_html;
             }
 
-            // Панель статистики и подвал
-            html << R"(
-                <!-- Панель сдачи -->
-                <div class="submission-panel">
-                    <div class="submission-stats">
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value" id="statsSolved">0</div>
-                                <div class="stat-label">Решено</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-item">
-                            <div class="stat-icon">
-                                <i class="fas fa-percentage"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value" id="statsAccuracy">0%</div>
-                                <div class="stat-label">Точность</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="submission-actions">
-                        <button class="cosmic-btn cosmic-btn-submit" onclick="problemManager.submitAssignment() >
-                <i class = "fas fa-paper-plane">< / i>
-                СДАТЬ ЗАДАНИЕ
-                < / button>
-                < / div>
-                < / div>
-                < / div>
+            // РџР°РЅРµР»СЊ СЃРґР°С‡Рё
+            html << "                <!-- РџР°РЅРµР»СЊ СЃРґР°С‡Рё -->\n";
+            html << "                <div class=\"submission-panel\">\n";
+            html << "                    <div class=\"submission-stats\">\n";
+            html << "                        <div class=\"stat-item\">\n";
+            html << "                            <div class=\"stat-icon\">\n";
+            html << "                                <i class=\"fas fa-check-circle\"></i>\n";
+            html << "                            </div>\n";
+            html << "                            <div class=\"stat-info\">\n";
+            html << "                                <div class=\"stat-value\" id=\"statsSolved\">0</div>\n";
+            html << "                                <div class=\"stat-label\">Р РµС€РµРЅРѕ</div>\n";
+            html << "                            </div>\n";
+            html << "                        </div>\n";
+            html << "                        \n";
+            html << "                        <div class=\"stat-item\">\n";
+            html << "                            <div class=\"stat-icon\">\n";
+            html << "                                <i class=\"fas fa-percentage\"></i>\n";
+            html << "                            </div>\n";
+            html << "                            <div class=\"stat-info\">\n";
+            html << "                                <div class=\"stat-value\" id=\"statsAccuracy\">0%</div>\n";
+            html << "                                <div class=\"stat-label\">РўРѕС‡РЅРѕСЃС‚СЊ</div>\n";
+            html << "                            </div>\n";
+            html << "                        </div>\n";
+            html << "                    </div>\n";
+            html << "                    \n";
+            html << "                    <div class=\"submission-actions\">\n";
+            html << "                        <button class=\"cosmic-btn cosmic-btn-submit\" onclick=\"problemManager.submitAssignment()\">\n";
+            html << "                            <i class=\"fas fa-paper-plane\"></i>\n";
+            html << "                            РЎР”РђРўР¬ Р—РђР”РђРќРР•\n";
+            html << "                        </button>\n";
+            html << "                    </div>\n";
+            html << "                </div>\n";
+            html << "            </div>\n\n";
 
-                <!--Панель статистики-->
-                <aside class = "stats-panel">
-                <div class = "stats-header">
-                <h2><i class = "fas fa-chart-line">< / i> СТАТИСТИКА< / h2>
-                <div class = "stats-line">< / div>
-                < / div>
+            html << "            <!-- РџР°РЅРµР»СЊ СЃС‚Р°С‚РёСЃС‚РёРєРё -->\n";
+            html << "            <aside class=\"stats-panel\">\n";
+            html << "                <div class=\"stats-header\">\n";
+            html << "                    <h2><i class=\"fas fa-chart-line\"></i> РЎРўРђРўРРЎРўРРљРђ</h2>\n";
+            html << "                    <div class=\"stats-line\"></div>\n";
+            html << "                </div>\n\n";
+            html << "                <div class=\"stats-content\">\n";
+            html << "                    <div class=\"stat-item\">\n";
+            html << "                        <div class=\"stat-icon\">\n";
+            html << "                            <i class=\"fas fa-hashtag\"></i>\n";
+            html << "                        </div>\n";
+            html << "                        <div class=\"stat-info\">\n";
+            html << "                            <div class=\"stat-value\">" << config.total_problems << "</div>\n";
+            html << "                            <div class=\"stat-label\">Р’СЃРµРіРѕ Р·Р°РґР°С‡</div>\n";
+            html << "                        </div>\n";
+            html << "                    </div>\n";
+            html << "                </div>\n";
+            html << "            </aside>\n";
+            html << "        </section>\n";
 
-                <div class = "stats-content">
-                <div class = "stat-item">
-                <div class = "stat-icon">
-                <i class = "fas fa-hashtag">< / i>
-                < / div>
-                <div class = "stat-info">
-                <div class = "stat-value">)" << config.total_problems << R"(< / div>
-                <div class = "stat-label">Всего задач< / div>
-                    < / div>
-                    < / div>
-                    < / div>
-                    < / aside>
-                    < / section>)";
-
-                // Подвал
-                html << generate_footer();
+            // РџРѕРґРІР°Р»
+            html << generate_footer();
 
             // JavaScript
-            html << R"(
-    </main>
-    
-    <!-- JavaScript -->
-    <script src=")" << config.js_file << R"("></script>
-    
-    <!-- Встроенные данные задач -->)";
+            html << "    </main>\n";
+            html << "    \n";
+            html << "    <!-- JavaScript -->\n";
+            html << "    <script src=\"" << config.js_file << "\"></script>\n";
+            html << "    \n";
+            html << "    <!-- Р’СЃС‚СЂРѕРµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ Р·Р°РґР°С‡ -->\n";
 
-            // Генерируем JS данные если есть
+            // Р“РµРЅРµСЂР°С†РёСЏ JS РґР°РЅРЅС‹С… РµСЃР»Рё РµСЃС‚СЊ
             if (!problems_json.empty()) {
                 html << generate_js_data(problems_json);
             }
 
-            // Скрипт инициализации
-            html << R"(
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Плавная загрузка
-            setTimeout(() => {
-                const loadingBar = document.getElementById('loadingBar');
-                loadingBar.style.width = '100%';
-                
-                setTimeout(() => {
-                    document.getElementById('loadingScreen').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('loadingScreen').style.display = 'none';
-                        document.getElementById('mainContainer').style.display = 'block';
-                    }, 500);
-                }, 300);
-            }, 500);
-            
-            // Инициализация менеджера задач
-            window.problemManager = new CosmicProblemManager();
-        });
-    </script>
-</body>
-</html>)";
+            // РЎРєСЂРёРїС‚ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
+            html << "    <script>\n";
+            html << "        document.addEventListener('DOMContentLoaded', function() {\n";
+            html << "            // РџР»Р°РІРЅР°СЏ Р·Р°РіСЂСѓР·РєР°\n";
+            html << "            setTimeout(() => {\n";
+            html << "                const loadingBar = document.getElementById('loadingBar');\n";
+            html << "                loadingBar.style.width = '100%';\n";
+            html << "                \n";
+            html << "                setTimeout(() => {\n";
+            html << "                    document.getElementById('loadingScreen').style.opacity = '0';\n";
+            html << "                    setTimeout(() => {\n";
+            html << "                        document.getElementById('loadingScreen').style.display = 'none';\n";
+            html << "                        document.getElementById('mainContainer').style.display = 'block';\n";
+            html << "                    }, 500);\n";
+            html << "                }, 300);\n";
+            html << "            }, 500);\n";
+            html << "            \n";
+            html << "            // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјРµРЅРµРґР¶РµСЂР° Р·Р°РґР°С‡\n";
+            html << "            window.problemManager = new CosmicProblemManager();\n";
+            html << "        });\n";
+            html << "    </script>\n";
+            html << "</body>\n";
+            html << "</html>\n";
 
             return html.str();
         }
 
-        // Генерация только шапки
+        // Р“РµРЅРµСЂР°С†РёСЏ С‚РѕР»СЊРєРѕ С€Р°РїРєРё
         string generate_header() {
             stringstream html;
 
-            html << R"(
-        <header class="cosmic-header">
-            <div class="title-wrapper">
-                <h1 class="main-title">
-                    <span class="title-word title-word-1">COSMIC</span>
-                    <span class="title-word title-word-2">ОГЭ</span>
-                    <span class="title-word title-word-3">ГЕНЕРАТОР</span>
-                </h1>
-                <div class="title-sub">
-                    <span class="sub-text">СИСТЕМА ТРЕНИРОВКИ</span>
-                    <span class="version">)" << config.version << R"(</span>
-                    <div class="pulse-dot"></div>
-                </div>
-            </div>
-            
-            <div class="header-actions">
-                <button class="cosmic-btn cosmic-btn-primary" onclick="problemManager.submitAssignment() >
-                <i class = "fas fa-rocket">< / i>
-                <span>ПРОВЕРИТЬ РЕШЕНИЯ< / span>
-                < / button>
-                <button class = "cosmic-btn cosmic-btn-secondary" onclick = "problemManager.showDetailedStats()>
-                <i class = "fas fa-chart-pie">< / i>
-                <span>СТАТИСТИКА< / span>
-                < / button>
-                < / div>
-                < / header>)";
-
-                return html.str();
-        }
-
-        // Генерация подвала
-        string generate_footer() {
-            stringstream html;
-
-            html << R"(
-        <footer class="cosmic-footer">
-            <div class="footer-grid">
-                <div class="footer-section">
-                    <h3><i class="fas fa-info-circle"></i> О СИСТЕМЕ</h3>
-                    <p>Сгенерировано C++ генератором задач ОГЭ. Всего задач: )"
-                << config.total_problems << R"(</p>
-                    <div class="system-status">
-                        <i class="fas fa-circle"></i>
-                        <span>СИСТЕМА АКТИВНА</span>
-                    </div>
-                </div>
-                
-                <div class="footer-section">
-                    <h3><i class="fas fa-cogs"></i> ТЕХНОЛОГИИ</h3>
-                    <ul>
-                        <li>C++ генерация задач</li>
-                        <li>SQLite база данных</li>
-                        <li>JavaScript интерфейс</li>
-                        <li>HTML5 & CSS3</li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h3><i class="fas fa-code"></i> СГЕНЕРИРОВАНО</h3>
-                    <p>)" << format_time(config.generation_time) << R"(</p>
-                    <p>Версия: )" << config.version << R"(</p>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <div class="scanline"></div>
-                <p>&copy; 2024 Cosmic OГЭ Generator</p>
-                <div class="terminal-text">Система загружена. Готов к работе...</div>
-            </div>
-        </footer>)";
+            html << "        <header class=\"cosmic-header\">\n";
+            html << "            <div class=\"title-wrapper\">\n";
+            html << "                <h1 class=\"main-title\">\n";
+            html << "                    <span class=\"title-word title-word-1\">COSMIC</span>\n";
+            html << "                    <span class=\"title-word title-word-2\">РћР“Р­</span>\n";
+            html << "                    <span class=\"title-word title-word-3\">Р“Р•РќР•Р РђРўРћР </span>\n";
+            html << "                </h1>\n";
+            html << "                <div class=\"title-sub\">\n";
+            html << "                    <span class=\"sub-text\">РЎРРЎРўР•РњРђ РўР Р•РќРР РћР’РљР</span>\n";
+            html << "                    <span class=\"version\">" << config.version << "</span>\n";
+            html << "                    <div class=\"pulse-dot\"></div>\n";
+            html << "                </div>\n";
+            html << "            </div>\n";
+            html << "            \n";
+            html << "            <div class=\"header-actions\">\n";
+            html << "                <button class=\"cosmic-btn cosmic-btn-primary\" onclick=\"problemManager.submitAssignment()\">\n";
+            html << "                    <i class=\"fas fa-rocket\"></i>\n";
+            html << "                    <span>РџР РћР’Р•Р РРўР¬ Р Р•РЁР•РќРРЇ</span>\n";
+            html << "                </button>\n";
+            html << "                <button class=\"cosmic-btn cosmic-btn-secondary\" onclick=\"problemManager.showDetailedStats()\">\n";
+            html << "                    <i class=\"fas fa-chart-pie\"></i>\n";
+            html << "                    <span>РЎРўРђРўРРЎРўРРљРђ</span>\n";
+            html << "                </button>\n";
+            html << "            </div>\n";
+            html << "        </header>\n";
 
             return html.str();
         }
 
-        // Генерация JS данных
+        // Р“РµРЅРµСЂР°С†РёСЏ РїРѕРґРІР°Р»Р°
+        string generate_footer() {
+            stringstream html;
+
+            html << "        <footer class=\"cosmic-footer\">\n";
+            html << "            <div class=\"footer-grid\">\n";
+            html << "                <div class=\"footer-section\">\n";
+            html << "                    <h3><i class=\"fas fa-info-circle\"></i> Рћ РЎРРЎРўР•РњР•</h3>\n";
+            html << "                    <p>РЎРіРµРЅРµСЂРёСЂРѕРІР°РЅРѕ C++ РіРµРЅРµСЂР°С‚РѕСЂРѕРј Р·Р°РґР°С‡ РћР“Р­. Р’СЃРµРіРѕ Р·Р°РґР°С‡: "
+                << config.total_problems << "</p>\n";
+            html << "                    <div class=\"system-status\">\n";
+            html << "                        <i class=\"fas fa-circle\"></i>\n";
+            html << "                        <span>РЎРРЎРўР•РњРђ РђРљРўРР’РќРђ</span>\n";
+            html << "                    </div>\n";
+            html << "                </div>\n";
+            html << "                \n";
+            html << "                <div class=\"footer-section\">\n";
+            html << "                    <h3><i class=\"fas fa-cogs\"></i> РўР•РҐРќРћР›РћР“РР</h3>\n";
+            html << "                    <ul>\n";
+            html << "                        <li>C++ РіРµРЅРµСЂР°С†РёСЏ Р·Р°РґР°С‡</li>\n";
+            html << "                        <li>SQLite Р±Р°Р·Р° РґР°РЅРЅС‹С…</li>\n";
+            html << "                        <li>JavaScript РёРЅС‚РµСЂС„РµР№СЃ</li>\n";
+            html << "                        <li>HTML5 & CSS3</li>\n";
+            html << "                    </ul>\n";
+            html << "                </div>\n";
+            html << "                \n";
+            html << "                <div class=\"footer-section\">\n";
+            html << "                    <h3><i class=\"fas fa-code\"></i> РЎР“Р•РќР•Р РР РћР’РђРќРћ</h3>\n";
+            html << "                    <p>" << format_time(config.generation_time) << "</p>\n";
+            html << "                    <p>Р’РµСЂСЃРёСЏ: " << config.version << "</p>\n";
+            html << "                </div>\n";
+            html << "            </div>\n";
+            html << "            \n";
+            html << "            <div class=\"footer-bottom\">\n";
+            html << "                <div class=\"scanline\"></div>\n";
+            html << "                <p>&copy; 2024 Cosmic OР“Р­ Generator</p>\n";
+            html << "                <div class=\"terminal-text\">РЎРёСЃС‚РµРјР° Р·Р°РіСЂСѓР¶РµРЅР°. Р“РѕС‚РѕРІ Рє СЂР°Р±РѕС‚Рµ...</div>\n";
+            html << "            </div>\n";
+            html << "        </footer>\n";
+
+            return html.str();
+        }
+
+        // Р“РµРЅРµСЂР°С†РёСЏ JS РґР°РЅРЅС‹С…
         string generate_js_data(const vector<map<string, string>>& problems_json) {
             stringstream js;
 
-            js << "\n<script>\n";
-            js << "// Данные задач, сгенерированные C++\n";
+            js << "<script>\n";
+            js << "// Р”Р°РЅРЅС‹Рµ Р·Р°РґР°С‡, СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅС‹Рµ C++\n";
             js << "const problemsData = [\n";
 
             for (size_t i = 0; i < problems_json.size(); i++) {
                 js << "  {\n";
+
+                // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј Р±Р°Р·РѕРІС‹Рµ РїРѕР»СЏ
                 js << "    \"id\": \"" << (i + 1) << "\",\n";
                 js << "    \"type\": \"1\",\n";
 
-                // Добавляем все поля из JSON
+                // Р”РѕР±Р°РІР»СЏРµРј РІСЃРµ РїРѕР»СЏ РёР· JSON (РєСЂРѕРјРµ РґСѓР±Р»РёРєР°С‚РѕРІ id)
+                bool has_own_id = false;
+                bool has_own_type = false;
+
                 for (const auto& [key, value] : problems_json[i]) {
+                    if (key == "id") has_own_id = true;
+                    if (key == "type") has_own_type = true;
+                }
+
+                for (const auto& [key, value] : problems_json[i]) {
+                    // РџСЂРѕРїСѓСЃРєР°РµРј РґСѓР±Р»РёСЂСѓСЋС‰РёРµСЃСЏ РїРѕР»СЏ
+                    if (key == "id" && has_own_id) continue;
+                    if (key == "type" && has_own_type) continue;
+
                     js << "    \"" << key << "\": \"" << escape_js_string(value) << "\",\n";
                 }
 
@@ -452,7 +441,7 @@ namespace OGE {
             }
 
             js << "];\n\n";
-            js << "// Автозагрузка данных при инициализации\n";
+            js << "// РђРІС‚РѕР·Р°РіСЂСѓР·РєР° РґР°РЅРЅС‹С… РїСЂРё РёРЅРёС†РёР°Р»РёР·Р°С†РёРё\n";
             js << "window.addEventListener('load', function() {\n";
             js << "  setTimeout(() => {\n";
             js << "    if (window.problemManager && problemsData.length > 0) {\n";
@@ -465,7 +454,7 @@ namespace OGE {
             return js.str();
         }
 
-        // Сохранение в файл
+        // РЎРѕС…СЂР°РЅРµРЅРёРµ РІ С„Р°Р№Р»
         bool save_to_file(const string& content, const string& filename = "") {
             string file = filename.empty() ? config.output_file : filename;
 
@@ -479,7 +468,7 @@ namespace OGE {
             return true;
         }
 
-        // Генерация и сохранение
+        // Р“РµРЅРµСЂР°С†РёСЏ Рё СЃРѕС…СЂР°РЅРµРЅРёРµ
         bool generate_and_save(const vector<string>& problems_html,
             const vector<map<string, string>>& problems_json = {}) {
             string html = generate_full_page(problems_html, problems_json);
