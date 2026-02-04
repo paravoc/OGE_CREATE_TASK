@@ -90,9 +90,6 @@ namespace OGE {
         ProblemType1Result generate_addition(const ProblemType1Config& config);
         ProblemType1Result generate_encoding_change(const ProblemType1Config& config);
 
-        // Вспомогательные методы для HTML генерации
-        //string escape_html(const string& text) const;
-        string wrap_paragraphs(const string& text) const;
 
     public:
         // Используем объявленные выше структуры
@@ -104,7 +101,6 @@ namespace OGE {
 
         // Основные методы
         Problem generate(const Config& config);
-        vector<Problem> generate_batch(int count, const Config& config);
 
         // Управление кэшем
         void reload_cache();
@@ -114,8 +110,6 @@ namespace OGE {
         string generate_html_problems(int count, const Config& config);
         string generate_single_problem_html(const Problem& problem, int problem_number = 1);
 
-        // Генерация JSON данных для JavaScript
-        vector<map<string, string>> generate_problems_json(int count, const Config& config);
 
         // Статистика
         struct Stats {

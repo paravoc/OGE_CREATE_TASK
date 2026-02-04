@@ -11,7 +11,6 @@
 using namespace std;
 using namespace OGE;
 
-// Вспомогательная функция для выполнения SQL запроса
 static vector<vector<string>> sql_query(sqlite3* db, const string& sql) {
     vector<vector<string>> results;
 
@@ -37,13 +36,10 @@ static vector<vector<string>> sql_query(sqlite3* db, const string& sql) {
     return results;
 }
 
-// Конструктор
 ProblemType1::ProblemType1(sqlite3* connection) : db_conn(connection) {
-    // Инициализируем кэш
     reload_cache();
 }
 
-// Загрузка слов из БД
 bool ProblemType1::load_words_from_db(const string& category_filter) {
     words_cache.clear();
 
@@ -67,7 +63,6 @@ bool ProblemType1::load_words_from_db(const string& category_filter) {
     return !words_cache.empty();
 }
 
-// Загрузка кодировок из БД
 bool ProblemType1::load_encodings_from_db() {
     encodings_cache.clear();
 
@@ -87,7 +82,6 @@ bool ProblemType1::load_encodings_from_db() {
     return !encodings_cache.empty();
 }
 
-// Загрузка шаблонов из БД
 bool ProblemType1::load_templates_from_db() {
     prefixes_cache.clear();
     suffixes_cache.clear();
@@ -107,14 +101,12 @@ bool ProblemType1::load_templates_from_db() {
     return !prefixes_cache.empty();
 }
 
-// Перезагрузка всего кэша
 void ProblemType1::reload_cache() {
     cache_loaded = load_words_from_db() &&
         load_encodings_from_db() &&
         load_templates_from_db();
 }
 
-// Выбор случайного элемента
 const string& ProblemType1::select_random(const vector<string>& items) {
     static default_random_engine rng(random_device{}());
     static string empty_string;
@@ -145,7 +137,6 @@ const ProblemType1::EncodingInfo& ProblemType1::select_random_encoding() {
     return encodings_cache[dist(rng)];
 }
 
-// Построение текста из слов
 string ProblemType1::build_text(const vector<string>& words,
     const string& prefix,
     const string& suffix,
@@ -171,33 +162,26 @@ string ProblemType1::build_text(const vector<string>& words,
     return ss.str();
 }
 
-// Расчет размера текста в байтах
 int ProblemType1::calculate_size(const string& text, int bits_per_char) const {
     if (text.empty()) return 0;
 
-    // Для 7-битного ASCII нужен специальный расчет
     if (bits_per_char == 7) {
         return static_cast<int>(ceil(text.length() * 7.0 / 8.0));
     }
 
-    // Для 8, 16, 32 бит - просто делим на 8
     int bytes_per_char = bits_per_char / 8;
     return text.length() * bytes_per_char;
 }
 
-// Модификация текста (удаление или добавление слова)
 string ProblemType1::modify_text(const string& text,
     const string& target_word,
     const string& delimiter,
     bool is_removal) const {
     if (is_removal) {
-        // Удаление слова
         string result = text;
 
-        // Ищем слово с учетом разделителей
         size_t pos = result.find(target_word);
         while (pos != string::npos) {
-            // Проверяем границы слова
             bool left_ok = (pos == 0) ||
                 (result[pos - 1] == delimiter[0] || result[pos - 1] == ' ');
             bool right_ok = (pos + target_word.length() == result.length()) ||
@@ -205,15 +189,12 @@ string ProblemType1::modify_text(const string& text,
                     result[pos + target_word.length()] == ' ');
 
             if (left_ok && right_ok) {
-                // Удаляем слово
                 result.erase(pos, target_word.length());
 
-                // Удаляем разделитель перед словом если есть
                 if (pos > 0 && result.substr(pos - delimiter.length(), delimiter.length()) == delimiter) {
                     result.erase(pos - delimiter.length(), delimiter.length());
                 }
 
-                // Удаляем разделитель после слова если есть
                 if (pos < result.length() && result.substr(pos, delimiter.length()) == delimiter) {
                     result.erase(pos, delimiter.length());
                 }
@@ -223,23 +204,19 @@ string ProblemType1::modify_text(const string& text,
             pos = result.find(target_word, pos + 1);
         }
 
-        // Чистка лишних пробелов
         size_t space_pos;
         while ((space_pos = result.find("  ")) != string::npos) {
             result.erase(space_pos, 1);
         }
 
-        // Убираем пробелы перед запятыми
         while ((space_pos = result.find(" ,")) != string::npos) {
             result.erase(space_pos, 1);
         }
 
-        // Убираем пробелы после запятых если их много
         while ((space_pos = result.find(",  ")) != string::npos) {
             result.erase(space_pos + 1, 1);
         }
 
-        // Обрезаем пробелы по краям
         size_t start = result.find_first_not_of(" \t\n\r");
         size_t end = result.find_last_not_of(" \t\n\r");
 
@@ -250,7 +227,6 @@ string ProblemType1::modify_text(const string& text,
         return result;
     }
     else {
-        // Добавление слова (просто добавляем в конец с разделителем)
         if (text.empty()) return target_word;
 
         string result = text;
@@ -264,9 +240,7 @@ string ProblemType1::modify_text(const string& text,
     }
 }
 
-// Выбор сценария на основе конфигурации
 ProblemType1::Scenario ProblemType1::select_scenario(const ProblemType1Config& config) const {
-    // Если только один сценарий доступен - возвращаем его
     if (config.allow_removal && !config.allow_addition && !config.allow_encoding_change) {
         return Scenario::REMOVAL;
     }
@@ -277,14 +251,13 @@ ProblemType1::Scenario ProblemType1::select_scenario(const ProblemType1Config& c
         return Scenario::ENCODING_CHANGE;
     }
 
-    // Случайный выбор из доступных сценариев
     vector<Scenario> available_scenarios;
     if (config.allow_removal) available_scenarios.push_back(Scenario::REMOVAL);
     if (config.allow_addition) available_scenarios.push_back(Scenario::ADDITION);
     if (config.allow_encoding_change) available_scenarios.push_back(Scenario::ENCODING_CHANGE);
 
     if (available_scenarios.empty()) {
-        return Scenario::REMOVAL; // По умолчанию
+        return Scenario::REMOVAL;
     }
 
     static default_random_engine rng(random_device{}());
@@ -292,41 +265,35 @@ ProblemType1::Scenario ProblemType1::select_scenario(const ProblemType1Config& c
     return available_scenarios[dist(rng)];
 }
 
-
 ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& config) {
     ProblemType1Result result;
 
-    // 1. Выбираем кодировку
     const auto& encoding = select_random_encoding();
     int bytes_per_char = encoding.bits_per_char / 8;
 
     static default_random_engine rng(random_device{}());
 
-    // 2. Выбираем главное слово
     const WordItem& main_word_item = select_random_word();
     string main_word = main_word_item.word;
     int main_word_length = main_word_item.length;
 
-    // 3. Выбираем другие слова (без такой же длины)
     vector<string> selected_words;
     selected_words.push_back(main_word);
 
     int additional_words = config.word_count_min +
         uniform_int_distribution<>(0, config.word_count_max - config.word_count_min)(rng) - 1;
 
-    // Берем слова с разными длинами
     vector<WordItem> available = words_cache;
     shuffle(available.begin(), available.end(), rng);
 
     for (const auto& word_item : available) {
         if (selected_words.size() >= additional_words + 1) break;
         if (word_item.word == main_word) continue;
-        if (word_item.length == main_word_length) continue; // ПРОПУСКАЕМ слова такой же длины!
+        if (word_item.length == main_word_length) continue;
 
         selected_words.push_back(word_item.word);
     }
 
-    // 4. Шаблон и текст
     size_t template_index = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
     string prefix = prefixes_cache[template_index];
     string suffix = suffixes_cache[template_index];
@@ -335,12 +302,10 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
     string original_text = build_text(selected_words, prefix, suffix, delimiter);
     string modified_text = modify_text(original_text, main_word, delimiter, true);
 
-    // 5. Расчет разницы
     int original_size = calculate_size(original_text, encoding.bits_per_char);
     int modified_size = calculate_size(modified_text, encoding.bits_per_char);
     int size_diff = original_size - modified_size;
 
-    // 6. Формируем результат
     result.problem_text = format_problem_text(encoding.name, encoding.description,
         original_text, size_diff, true);
 
@@ -349,7 +314,6 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
         encoding.name, encoding.bits_per_char,
         size_diff, main_word, true);
 
-    // 7. Метаданные
     result.meta["encoding"] = encoding.name;
     result.meta["bits_per_char"] = to_string(encoding.bits_per_char);
     result.meta["original_size"] = to_string(original_size);
@@ -360,27 +324,22 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
 
     return result;
 }
-// Генерация задачи на добавление слова
-// Генерация задачи на добавление слова
+
 ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& config) {
     ProblemType1Result result;
 
-    // 1. Выбираем кодировку
     const auto& encoding = select_random_encoding();
     int bytes_per_char = encoding.bits_per_char / 8;
 
     static default_random_engine rng(random_device{}());
 
-    // 2. Выбираем главное слово (которое будет добавлено)
     const WordItem& main_word_item = select_random_word();
     string main_word = main_word_item.word;
     int main_word_length = main_word_item.length;
 
-    // 3. Выбираем другие слова для ИСХОДНОГО текста
-    vector<string> original_words; // Слова в исходном тексте (БЕЗ добавленного)
+    vector<string> original_words;
     original_words.push_back(main_word);
 
-    // Берем слова с разными длинами (не равными длине добавляемого слова)
     vector<WordItem> available = words_cache;
     shuffle(available.begin(), available.end(), rng);
 
@@ -389,38 +348,32 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
 
     for (const auto& word_item : available) {
         if (original_words.size() >= original_count) break;
-        if (word_item.word == main_word) continue; // Не добавляем наше слово
-        if (word_item.length == main_word_length) continue; // Пропускаем слова такой же длины!
+        if (word_item.word == main_word) continue;
+        if (word_item.length == main_word_length) continue;
 
         original_words.push_back(word_item.word);
     }
 
-    // 4. Выбираем шаблон
     size_t template_index = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
     string prefix = prefixes_cache[template_index];
     string suffix = suffixes_cache[template_index];
     string delimiter = delimiters_cache[template_index];
 
-    // 5. Строим ИСХОДНЫЙ текст (без добавленного слова)
     string original_text = build_text(original_words, prefix, suffix, delimiter);
 
-    // 6. Рассчитываем размер исходного текста
     int original_size = calculate_size(original_text, encoding.bits_per_char);
 
-    // 7. Выбираем количество разделителей для добавленного слова
-    int delimiter_chars = 2; // 1 или 2 символа
+    int delimiter_chars = 2;
     int total_added_chars = main_word_length + delimiter_chars;
     int added_size = total_added_chars * bytes_per_char;
 
-    // 8. Рассчитываем новый размер
     int new_size = original_size + added_size;
 
-    // 9. Формируем текст задачи
     stringstream problem_ss;
     problem_ss << "В кодировке " << encoding.name << " " << encoding.description << ".\n\n";
 
     problem_ss << "Андрей написал текст (в нем нет лишних пробелов):\n\n";
-    problem_ss << "«" << original_text << "».\n\n";  // ← ПОКАЗЫВАЕМ ИСХОДНЫЙ ТЕКСТ
+    problem_ss << "«" << original_text << "».\n\n";
 
     problem_ss << "Ученик добавил в список название ещё одного элемента. ";
     problem_ss << "Заодно он добавил необходимые запятые и пробелы — ";
@@ -429,7 +382,6 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
     problem_ss << "При этом размер нового предложения в данной кодировке ";
     problem_ss << "оказался на " << added_size << " байт";
 
-    // Правильное склонение
     if (added_size % 10 == 1 && added_size % 100 != 11) {
         problem_ss << " больше";
     }
@@ -444,7 +396,6 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
     problem_ss << ", чем размер исходного предложения.\n\n";
     problem_ss << "Напишите в ответе добавленное название.";
 
-    // 10. Формируем объяснение решения
     stringstream solution_ss;
 
     solution_ss << "\n1. Исходный текст: «" << original_text << "»\n";
@@ -470,12 +421,10 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
 
     solution_ss << "ОТВЕТ: " << main_word;
 
-    // 11. Заполняем результат
     result.problem_text = problem_ss.str();
     result.correct_answer = main_word;
     result.solution_explanation = OGE::HtmlPageGenerator::nl2br(solution_ss.str());
 
-    // 12. Метаданные
     result.meta["encoding"] = encoding.name;
     result.meta["original_size"] = to_string(original_size);
     result.meta["new_size"] = to_string(new_size);
@@ -487,13 +436,12 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
 
     return result;
 }
-// Генерация задачи на изменение кодировки
+
 ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Config& config) {
     ProblemType1Result result;
 
     static default_random_engine rng(random_device{}());
 
-    // 1. Выбираем две разные кодировки с РАЗНЫМ размером символа
     vector<EncodingInfo> encodings = encodings_cache;
 
     if (encodings.size() < 2) {
@@ -502,7 +450,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
         return result;
     }
 
-    // Фильтруем кодировки, чтобы они были разного размера
     vector<pair<EncodingInfo, EncodingInfo>> valid_pairs;
 
     for (size_t i = 0; i < encodings.size(); i++) {
@@ -514,7 +461,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
     }
 
     if (valid_pairs.empty()) {
-        // Если нет пар с разным размером, создаем пару вручную
         EncodingInfo source, target;
         source.name = "КОИ-8";
         source.bits_per_char = 8;
@@ -527,12 +473,10 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
         valid_pairs.push_back({ source, target });
     }
 
-    // Выбираем случайную пару
     int pair_index = uniform_int_distribution<>(0, (int)valid_pairs.size() - 1)(rng);
     const EncodingInfo& source_encoding = valid_pairs[pair_index].first;
     const EncodingInfo& target_encoding = valid_pairs[pair_index].second;
 
-    // Убедимся, что source меньше target для упрощения задач
     bool source_is_smaller = (source_encoding.bits_per_char < target_encoding.bits_per_char);
     const EncodingInfo& smaller_encoding = source_is_smaller ? source_encoding : target_encoding;
     const EncodingInfo& larger_encoding = source_is_smaller ? target_encoding : source_encoding;
@@ -541,7 +485,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
     int large_bytes_per_char = larger_encoding.bits_per_char / 8;
     int bytes_diff = large_bytes_per_char - small_bytes_per_char;
 
-    // 2. Выбираем текст (несколько слов)
     vector<string> selected_words;
     vector<WordItem> available = words_cache;
     shuffle(available.begin(), available.end(), rng);
@@ -554,22 +497,18 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
         selected_words.push_back(word_item.word);
     }
 
-    // 3. Выбираем шаблон
     size_t template_idx = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
     string prefix = prefixes_cache[template_idx];
     string suffix = suffixes_cache[template_idx];
     string delimiter = delimiters_cache[template_idx];
 
-    // 4. Строим текст
     string text = build_text(selected_words, prefix, suffix, delimiter);
     int text_length = text.length();
 
-    // 5. Рассчитываем размеры
     int small_size = calculate_size(text, smaller_encoding.bits_per_char);
     int large_size = calculate_size(text, larger_encoding.bits_per_char);
-    int size_diff = large_size - small_size; // всегда положительно
+    int size_diff = large_size - small_size;
 
-    // 6. Определяем тип задачи
     int task_type = uniform_int_distribution<>(1, 4)(rng);
 
     stringstream problem_ss;
@@ -578,7 +517,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
 
     switch (task_type) {
     case 1: {
-        // Тип 1: Известны размеры в двух кодировках, найти длину текста
         problem_ss << "Текст в кодировке " << smaller_encoding.name
             << " имеет размер " << small_size << " байт.\n\n";
 
@@ -608,7 +546,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
     }
 
     case 2: {
-        // Тип 2: Известен размер в одной кодировке и длина текста, найти размер в другой
         problem_ss << "Текст содержит " << text_length << " символов.\n\n";
 
         problem_ss << "В кодировке " << smaller_encoding.name
@@ -642,9 +579,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
     }
 
     case 3: {
-        // Тип 3: Известна разница в размерах и одна кодировка, найти другую
-        // Показываем разницу и спрашиваем, как изменился размер одного символа
-
         int char_diff = large_bytes_per_char - small_bytes_per_char;
 
         problem_ss << "Текст перекодировали из " << smaller_encoding.name
@@ -677,7 +611,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
     }
 
     case 4: {
-        // Тип 4: Обратная задача - найти исходный размер
         problem_ss << "Текст перекодировали из " << smaller_encoding.name
             << " в " << larger_encoding.name << ".\n\n";
 
@@ -716,7 +649,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
     }
     }
 
-    // 7. Добавляем описание кодировок для ясности
     stringstream final_problem;
     final_problem << "В кодировке " << smaller_encoding.name << " "
         << smaller_encoding.description << " ("
@@ -728,12 +660,10 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
 
     final_problem << problem_ss.str();
 
-    // 8. Заполняем результат
     result.problem_text = final_problem.str();
     result.correct_answer = correct_answer;
     result.solution_explanation = OGE::HtmlPageGenerator::nl2br(solution_ss.str());
 
-    // 9. Метаданные
     result.meta["encoding_source"] = smaller_encoding.name;
     result.meta["encoding_target"] = larger_encoding.name;
     result.meta["source_bytes_per_char"] = to_string(small_bytes_per_char);
@@ -748,7 +678,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
     return result;
 }
 
-// Основной метод генерации
 ProblemType1Result ProblemType1::generate(const Config& config) {
     if (!cache_loaded) {
         reload_cache();
@@ -771,13 +700,11 @@ ProblemType1Result ProblemType1::generate(const Config& config) {
     }
 }
 
-// Получение статистики
 ProblemType1::Stats ProblemType1::get_stats() const {
     Stats stats;
     stats.total_words = static_cast<int>(words_cache.size());
     stats.total_encodings = static_cast<int>(encodings_cache.size());
 
-    // Группируем слова по категориям
     for (const auto& word : words_cache) {
         stats.words_by_category[word.category]++;
     }
@@ -785,24 +712,20 @@ ProblemType1::Stats ProblemType1::get_stats() const {
     return stats;
 }
 
-// Проверка ответа
 bool ProblemType1::check_answer(const string& user_answer,
     const string& correct_answer) {
     string user_lower = user_answer;
     string correct_lower = correct_answer;
 
-    // Приводим к нижнему регистру
     transform(user_lower.begin(), user_lower.end(), user_lower.begin(), ::tolower);
     transform(correct_lower.begin(), correct_lower.end(), correct_lower.begin(), ::tolower);
 
-    // Убираем лишние пробелы
     user_lower.erase(remove_if(user_lower.begin(), user_lower.end(), ::isspace), user_lower.end());
     correct_lower.erase(remove_if(correct_lower.begin(), correct_lower.end(), ::isspace), correct_lower.end());
 
     return user_lower == correct_lower;
 }
 
-// Вычисление разницы в размере
 int ProblemType1::compute_size_difference(const string& text1,
     const string& text2,
     int bits_per_char) {
@@ -822,7 +745,6 @@ int ProblemType1::compute_size_difference(const string& text1,
     return size1 - size2;
 }
 
-// Форматирование текста задачи
 string ProblemType1::format_problem_text(const string& encoding_name,
     const string& encoding_desc,
     const string& original_text,
@@ -847,7 +769,6 @@ string ProblemType1::format_problem_text(const string& encoding_name,
     ss << "При этом размер нового предложения в данной кодировке ";
     ss << "оказался на " << size_diff << " байт";
 
-    // Правильное склонение
     if (size_diff % 10 == 1 && size_diff % 100 != 11) {
         ss << " меньше";
     }
@@ -873,7 +794,6 @@ string ProblemType1::format_problem_text(const string& encoding_name,
     return solution_string_br;
 }
 
-// Создание объяснения решения
 string ProblemType1::create_solution_explanation(const string& original_text,
     const string& modified_text,
     const string& encoding_name,
@@ -913,24 +833,6 @@ string ProblemType1::create_solution_explanation(const string& original_text,
     return solution_string_br;
 }
 
-
-
-// Обернуть текст в параграфы
-string ProblemType1::wrap_paragraphs(const string& text) const {
-    stringstream input(text);
-    stringstream output;
-    string line;
-
-    while (getline(input, line, '\n')) {
-        if (!line.empty()) {
-            output  << "</p>\n";
-        }
-    }
-
-    return output.str();
-}
-
-// Генерация HTML для нескольких задач
 string ProblemType1::generate_html_problems(int count, const Config& config) {
     stringstream html;
 
@@ -942,11 +844,9 @@ string ProblemType1::generate_html_problems(int count, const Config& config) {
     return html.str();
 }
 
-// Генерация HTML для одной задачи
 string ProblemType1::generate_single_problem_html(const Problem& problem, int problem_number) {
     stringstream html;
 
-    // Получаем метаданные
     string encoding = "UTF-8";
     string size_diff = "0";
 
@@ -960,12 +860,10 @@ string ProblemType1::generate_single_problem_html(const Problem& problem, int pr
         size_diff = it_size->second;
     }
 
-    // Экранируем текст
     string escaped_text = problem.problem_text;
-    string escaped_solution = wrap_paragraphs(problem.solution_explanation);
+    string escaped_solution = problem.solution_explanation;
     string escaped_answer = problem.correct_answer;
 
-    // Генерируем HTML
     html << R"(<article class="cosmic-problem" data-id=")" << problem_number
         << R"(" data-type="type1">
         <div class="problem-header">
@@ -1045,29 +943,4 @@ string ProblemType1::generate_single_problem_html(const Problem& problem, int pr
     </article>)";
 
     return html.str();
-}
-
-// Генерация JSON данных для JavaScript
-vector<map<string, string>> ProblemType1::generate_problems_json(int count, const Config& config) {
-    vector<map<string, string>> problems;
-
-    for (int i = 0; i < count; i++) {
-        auto problem = generate(config);
-        map<string, string> problem_json;
-
-        problem_json["id"] = to_string(i + 1);
-        problem_json["type"] = "1";
-        problem_json["problem_text"] = problem.problem_text;
-        problem_json["correct_answer"] = problem.correct_answer;
-        problem_json["solution_explanation"] = problem.solution_explanation;
-
-        // Добавляем все метаданные
-        for (const auto& [key, value] : problem.meta) {
-            problem_json[key] = value;
-        }
-
-        problems.push_back(problem_json);
-    }
-
-    return problems;
 }
