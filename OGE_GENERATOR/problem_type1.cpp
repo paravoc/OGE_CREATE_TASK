@@ -6,6 +6,7 @@
 #include <ctime>
 #include <cmath>
 #include <cstring>
+#include "html_page_generator.h"
 
 using namespace std;
 using namespace OGE;
@@ -445,8 +446,8 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
 
     // 10. Формируем объяснение решения
     stringstream solution_ss;
-    solution_ss << "РЕШЕНИЕ:\n\n";
-    solution_ss << "1. Исходный текст: «" << original_text << "»\n";
+
+    solution_ss << "\n1. Исходный текст: «" << original_text << "»\n";
     solution_ss << "2. Разница в размере: " << new_size << " - " << original_size
         << " = " << added_size << " байт\n";
     solution_ss << "3. В кодировке " << encoding.name << " 1 символ = "
@@ -472,7 +473,7 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
     // 11. Заполняем результат
     result.problem_text = problem_ss.str();
     result.correct_answer = main_word;
-    result.solution_explanation = solution_ss.str();
+    result.solution_explanation = OGE::HtmlPageGenerator::nl2br(solution_ss.str());
 
     // 12. Метаданные
     result.meta["encoding"] = encoding.name;
@@ -588,19 +589,18 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
 
         correct_answer = to_string(text_length);
 
-        solution_ss << "РЕШЕНИЕ:\n\n";
         solution_ss << "1. В кодировке " << smaller_encoding.name
             << ": 1 символ = " << small_bytes_per_char << " байт\n";
         solution_ss << "2. В кодировке " << larger_encoding.name
             << ": 1 символ = " << large_bytes_per_char << " байт\n\n";
 
         solution_ss << "3. Пусть N - количество символов\n";
-        solution_ss << "   Тогда: N × " << small_bytes_per_char << " = " << small_size << "\n";
-        solution_ss << "   Или:   N × " << large_bytes_per_char << " = " << large_size << "\n\n";
+        solution_ss << "   Тогда: N * " << small_bytes_per_char << " = " << small_size << "\n";
+        solution_ss << "   Или:   N * " << large_bytes_per_char << " = " << large_size << "\n\n";
 
         solution_ss << "4. Решаем: N = " << small_size << " / " << small_bytes_per_char
             << " = " << text_length << "\n";
-        solution_ss << "   Проверка: " << text_length << " × " << large_bytes_per_char
+        solution_ss << "   Проверка: " << text_length << " * " << large_bytes_per_char
             << " = " << large_size << "\n\n";
 
         solution_ss << "ОТВЕТ: " << text_length;
@@ -619,7 +619,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
 
         correct_answer = to_string(large_size);
 
-        solution_ss << "РЕШЕНИЕ:\n\n";
         solution_ss << "1. Текст: " << text_length << " символов\n";
         solution_ss << "2. " << smaller_encoding.name << ": "
             << small_bytes_per_char << " байт/символ\n";
@@ -627,13 +626,13 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
             << large_bytes_per_char << " байт/символ\n\n";
 
         solution_ss << "4. Размер в " << larger_encoding.name << ":\n";
-        solution_ss << "   " << text_length << " × " << large_bytes_per_char
+        solution_ss << "   " << text_length << " * " << large_bytes_per_char
             << " = " << large_size << " байт\n\n";
 
         solution_ss << "5. Проверка через разницу:\n";
         solution_ss << "   Разница на 1 символ: " << large_bytes_per_char << " - "
             << small_bytes_per_char << " = " << bytes_diff << " байт\n";
-        solution_ss << "   Общая разница: " << text_length << " × " << bytes_diff
+        solution_ss << "   Общая разница: " << text_length << " * " << bytes_diff
             << " = " << size_diff << " байт\n";
         solution_ss << "   Новый размер: " << small_size << " + " << size_diff
             << " = " << large_size << " байт\n\n";
@@ -659,7 +658,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
 
         correct_answer = to_string(char_diff);
 
-        solution_ss << "РЕШЕНИЕ:\n\n";
         solution_ss << "1. Разница в размере всего текста: " << size_diff << " байт\n";
         solution_ss << "2. " << smaller_encoding.name << ": "
             << small_bytes_per_char << " байт/символ\n";
@@ -691,7 +689,6 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
 
         correct_answer = to_string(small_size);
 
-        solution_ss << "РЕШЕНИЕ:\n\n";
         solution_ss << "1. Новая кодировка: " << larger_encoding.name
             << " (" << large_bytes_per_char << " байт/символ)\n";
         solution_ss << "2. Исходная кодировка: " << smaller_encoding.name
@@ -703,7 +700,7 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
             << " = " << text_length << " символов\n\n";
 
         solution_ss << "5. Исходный размер:\n";
-        solution_ss << "   " << text_length << " × " << small_bytes_per_char
+        solution_ss << "   " << text_length << " * " << small_bytes_per_char
             << " = " << small_size << " байт\n\n";
 
         solution_ss << "6. Проверка разницы:\n";
@@ -711,7 +708,7 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
             << " = " << size_diff << " байт\n";
         solution_ss << "   На 1 символ: " << large_bytes_per_char << " - "
             << small_bytes_per_char << " = " << bytes_diff << " байт\n";
-        solution_ss << "   Общая: " << text_length << " × " << bytes_diff
+        solution_ss << "   Общая: " << text_length << " * " << bytes_diff
             << " = " << size_diff << " байт ✓\n\n";
 
         solution_ss << "ОТВЕТ: " << small_size;
@@ -734,7 +731,7 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
     // 8. Заполняем результат
     result.problem_text = final_problem.str();
     result.correct_answer = correct_answer;
-    result.solution_explanation = solution_ss.str();
+    result.solution_explanation = OGE::HtmlPageGenerator::nl2br(solution_ss.str());
 
     // 9. Метаданные
     result.meta["encoding_source"] = smaller_encoding.name;
@@ -870,8 +867,10 @@ string ProblemType1::format_problem_text(const string& encoding_name,
     else {
         ss << "Напишите в ответе добавленное название.";
     }
+    const string solution_string_n = ss.str();
+    string solution_string_br = OGE::HtmlPageGenerator::nl2br(solution_string_n);
 
-    return ss.str();
+    return solution_string_br;
 }
 
 // Создание объяснения решения
@@ -908,8 +907,10 @@ string ProblemType1::create_solution_explanation(const string& original_text,
 
         ss << "\nОТВЕТ: " << target_word;
     }
+    const string solution_string_n = ss.str();
+    string solution_string_br = OGE::HtmlPageGenerator::nl2br(solution_string_n);
 
-    return ss.str();
+    return solution_string_br;
 }
 
 

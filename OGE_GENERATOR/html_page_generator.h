@@ -24,9 +24,10 @@ namespace OGE {
         PageConfig config;
 
         string format_time(time_t t) const;
-        string nl2br(const string& str) const;
+        
 
     public:
+        static string nl2br(const string& str);
         HtmlPageGenerator(const PageConfig& cfg = PageConfig());
 
         // Генерация страницы в ANSI (Windows-1251)

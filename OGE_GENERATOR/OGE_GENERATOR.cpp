@@ -29,7 +29,7 @@ int main() {
         // 4. Собираем данные задач
         std::vector<std::map<std::string, std::string>> problems_data;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 24; i++) {
             auto problem = generator.generate(config);
 
             std::map<std::string, std::string> problem_data;
@@ -44,7 +44,7 @@ int main() {
         // 5. Используем HtmlPageGenerator для создания ANSI HTML
         OGE::PageConfig page_config;
         page_config.title = "Задачи на кодирование";
-        page_config.total_problems = 10;
+        page_config.total_problems = 24;
 
         OGE::HtmlPageGenerator html_gen(page_config);
 

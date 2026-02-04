@@ -25,7 +25,7 @@ string HtmlPageGenerator::format_time(time_t t) const {
 }
 
 // Замена переносов строк на HTML-тег <br>
-string HtmlPageGenerator::nl2br(const string& str) const {
+string HtmlPageGenerator::nl2br(const string& str) {
     string result;
     result.reserve(str.length() * 2);
 
