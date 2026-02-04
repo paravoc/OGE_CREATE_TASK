@@ -142,69 +142,6 @@ namespace OGE {
             return html.str();
         }
 
-        // Еще более простая версия - без указания кодировки вообще
-        string generate_simple_ansi_page(const vector<map<string, string>>& problems) {
-            stringstream html;
-
-            html << "<!DOCTYPE html>\n";
-            html << "<html>\n";
-            html << "<head>\n";
-            html << "    <title>" << config.title << "</title>\n";
-            // НИКАКОГО charset - браузер сам определит как ANSI
-            html << "</head>\n";
-            html << "<body>\n";
-
-            html << "    <h1>" << config.title << "</h1>\n";
-            html << "    <p>Всего задач: " << problems.size() << "</p>\n";
-            html << "    <hr>\n";
-
-            for (size_t i = 0; i < problems.size(); i++) {
-                const auto& problem = problems[i];
-
-                html << "    <h2>Задача #" << (i + 1) << "</h2>\n";
-
-                string problem_text = problem.count("problem_text") ? problem.at("problem_text") : "";
-                html << "    <p>" << nl2br(escape_html(problem_text)) << "</p>\n";
-
-                if (problem.count("correct_answer")) {
-                    html << "    <p><b>Ответ:</b> " << problem.at("correct_answer") << "</p>\n";
-                }
-
-                html << "    <hr>\n";
-            }
-
-            html << "</body>\n";
-            html << "</html>\n";
-
-            return html.str();
-        }
-
-        // Генерация для ANSI без BOM
-        string generate_for_ansi(const vector<map<string, string>>& problems) {
-            stringstream html;
-
-            // Самый простой HTML без указания кодировки
-            html << "<html>\n<head>\n<title>" << config.title << "</title>\n</head>\n<body>\n";
-            html << "<h1>" << config.title << "</h1>\n";
-
-            for (size_t i = 0; i < problems.size(); i++) {
-                const auto& problem = problems[i];
-
-                html << "<h2>Задача #" << (i + 1) << "</h2>\n";
-
-                // ИСПРАВЛЕНО: добавлены скобки вокруг тернарного оператора
-                html << "<p>" << (problem.count("problem_text") ? nl2br(escape_html(problem.at("problem_text"))) : "") << "</p>\n";
-
-                // ИСПРАВЛЕНО: добавлены скобки
-                html << "<p><b>Ответ:</b> " << (problem.count("correct_answer") ? escape_html(problem.at("correct_answer")) : "") << "</p>\n";
-
-                html << "<hr>\n";
-            }
-
-            html << "</body>\n</html>\n";
-            return html.str();
-        }
-
         // Сохранение в файл (ANSI по умолчанию)
         bool save_to_file(const string& content, const string& filename = "") {
             string file = filename.empty() ? config.output_file : filename;
@@ -220,25 +157,12 @@ namespace OGE {
             return true;
         }
 
-        // Сохранение специально для ANSI
-        bool save_ansi_to_file(const string& content, const string& filename = "") {
-            string file = filename.empty() ? config.output_file : filename;
-
-            // Обычное сохранение, НЕ бинарное, НЕ BOM
-            ofstream out(file);  // НЕ ios::binary
-            if (!out.is_open()) {
-                return false;
-            }
-
-            out << content;
-            out.close();
-            return true;
-        }
+    
 
         // Генерация и сохранение в ANSI
         bool generate_and_save_ansi(const vector<map<string, string>>& problems) {
             string html = generate_ansi_page(problems);  // или generate_for_ansi
-            return save_ansi_to_file(html);
+            return save_to_file(html);
         }
     };
 
