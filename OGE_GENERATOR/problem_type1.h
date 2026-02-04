@@ -30,8 +30,8 @@ namespace OGE {
         string solution_explanation;
         map<string, string> meta;
 
-        string to_json() const;
-        string to_html() const;
+        //string to_json() const;
+        //string to_html() const;
     };
 
     class ProblemType1 {
@@ -91,7 +91,7 @@ namespace OGE {
         ProblemType1Result generate_encoding_change(const ProblemType1Config& config);
 
         // ¬спомогательные методы дл€ HTML генерации
-        string escape_html(const string& text) const;
+        //string escape_html(const string& text) const;
         string wrap_paragraphs(const string& text) const;
 
     public:

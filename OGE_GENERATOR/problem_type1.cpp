@@ -774,17 +774,6 @@ ProblemType1Result ProblemType1::generate(const Config& config) {
     }
 }
 
-// Генерация пакета задач
-vector<ProblemType1::Problem> ProblemType1::generate_batch(int count, const Config& config) {
-    vector<Problem> problems;
-
-    for (int i = 0; i < count; i++) {
-        problems.push_back(generate(config));
-    }
-
-    return problems;
-}
-
 // Получение статистики
 ProblemType1::Stats ProblemType1::get_stats() const {
     Stats stats;
@@ -895,7 +884,6 @@ string ProblemType1::create_solution_explanation(const string& original_text,
     bool is_removal) {
     stringstream ss;
 
-    ss << "РЕШЕНИЕ:\n\n";
     ss << "1. Исходный текст: «" << original_text << "»\n";
     ss << "2. Измененный текст: «" << modified_text << "»\n\n";
     ss << "3. Разница в размере: " << size_diff << " байт\n";
@@ -903,12 +891,7 @@ string ProblemType1::create_solution_explanation(const string& original_text,
         << bits_per_char << " бит = " << (bits_per_char / 8.0) << " байт\n\n";
 
     int removed_chars = 0;
-    if (bits_per_char == 7) {
-        removed_chars = static_cast<int>(round(size_diff * 8.0 / 7.0));
-    }
-    else {
-        removed_chars = size_diff * 8 / bits_per_char;
-    }
+    removed_chars = size_diff * 8 / bits_per_char;
 
     ss << "5. Удалено символов: " << size_diff << " байт / ("
         << bits_per_char << " бит/8) = " << removed_chars << " символов\n\n";
@@ -929,60 +912,7 @@ string ProblemType1::create_solution_explanation(const string& original_text,
     return ss.str();
 }
 
-// Методы ProblemType1Result
-string ProblemType1Result::to_json() const {
-    stringstream ss;
-    ss << "{\n";
-    ss << "  \"problem_text\": \"" << problem_text << "\",\n";
-    ss << "  \"correct_answer\": \"" << correct_answer << "\",\n";
-    ss << "  \"solution_explanation\": \"" << solution_explanation << "\",\n";
-    ss << "  \"meta\": {\n";
 
-    size_t i = 0;
-    for (const auto& [key, value] : meta) {
-        ss << "    \"" << key << "\": \"" << value << "\"";
-        if (++i < meta.size()) ss << ",";
-        ss << "\n";
-    }
-
-    ss << "  }\n";
-    ss << "}";
-    return ss.str();
-}
-
-string ProblemType1Result::to_html() const {
-    stringstream ss;
-    ss << "<div class=\"problem type1\">\n";
-    ss << "  <div class=\"problem-text\">\n";
-    ss << "    <p>" << problem_text << "</p>\n";
-    ss << "  </div>\n";
-    ss << "  <div class=\"solution\" style=\"display: none;\">\n";
-    ss << "    <p><strong>Решение:</strong><br>\n";
-    ss << "    " << solution_explanation << "</p>\n";
-    ss << "  </div>\n";
-    ss << "  <button class=\"show-solution\">Показать решение</button>\n";
-    ss << "</div>";
-    return ss.str();
-}
-
-string ProblemType1::escape_html(const string& text) const {
-    string result;
-    result.reserve(text.length());
-
-    for (char c : text) {
-        switch (c) {
-        case '&':  result += "&amp;";  break;
-        case '<':  result += "&lt;";   break;
-        case '>':  result += "&gt;";   break;
-        case '"':  result += "&quot;"; break;
-        case '\'': result += "&#39;";  break;
-        case '\n': result += "<br>";   break;
-        default:   result += c;        break;
-        }
-    }
-
-    return result;
-}
 
 // Обернуть текст в параграфы
 string ProblemType1::wrap_paragraphs(const string& text) const {
@@ -992,7 +922,7 @@ string ProblemType1::wrap_paragraphs(const string& text) const {
 
     while (getline(input, line, '\n')) {
         if (!line.empty()) {
-            output << "<p>" << escape_html(line) << "</p>\n";
+            output  << "</p>\n";
         }
     }
 
@@ -1030,9 +960,9 @@ string ProblemType1::generate_single_problem_html(const Problem& problem, int pr
     }
 
     // Экранируем текст
-    string escaped_text = escape_html(problem.problem_text);
+    string escaped_text = problem.problem_text;
     string escaped_solution = wrap_paragraphs(problem.solution_explanation);
-    string escaped_answer = escape_html(problem.correct_answer);
+    string escaped_answer = problem.correct_answer;
 
     // Генерируем HTML
     html << R"(<article class="cosmic-problem" data-id=")" << problem_number

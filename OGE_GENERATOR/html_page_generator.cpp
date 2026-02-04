@@ -87,6 +87,9 @@ string HtmlPageGenerator::generate_ansi_page(const vector<map<string, string>>& 
         </div>
         <div class="correct-answer">
             <span class="correct-answer-label">Правильный ответ:</span> )" << correct_answer << R"(
+            <br>
+            <span class="correct-answer-label">Решение: </span>
+            )" << solution_text <<R"(
         </div>
     </div>)";
     }
