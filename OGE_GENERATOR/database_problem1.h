@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include<unordered_map>
 
 // Forward declaration
 struct sqlite3;
@@ -66,7 +67,26 @@ namespace OGE {
 
         // Проверка существования таблиц
         bool tables_exist() const;
+
+        // В класс DatabaseProblem1 добавьте:
+        struct DatabaseStats {
+            int word_count;
+            int encoding_count;
+            std::unordered_map<std::string, int> words_by_category;
+        };
+
+        DatabaseStats get_stats() const {
+            DatabaseStats stats;
+            //stats.word_count = get_word_count();
+            //stats.encoding_count = get_encoding_count();
+
+            // Нужно реализовать получение слов по категориям
+            // Пока вернем пустую структуру
+            return stats;
+        }
     };
+
+
 
 } // namespace OGE
 

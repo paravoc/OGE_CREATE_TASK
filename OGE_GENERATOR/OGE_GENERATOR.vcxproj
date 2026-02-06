@@ -124,17 +124,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="application_manager.cpp" />
     <ClCompile Include="database_manager.cpp" />
     <ClCompile Include="database_problem1.cpp" />
     <ClCompile Include="html_page_generator.cpp" />
     <ClCompile Include="OGE_GENERATOR.cpp" />
     <ClCompile Include="problem_type1.cpp" />
+    <ClCompile Include="scenario_config.cpp" />
+    <ClCompile Include="task_generator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="application_manager.h" />
     <ClInclude Include="database_manager.h" />
     <ClInclude Include="database_problem1.h" />
     <ClInclude Include="html_page_generator.h" />
     <ClInclude Include="problem_type1.h" />
+    <ClInclude Include="scenario_config.h" />
+    <ClInclude Include="task_generator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

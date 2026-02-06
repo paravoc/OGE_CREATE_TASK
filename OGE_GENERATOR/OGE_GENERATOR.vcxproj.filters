@@ -36,6 +36,15 @@
     <ClInclude Include="database_problem1.h">
       <Filter>Исходные файлы\include\tasks</Filter>
     </ClInclude>
+    <ClInclude Include="scenario_config.h">
+      <Filter>Исходные файлы\include</Filter>
+    </ClInclude>
+    <ClInclude Include="task_generator.h">
+      <Filter>Исходные файлы\include</Filter>
+    </ClInclude>
+    <ClInclude Include="application_manager.h">
+      <Filter>Исходные файлы\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OGE_GENERATOR.cpp">
@@ -51,6 +60,15 @@
       <Filter>Исходные файлы\src</Filter>
     </ClCompile>
     <ClCompile Include="database_problem1.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
+    <ClCompile Include="scenario_config.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
+    <ClCompile Include="task_generator.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
+    <ClCompile Include="application_manager.cpp">
       <Filter>Исходные файлы\src</Filter>
     </ClCompile>
   </ItemGroup>
