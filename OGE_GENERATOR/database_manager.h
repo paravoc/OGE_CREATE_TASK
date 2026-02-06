@@ -5,18 +5,17 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 // Forward declaration
 struct sqlite3;
-
-using namespace std;
 
 namespace OGE {
 
     class DatabaseManager {
     private:
         sqlite3* db = nullptr;
-        string db_path;
+        std::string db_path;
         bool is_open = false;
 
     public:
@@ -24,54 +23,29 @@ namespace OGE {
         ~DatabaseManager();
 
         // Управление соединением
-        bool open(const string& path = ""); // Если пусто - in-memory
-        bool open_or_create(const string& path);
+        bool open(const std::string& path = ""); // Если пусто - in-memory
+        bool open_or_create(const std::string& path);
         void close();
         bool is_connected() const { return is_open; }
 
         // Получить соединение для передачи в ProblemType1
         sqlite3* get_connection() { return db; }
+        const std::string& get_db_path() const { return db_path; }
 
-        // Создание схемы
-        bool create_schema();
-        bool create_problem1_tables();
-
-        // Заполнение данными
-        bool seed_default_data();
-        bool seed_problem1_data();
-
-        // CRUD операции
-        bool execute_sql(const string& sql);
-        vector<vector<string>> query(const string& sql);
-
-        // Для ProblemType1
-        struct WordRecord {
-            string word;
-            int length;
-            string category;
-        };
-
-        struct EncodingRecord {
-            string name;
-            int bits_per_char;
-            string description;
-        };
-
-        vector<WordRecord> get_words(const string& category = "");
-        vector<EncodingRecord> get_encodings();
-        bool add_word(const string& word, const string& category);
-        bool add_encoding(const string& name, int bits, const string& desc);
+        // CRUD операции (общие для всех задач)
+        bool execute_sql(const std::string& sql);
+        std::vector<std::vector<std::string>> query(const std::string& sql);
 
         // Бэкап
-        bool backup(const string& backup_path);
-        bool restore(const string& backup_path);
+        bool backup(const std::string& backup_path);
+        bool restore(const std::string& backup_path);
 
         // Информация
         struct DatabaseInfo {
-            string path;
+            std::string path;
             size_t file_size;
             int total_tables;
-            bool schema_created;
+            std::unordered_map<int, bool> schemas_created;
         };
 
         DatabaseInfo get_info() const;

@@ -1,4 +1,4 @@
-// problem_type1.h
+#pragma once
 #ifndef PROBLEM_TYPE1_H
 #define PROBLEM_TYPE1_H
 
@@ -7,8 +7,7 @@
 #include <map>
 #include <memory>
 #include <sstream>
-
-struct sqlite3;
+#include "database_problem1.h"
 
 using namespace std;
 
@@ -29,14 +28,11 @@ namespace OGE {
         string correct_answer;
         string solution_explanation;
         map<string, string> meta;
-
-        //string to_json() const;
-        //string to_html() const;
     };
 
     class ProblemType1 {
     private:
-        sqlite3* db_conn = nullptr;
+        DatabaseProblem1 db_problem1;
 
         struct WordItem {
             string word;
@@ -96,8 +92,11 @@ namespace OGE {
         using Config = ProblemType1Config;
         using Problem = ProblemType1Result;
 
-        // Конструктор принимает уже открытое соединение SQLite
-        ProblemType1(sqlite3* connection);
+        // Конструктор принимает DatabaseProblem1
+        ProblemType1(DatabaseProblem1& db_problem1_ref);
+
+        // Или sqlite3 соединение
+        explicit ProblemType1(sqlite3* connection);
 
         // Основные методы
         Problem generate(const Config& config);
@@ -105,6 +104,9 @@ namespace OGE {
         // Управление кэшем
         void reload_cache();
         bool is_cache_loaded() const { return cache_loaded; }
+
+        // Получить доступ к базе данных
+        DatabaseProblem1& get_database() { return db_problem1; }
 
         // Генерация HTML контента
         string generate_html_problems(int count, const Config& config);

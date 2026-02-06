@@ -7,57 +7,33 @@
 #include <cmath>
 #include <cstring>
 #include "html_page_generator.h"
+#include <functional>
+#include <numeric>
 
 using namespace std;
 using namespace OGE;
 
-static vector<vector<string>> sql_query(sqlite3* db, const string& sql) {
-    vector<vector<string>> results;
-
-    if (!db) return results;
-
-    sqlite3_stmt* stmt;
-    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
-        return results;
-    }
-
-    int column_count = sqlite3_column_count(stmt);
-
-    while (sqlite3_step(stmt) == SQLITE_ROW) {
-        vector<string> row;
-        for (int i = 0; i < column_count; i++) {
-            const char* text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, i));
-            row.push_back(text ? text : "");
-        }
-        results.push_back(row);
-    }
-
-    sqlite3_finalize(stmt);
-    return results;
+ProblemType1::ProblemType1(DatabaseProblem1& db_problem1_ref)
+    : db_problem1(db_problem1_ref) {
+    reload_cache();
 }
 
-ProblemType1::ProblemType1(sqlite3* connection) : db_conn(connection) {
+ProblemType1::ProblemType1(sqlite3* connection)
+    : db_problem1(connection) {
     reload_cache();
 }
 
 bool ProblemType1::load_words_from_db(const string& category_filter) {
     words_cache.clear();
 
-    string sql = "SELECT word, length, category FROM problem1_words";
-    if (!category_filter.empty()) {
-        sql += " WHERE category = '" + category_filter + "'";
-    }
+    auto records = db_problem1.get_words(category_filter);
 
-    auto results = sql_query(db_conn, sql);
-
-    for (const auto& row : results) {
-        if (row.size() >= 3) {
-            WordItem item;
-            item.word = row[0];
-            item.length = stoi(row[1]);
-            item.category = row[2];
-            words_cache.push_back(item);
-        }
+    for (const auto& record : records) {
+        WordItem item;
+        item.word = record.word;
+        item.length = record.length;
+        item.category = record.category;
+        words_cache.push_back(item);
     }
 
     return !words_cache.empty();
@@ -66,17 +42,14 @@ bool ProblemType1::load_words_from_db(const string& category_filter) {
 bool ProblemType1::load_encodings_from_db() {
     encodings_cache.clear();
 
-    string sql = "SELECT name, bits_per_char, description FROM problem1_encodings";
-    auto results = sql_query(db_conn, sql);
+    auto records = db_problem1.get_encodings();
 
-    for (const auto& row : results) {
-        if (row.size() >= 3) {
-            EncodingInfo info;
-            info.name = row[0];
-            info.bits_per_char = stoi(row[1]);
-            info.description = row[2];
-            encodings_cache.push_back(info);
-        }
+    for (const auto& record : records) {
+        EncodingInfo info;
+        info.name = record.name;
+        info.bits_per_char = record.bits_per_char;
+        info.description = record.description;
+        encodings_cache.push_back(info);
     }
 
     return !encodings_cache.empty();
@@ -87,15 +60,12 @@ bool ProblemType1::load_templates_from_db() {
     suffixes_cache.clear();
     delimiters_cache.clear();
 
-    string sql = "SELECT prefix, suffix, delimiter FROM problem1_text_templates";
-    auto results = sql_query(db_conn, sql);
+    auto templates = db_problem1.get_templates();
 
-    for (const auto& row : results) {
-        if (row.size() >= 3) {
-            prefixes_cache.push_back(row[0]);
-            suffixes_cache.push_back(row[1]);
-            delimiters_cache.push_back(row[2]);
-        }
+    for (const auto& template_rec : templates) {
+        prefixes_cache.push_back(template_rec.prefix);
+        suffixes_cache.push_back(template_rec.suffix);
+        delimiters_cache.push_back(template_rec.delimiter);
     }
 
     return !prefixes_cache.empty();
@@ -121,7 +91,10 @@ const ProblemType1::WordItem& ProblemType1::select_random_word() {
     static default_random_engine rng(random_device{}());
     static WordItem empty_item{ "", 0, "" };
 
-    if (words_cache.empty()) return empty_item;
+    if (words_cache.empty()) {
+        reload_cache();
+        if (words_cache.empty()) return empty_item;
+    }
 
     uniform_int_distribution<size_t> dist(0, words_cache.size() - 1);
     return words_cache[dist(rng)];
@@ -131,7 +104,10 @@ const ProblemType1::EncodingInfo& ProblemType1::select_random_encoding() {
     static default_random_engine rng(random_device{}());
     static EncodingInfo empty_item{ "", 0, "" };
 
-    if (encodings_cache.empty()) return empty_item;
+    if (encodings_cache.empty()) {
+        reload_cache();
+        if (encodings_cache.empty()) return empty_item;
+    }
 
     uniform_int_distribution<size_t> dist(0, encodings_cache.size() - 1);
     return encodings_cache[dist(rng)];
@@ -268,12 +244,23 @@ ProblemType1::Scenario ProblemType1::select_scenario(const ProblemType1Config& c
 ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& config) {
     ProblemType1Result result;
 
+    if (encodings_cache.empty()) {
+        reload_cache();
+        if (encodings_cache.empty()) {
+            throw runtime_error("Нет доступных кодировок в БД");
+        }
+    }
+
     const auto& encoding = select_random_encoding();
     int bytes_per_char = encoding.bits_per_char / 8;
 
     static default_random_engine rng(random_device{}());
 
     const WordItem& main_word_item = select_random_word();
+    if (main_word_item.word.empty()) {
+        throw runtime_error("Нет доступных слов в БД");
+    }
+
     string main_word = main_word_item.word;
     int main_word_length = main_word_item.length;
 
@@ -283,7 +270,20 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
     int additional_words = config.word_count_min +
         uniform_int_distribution<>(0, config.word_count_max - config.word_count_min)(rng) - 1;
 
+    // Фильтруем слова по категории если задана
     vector<WordItem> available = words_cache;
+    if (!config.word_category.empty()) {
+        vector<WordItem> filtered;
+        for (const auto& word : available) {
+            if (word.category == config.word_category) {
+                filtered.push_back(word);
+            }
+        }
+        if (!filtered.empty()) {
+            available = filtered;
+        }
+    }
+
     shuffle(available.begin(), available.end(), rng);
 
     for (const auto& word_item : available) {
@@ -292,6 +292,14 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
         if (word_item.length == main_word_length) continue;
 
         selected_words.push_back(word_item.word);
+    }
+
+    if (prefixes_cache.empty() || suffixes_cache.empty() || delimiters_cache.empty()) {
+        reload_cache();
+    }
+
+    if (prefixes_cache.empty()) {
+        throw runtime_error("Нет доступных шаблонов в БД");
     }
 
     size_t template_index = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
@@ -328,12 +336,23 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
 ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& config) {
     ProblemType1Result result;
 
+    if (encodings_cache.empty()) {
+        reload_cache();
+        if (encodings_cache.empty()) {
+            throw runtime_error("Нет доступных кодировок в БД");
+        }
+    }
+
     const auto& encoding = select_random_encoding();
     int bytes_per_char = encoding.bits_per_char / 8;
 
     static default_random_engine rng(random_device{}());
 
     const WordItem& main_word_item = select_random_word();
+    if (main_word_item.word.empty()) {
+        throw runtime_error("Нет доступных слов в БД");
+    }
+
     string main_word = main_word_item.word;
     int main_word_length = main_word_item.length;
 
@@ -341,6 +360,18 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
     original_words.push_back(main_word);
 
     vector<WordItem> available = words_cache;
+    if (!config.word_category.empty()) {
+        vector<WordItem> filtered;
+        for (const auto& word : available) {
+            if (word.category == config.word_category) {
+                filtered.push_back(word);
+            }
+        }
+        if (!filtered.empty()) {
+            available = filtered;
+        }
+    }
+
     shuffle(available.begin(), available.end(), rng);
 
     int original_count = config.word_count_min +
@@ -352,6 +383,14 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
         if (word_item.length == main_word_length) continue;
 
         original_words.push_back(word_item.word);
+    }
+
+    if (prefixes_cache.empty() || suffixes_cache.empty() || delimiters_cache.empty()) {
+        reload_cache();
+    }
+
+    if (prefixes_cache.empty()) {
+        throw runtime_error("Нет доступных шаблонов в БД");
     }
 
     size_t template_index = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
@@ -442,13 +481,14 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
 
     static default_random_engine rng(random_device{}());
 
-    vector<EncodingInfo> encodings = encodings_cache;
-
-    if (encodings.size() < 2) {
-        result.problem_text = "Недостаточно данных о кодировках в БД";
-        result.correct_answer = "0";
-        return result;
+    if (encodings_cache.size() < 2) {
+        reload_cache();
+        if (encodings_cache.size() < 2) {
+            throw runtime_error("Недостаточно кодировок в БД (нужно минимум 2)");
+        }
     }
+
+    vector<EncodingInfo> encodings = encodings_cache;
 
     vector<pair<EncodingInfo, EncodingInfo>> valid_pairs;
 
@@ -487,6 +527,18 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
 
     vector<string> selected_words;
     vector<WordItem> available = words_cache;
+    if (!config.word_category.empty()) {
+        vector<WordItem> filtered;
+        for (const auto& word : available) {
+            if (word.category == config.word_category) {
+                filtered.push_back(word);
+            }
+        }
+        if (!filtered.empty()) {
+            available = filtered;
+        }
+    }
+
     shuffle(available.begin(), available.end(), rng);
 
     int word_count = config.word_count_min +
@@ -495,6 +547,14 @@ ProblemType1Result ProblemType1::generate_encoding_change(const ProblemType1Conf
     for (const auto& word_item : available) {
         if (selected_words.size() >= word_count) break;
         selected_words.push_back(word_item.word);
+    }
+
+    if (prefixes_cache.empty() || suffixes_cache.empty() || delimiters_cache.empty()) {
+        reload_cache();
+    }
+
+    if (prefixes_cache.empty()) {
+        throw runtime_error("Нет доступных шаблонов в БД");
     }
 
     size_t template_idx = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
@@ -682,21 +742,50 @@ ProblemType1Result ProblemType1::generate(const Config& config) {
     if (!cache_loaded) {
         reload_cache();
         if (!cache_loaded) {
-            throw runtime_error("Не удалось загрузить данные из БД");
+            throw runtime_error("Не удалось загрузить данные из БД. Проверьте подключение к БД и наличие данных.");
+        }
+    }
+
+    // Проверяем, что есть достаточно данных для генерации
+    if (words_cache.empty()) {
+        reload_cache();
+        if (words_cache.empty()) {
+            throw runtime_error("Нет слов в базе данных для генерации задачи");
+        }
+    }
+
+    if (encodings_cache.empty()) {
+        reload_cache();
+        if (encodings_cache.empty()) {
+            throw runtime_error("Нет кодировок в базе данных для генерации задачи");
         }
     }
 
     Scenario scenario = select_scenario(config);
 
-    switch (scenario) {
-    case Scenario::REMOVAL:
-        return generate_removal(config);
-    case Scenario::ADDITION:
-        return generate_addition(config);
-    case Scenario::ENCODING_CHANGE:
-        return generate_encoding_change(config);
-    default:
-        return generate_removal(config);
+    try {
+        switch (scenario) {
+        case Scenario::REMOVAL:
+            return generate_removal(config);
+        case Scenario::ADDITION:
+            return generate_addition(config);
+        case Scenario::ENCODING_CHANGE:
+            return generate_encoding_change(config);
+        default:
+            return generate_removal(config);
+        }
+    }
+    catch (const exception& e) {
+        // Если произошла ошибка, пробуем перезагрузить кэш и повторить
+        reload_cache();
+
+        // Пробуем снова с fallback-сценарием
+        try {
+            return generate_removal(config);
+        }
+        catch (const exception& e2) {
+            throw runtime_error(string("Не удалось сгенерировать задачу: ") + e2.what());
+        }
     }
 }
 
@@ -788,6 +877,7 @@ string ProblemType1::format_problem_text(const string& encoding_name,
     else {
         ss << "Напишите в ответе добавленное название.";
     }
+
     const string solution_string_n = ss.str();
     string solution_string_br = OGE::HtmlPageGenerator::nl2br(solution_string_n);
 
@@ -827,6 +917,7 @@ string ProblemType1::create_solution_explanation(const string& original_text,
 
         ss << "\nОТВЕТ: " << target_word;
     }
+
     const string solution_string_n = ss.str();
     string solution_string_br = OGE::HtmlPageGenerator::nl2br(solution_string_n);
 
@@ -837,8 +928,20 @@ string ProblemType1::generate_html_problems(int count, const Config& config) {
     stringstream html;
 
     for (int i = 0; i < count; i++) {
-        auto problem = generate(config);
-        html << generate_single_problem_html(problem, i + 1);
+        try {
+            auto problem = generate(config);
+            html << generate_single_problem_html(problem, i + 1);
+
+            // Добавляем разделитель между задачами
+            if (i < count - 1) {
+                html << "\n<div class='problem-separator'></div>\n";
+            }
+        }
+        catch (const exception& e) {
+            html << "<div class='error-message'>"
+                << "Ошибка генерации задачи " << (i + 1) << ": "
+                << e.what() << "</div>\n";
+        }
     }
 
     return html.str();
@@ -854,18 +957,46 @@ string ProblemType1::generate_single_problem_html(const Problem& problem, int pr
     if (it_encoding != problem.meta.end()) {
         encoding = it_encoding->second;
     }
+    else {
+        it_encoding = problem.meta.find("encoding_source");
+        if (it_encoding != problem.meta.end()) {
+            encoding = it_encoding->second;
+        }
+    }
 
     auto it_size = problem.meta.find("size_difference");
     if (it_size != problem.meta.end()) {
         size_diff = it_size->second;
     }
 
-    string escaped_text = problem.problem_text;
-    string escaped_solution = problem.solution_explanation;
-    string escaped_answer = problem.correct_answer;
+    // Экранирование специальных символов HTML (упрощенное)
+    auto escape_html = [](const string& s) -> string {
+        string result;
+        result.reserve(s.size());
+        for (char c : s) {
+            switch (c) {
+            case '&': result += "&amp;"; break;
+            case '<': result += "&lt;"; break;
+            case '>': result += "&gt;"; break;
+            case '"': result += "&quot;"; break;
+            case '\'': result += "&#39;"; break;
+            default: result += c;
+            }
+        }
+        return result;
+        };
+
+    string escaped_text = escape_html(problem.problem_text);
+    escaped_text = OGE::HtmlPageGenerator::nl2br(escaped_text);
+
+    string escaped_solution = escape_html(problem.solution_explanation);
+
+    string escaped_answer = escape_html(problem.correct_answer);
 
     html << R"(<article class="cosmic-problem" data-id=")" << problem_number
-        << R"(" data-type="type1">
+        << R"(" data-type="type1" data-scenario=")"
+        << (problem.meta.count("scenario") ? problem.meta.at("scenario") : "removal")
+        << R"(">
         <div class="problem-header">
             <div class="problem-id">
                 <span class="id-number">#)" << problem_number << R"(</span>
@@ -899,7 +1030,8 @@ string ProblemType1::generate_single_problem_html(const Problem& problem, int pr
                 <div class="answer-field">
                     <input type="text" 
                            placeholder="Введите ваш ответ..." 
-                           class="cosmic-input">
+                           class="cosmic-input"
+                           data-correct-answer=")" << escaped_answer << R"(">
                     <button class="cosmic-btn cosmic-btn-check">
                         <i class="fas fa-check"></i>
                         ПРОВЕРИТЬ
