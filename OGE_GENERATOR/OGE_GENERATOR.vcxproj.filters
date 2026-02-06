@@ -16,60 +16,93 @@
     <Filter Include="Исходные файлы\include">
       <UniqueIdentifier>{f7c9f84d-26cd-43ac-81d0-2cf8dab3e007}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\include\tasks">
-      <UniqueIdentifier>{e56e5e89-9feb-4cb1-a1fe-db6cff45356e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\src">
       <UniqueIdentifier>{cd6cb37b-f548-4763-bc9e-fb2c3f300f28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\src\Задачи">
+      <UniqueIdentifier>{c206b716-8046-4eb6-ab16-c32d3eb95e07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\src\база данных">
+      <UniqueIdentifier>{367b31d5-ad07-4a66-a599-b91343ceb704}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\src\база данных\база данных для проблем">
+      <UniqueIdentifier>{c9adbfa0-5271-4212-8290-e8f9dffc3995}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\src\проблемы">
+      <UniqueIdentifier>{71b21842-72f8-403e-9ba2-229dc08f5ff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\src\настройки">
+      <UniqueIdentifier>{f68dede7-0c06-460c-b805-c630dd29aa66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\src\ЗАПУСК">
+      <UniqueIdentifier>{2b965153-5beb-4fdd-b079-4ddaee4b7a16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\src\HTML">
+      <UniqueIdentifier>{fd0d8148-821d-4e0e-ad76-1fba40b5f787}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\include\ПРОБЛЕМЫ">
+      <UniqueIdentifier>{e56e5e89-9feb-4cb1-a1fe-db6cff45356e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\include\база данных">
+      <UniqueIdentifier>{ea6eee75-d37c-4287-88cb-272d93340373}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\include\настройки">
+      <UniqueIdentifier>{1f31d4f4-04d4-456e-a2ca-9bd2919e61f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\include\база данных\проблемы база данных">
+      <UniqueIdentifier>{b0b6900c-aff9-411c-9264-0644ef2bbbce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\include\HTML">
+      <UniqueIdentifier>{9b9d904b-dc57-43f2-aa25-227a6dc6f6b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="database_manager.h">
-      <Filter>Исходные файлы\include</Filter>
-    </ClInclude>
     <ClInclude Include="problem_type1.h">
-      <Filter>Исходные файлы\include\tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="html_page_generator.h">
-      <Filter>Исходные файлы\include</Filter>
-    </ClInclude>
-    <ClInclude Include="database_problem1.h">
-      <Filter>Исходные файлы\include\tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="scenario_config.h">
-      <Filter>Исходные файлы\include</Filter>
-    </ClInclude>
-    <ClInclude Include="task_generator.h">
-      <Filter>Исходные файлы\include</Filter>
+      <Filter>Исходные файлы\include\ПРОБЛЕМЫ</Filter>
     </ClInclude>
     <ClInclude Include="application_manager.h">
-      <Filter>Исходные файлы\include</Filter>
+      <Filter>Исходные файлы\include\настройки</Filter>
+    </ClInclude>
+    <ClInclude Include="scenario_config.h">
+      <Filter>Исходные файлы\include\настройки</Filter>
+    </ClInclude>
+    <ClInclude Include="task_generator.h">
+      <Filter>Исходные файлы\include\настройки</Filter>
+    </ClInclude>
+    <ClInclude Include="database_manager.h">
+      <Filter>Исходные файлы\include\база данных</Filter>
+    </ClInclude>
+    <ClInclude Include="database_problem1.h">
+      <Filter>Исходные файлы\include\база данных\проблемы база данных</Filter>
+    </ClInclude>
+    <ClInclude Include="html_page_generator.h">
+      <Filter>Исходные файлы\include\HTML</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="OGE_GENERATOR.cpp">
-      <Filter>Исходные файлы\src</Filter>
-    </ClCompile>
     <ClCompile Include="database_manager.cpp">
-      <Filter>Исходные файлы\src</Filter>
-    </ClCompile>
-    <ClCompile Include="problem_type1.cpp">
-      <Filter>Исходные файлы\src</Filter>
-    </ClCompile>
-    <ClCompile Include="html_page_generator.cpp">
-      <Filter>Исходные файлы\src</Filter>
+      <Filter>Исходные файлы\src\база данных</Filter>
     </ClCompile>
     <ClCompile Include="database_problem1.cpp">
-      <Filter>Исходные файлы\src</Filter>
+      <Filter>Исходные файлы\src\база данных\база данных для проблем</Filter>
+    </ClCompile>
+    <ClCompile Include="problem_type1.cpp">
+      <Filter>Исходные файлы\src\проблемы</Filter>
     </ClCompile>
     <ClCompile Include="scenario_config.cpp">
-      <Filter>Исходные файлы\src</Filter>
+      <Filter>Исходные файлы\src\настройки</Filter>
     </ClCompile>
     <ClCompile Include="task_generator.cpp">
-      <Filter>Исходные файлы\src</Filter>
+      <Filter>Исходные файлы\src\настройки</Filter>
+    </ClCompile>
+    <ClCompile Include="OGE_GENERATOR.cpp">
+      <Filter>Исходные файлы\src\ЗАПУСК</Filter>
     </ClCompile>
     <ClCompile Include="application_manager.cpp">
-      <Filter>Исходные файлы\src</Filter>
+      <Filter>Исходные файлы\src\настройки</Filter>
+    </ClCompile>
+    <ClCompile Include="html_page_generator.cpp">
+      <Filter>Исходные файлы\src\HTML</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

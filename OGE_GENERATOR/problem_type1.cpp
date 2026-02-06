@@ -302,6 +302,8 @@ ProblemType1Result ProblemType1::generate_removal(const ProblemType1Config& conf
         throw runtime_error("Нет доступных шаблонов в БД");
     }
 
+    shuffle(selected_words.begin(), selected_words.end(), rng);
+
     size_t template_index = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
     string prefix = prefixes_cache[template_index];
     string suffix = suffixes_cache[template_index];
@@ -392,6 +394,8 @@ ProblemType1Result ProblemType1::generate_addition(const ProblemType1Config& con
     if (prefixes_cache.empty()) {
         throw runtime_error("Нет доступных шаблонов в БД");
     }
+
+    shuffle(original_words.begin(), original_words.end(), rng);
 
     size_t template_index = uniform_int_distribution<size_t>(0, prefixes_cache.size() - 1)(rng);
     string prefix = prefixes_cache[template_index];
