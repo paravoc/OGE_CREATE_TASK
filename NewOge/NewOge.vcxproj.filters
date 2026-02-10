@@ -25,6 +25,9 @@
     <Filter Include="Исходные файлы\include\базы данных">
       <UniqueIdentifier>{43a678a3-0f8b-4fad-9454-8ca8631559f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\include\проблемы">
+      <UniqueIdentifier>{5d98ce66-84f5-4522-9b53-13c62d9c7dfa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NewOge.cpp">
@@ -38,8 +41,14 @@
     <ClInclude Include="database_manager.h">
       <Filter>Исходные файлы\include\базы данных</Filter>
     </ClInclude>
-    <ClInclude Include="database_problem1.h">
-      <Filter>Исходные файлы\include\базы данных</Filter>
+    <ClInclude Include="problem1.h">
+      <Filter>Исходные файлы\include\проблемы</Filter>
+    </ClInclude>
+    <ClInclude Include="page_setting.h">
+      <Filter>Исходные файлы\include</Filter>
+    </ClInclude>
+    <ClInclude Include="remote_control.h">
+      <Filter>Исходные файлы\include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

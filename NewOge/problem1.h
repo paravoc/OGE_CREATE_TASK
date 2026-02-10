@@ -5,6 +5,6 @@
 using namespace std;
 using namespace OGE;
 
-class DatabaseProblem1 : public DatabaseManager {
+class Problem1 : public DatabaseManager {
 	
 };

@@ -129,7 +129,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h" />
-    <ClInclude Include="database_problem1.h" />
+    <ClInclude Include="page_setting.h" />
+    <ClInclude Include="problem1.h" />
+    <ClInclude Include="remote_control.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
