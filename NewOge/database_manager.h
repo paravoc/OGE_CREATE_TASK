@@ -35,7 +35,6 @@ namespace OGE {
         DatabaseManager() = default;
         virtual ~DatabaseManager() = default;
 
-        bool open();
         bool open_or_create();
         void close();
         bool is_connected() const { return is_open; }
@@ -57,6 +56,10 @@ namespace OGE {
         virtual string get_problem_stats() = 0;
 
         DatabaseInfo get_info() const;
+
+        static bool database_exists(const string& path);
+
+        static bool remove_database(const string& path);
     };
 
 }
