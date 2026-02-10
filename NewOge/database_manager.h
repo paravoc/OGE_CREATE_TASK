@@ -33,6 +33,7 @@ namespace OGE {
 
     public:
         DatabaseManager() = default;
+        explicit DatabaseManager(const string& custom_path) : db_path(custom_path) {}
         virtual ~DatabaseManager() = default;
 
         bool open_or_create();
@@ -43,7 +44,7 @@ namespace OGE {
         const string& get_db_path() const { return db_path; }
 
         bool execute_sql(const string& sql);
-        vector<vector<string>> query(const string& sql);
+        vector<vector<string>> query(const string& sql) const;
 
         virtual bool create_table_problem() = 0;
         virtual string take_table_problem() = 0;
