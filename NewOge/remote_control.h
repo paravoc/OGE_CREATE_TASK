@@ -9,6 +9,7 @@
 #include <memory>
 #include <thread>
 
+
 namespace OGE {
 
     // —труктура дл€ безопасного хранени€ парол€
@@ -233,4 +234,4 @@ namespace OGE {
         void monitor_results_loop(int interval_ms);
     };
 
-} // namespace OGE
+}

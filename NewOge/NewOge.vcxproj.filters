@@ -50,5 +50,26 @@
     <ClInclude Include="remote_control.h">
       <Filter>Исходные файлы\include</Filter>
     </ClInclude>
+    <ClInclude Include="html_generator.h">
+      <Filter>Исходные файлы\include</Filter>
+    </ClInclude>
+    <ClInclude Include="problem_base.h">
+      <Filter>Исходные файлы\include\проблемы</Filter>
+    </ClInclude>
+    <ClInclude Include="problem_registry.h">
+      <Filter>Исходные файлы\include\проблемы</Filter>
+    </ClInclude>
+    <ClInclude Include="problem_factory.h">
+      <Filter>Исходные файлы\include\проблемы</Filter>
+    </ClInclude>
+    <ClInclude Include="variant.h">
+      <Filter>Исходные файлы\include</Filter>
+    </ClInclude>
+    <ClInclude Include="variant_generator.h">
+      <Filter>Исходные файлы\include</Filter>
+    </ClInclude>
+    <ClInclude Include="number_system_problem.h">
+      <Filter>Исходные файлы\include\проблемы</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
