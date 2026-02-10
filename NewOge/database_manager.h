@@ -9,25 +9,22 @@
 using namespace std;
 
 namespace OGE {
-    //инфа о базе данных
     struct DatabaseInfo {
         size_t file_size;
         int total_tables;
         unordered_map<int, bool> tables_created;
     };
-    //кастомный удалятель для си структуры
+
     struct SQLDeleter {
         void operator()(sqlite3* db_ptr) const {
-            if (db_ptr) {
-                sqlite3_close(db_ptr);
-            }
+            if (db_ptr) sqlite3_close(db_ptr);
         }
     };
-    //базовый абстрактный класс для реализации баз данных для задач и работы с ними
+
     class DatabaseManager {
     protected:
         const string db_path = "database/problems.db";
-        unique_ptr<sqlite3, SQLDeleter> db = nullptr; // база данных
+        unique_ptr<sqlite3, SQLDeleter> db = nullptr;
         bool is_open = false;
         DatabaseInfo db_info{};
 
@@ -46,21 +43,20 @@ namespace OGE {
         bool execute_sql(const string& sql);
         vector<vector<string>> query(const string& sql) const;
 
-        virtual bool create_table_problem() = 0;
-        virtual string take_table_problem() = 0;
+        virtual bool create_stats_table() = 0; 
+        virtual string get_table_name() = 0;   
 
-        virtual void insert_data_in_table() = 0;
-        virtual vector<string> generate_problems(int numbers) = 0;
-        virtual string generate_problem() = 0;
 
-        virtual vector<string> get_problems_stats() = 0;
-        virtual string get_problem_stats() = 0;
+        virtual void record_generation(int problem_num, const string& task_type) = 0;
+        virtual void record_solution(int problem_num, bool correct, double time_sec) = 0;
+
+
+        virtual unordered_map<string, int> get_generation_stats() const = 0;
+        virtual int get_total_generated() const = 0;
 
         DatabaseInfo get_info() const;
 
         static bool database_exists(const string& path);
-
         static bool remove_database(const string& path);
     };
-
 }

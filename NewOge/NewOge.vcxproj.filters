@@ -38,5 +38,8 @@
     <ClInclude Include="database_manager.h">
       <Filter>Исходные файлы\include\базы данных</Filter>
     </ClInclude>
+    <ClInclude Include="database_problem1.h">
+      <Filter>Исходные файлы\include\базы данных</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

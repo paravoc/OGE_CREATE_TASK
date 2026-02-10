@@ -17,7 +17,7 @@ bool DatabaseManager::open_or_create() {
 	int res_raw_db = sqlite3_open(db_path.c_str(), &raw_db);
 
 	if (res_raw_db != SQLITE_OK) {
-		if(!raw_db)
+		if(raw_db)
 			sqlite3_close(raw_db);
 		is_open = false;
 		return false;
