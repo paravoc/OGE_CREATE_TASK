@@ -9,13 +9,13 @@
 using namespace std;
 
 namespace OGE {
-
+    //инфа о базе данных
     struct DatabaseInfo {
         size_t file_size;
         int total_tables;
         unordered_map<int, bool> tables_created;
     };
-
+    //кастомный удалятель для си структуры
     struct SQLDeleter {
         void operator()(sqlite3* db_ptr) const {
             if (db_ptr) {
@@ -23,11 +23,11 @@ namespace OGE {
             }
         }
     };
-
+    //базовый абстрактный класс для реализации баз данных для задач и работы с ними
     class DatabaseManager {
     protected:
         const string db_path = "database/problems.db";
-        unique_ptr<sqlite3, SQLDeleter> db = nullptr;
+        unique_ptr<sqlite3, SQLDeleter> db = nullptr; // база данных
         bool is_open = false;
         DatabaseInfo db_info{};
 
