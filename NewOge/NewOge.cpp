@@ -18,8 +18,11 @@ int main() {
     PageSettings settings;
 
     // 2. Выбираем какие задачи и сколько
-    settings.problem_numbers["math"] = 300;      // 3 математические задачи
+    settings.problem_numbers["math"] = 3;      // 3 математические задачи
     settings.problem_numbers["decimal"] = 2;   // 2 задачи с десятичными дробями
+    settings.dark_mode = true;
+    settings.show_hints = false;
+    settings.show_after_answer = false;
 
     // 3. Настройки сложности
     GenerationConfig config;
