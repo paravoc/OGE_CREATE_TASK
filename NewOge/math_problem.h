@@ -9,7 +9,7 @@
 
 namespace OGE {
 
-    class MathProblem : public ProblemBase, public DatabaseManager {
+    class MathProblem : public ProblemBase {
     private:
         static PageSettings page_settings;
         int operand1;
@@ -29,13 +29,6 @@ namespace OGE {
         std::string generate_html() const override;
         bool check_answer(const std::string& user_answer) const;
 
-        // Реализация DatabaseManager
-        bool create_stats_table() override;
-        std::string get_table_name() override;
-        void record_generation(int problem_num, const std::string& task_type) override;
-        void record_solution(int problem_num, bool correct, double time_sec) override;
-        std::unordered_map<std::string, int> get_generation_stats() const override;
-        int get_total_generated() const override;
 
         // Методы для работы с PageSettings
         void set_page_settings(const PageSettings& settings);

@@ -6,19 +6,19 @@ namespace OGE {
     OGE::PageSettings OGE::MathProblem::page_settings;
 
     MathProblem::MathProblem(const ProblemMeta& meta)
-        : ProblemBase(meta), DatabaseManager(), operand1(0), operand2(0), operation('+') {
+        : ProblemBase(meta),  operand1(0), operand2(0), operation('+') {
         //open_or_create();
         //create_stats_table();
     }
 
     MathProblem::MathProblem(const ProblemMeta& meta, const std::string& db_path)
-        : ProblemBase(meta), DatabaseManager(db_path), operand1(0), operand2(0), operation('+') {
+        : ProblemBase(meta), operand1(0), operand2(0), operation('+') {
   /*      open_or_create();
         create_stats_table();*/
     }
 
     MathProblem::~MathProblem() {
-        close();
+
     }
 
     void MathProblem::generate(const GenerationConfig& config) {
@@ -137,64 +137,7 @@ namespace OGE {
         return user_answer == correct_answer;
     }
 
-    bool MathProblem::create_stats_table() {
-        std::string sql =
-            "CREATE TABLE IF NOT EXISTS math_generation_stats ("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "problem_num INTEGER,"
-            "task_type TEXT,"
-            "generated_at DATETIME DEFAULT CURRENT_TIMESTAMP"
-            ");";
-
-        sql +=
-            "CREATE TABLE IF NOT EXISTS math_solution_stats ("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "problem_num INTEGER,"
-            "correct BOOLEAN,"
-            "time_seconds REAL,"
-            "solved_at DATETIME DEFAULT CURRENT_TIMESTAMP"
-            ");";
-
-        return execute_sql(sql);
-    }
-
-    std::string MathProblem::get_table_name() {
-        return "math_problems";
-    }
-
-    void MathProblem::record_generation(int problem_num, const std::string& task_type) {
-        std::string sql = "INSERT INTO math_generation_stats (problem_num, task_type) VALUES ("
-            + std::to_string(problem_num) + ", '" + task_type + "');";
-        execute_sql(sql);
-    }
-
-    void MathProblem::record_solution(int problem_num, bool correct, double time_sec) {
-        std::string sql = "INSERT INTO math_solution_stats (problem_num, correct, time_seconds) VALUES ("
-            + std::to_string(problem_num) + ", "
-            + (correct ? "1" : "0") + ", "
-            + std::to_string(time_sec) + ");";
-        execute_sql(sql);
-    }
-
-    std::unordered_map<std::string, int> MathProblem::get_generation_stats() const {
-        std::unordered_map<std::string, int> stats;
-        auto result = query("SELECT task_type, COUNT(*) FROM math_generation_stats GROUP BY task_type;");
-
-        for (const auto& row : result) {
-            if (row.size() >= 2) {
-                stats[row[0]] = std::stoi(row[1]);
-            }
-        }
-        return stats;
-    }
-
-    int MathProblem::get_total_generated() const {
-        auto result = query("SELECT COUNT(*) FROM math_generation_stats;");
-        if (!result.empty() && !result[0].empty()) {
-            return std::stoi(result[0][0]);
-        }
-        return 0;
-    }
+    
 
     void MathProblem::set_page_settings(const PageSettings& settings) {
         page_settings = settings;
