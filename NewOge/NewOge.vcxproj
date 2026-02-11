@@ -126,8 +126,11 @@
   <ItemGroup>
     <ClCompile Include="database_manager.cpp" />
     <ClCompile Include="decimal_problem.cpp" />
+    <ClCompile Include="html_generator.cpp" />
     <ClCompile Include="math_problem.cpp" />
     <ClCompile Include="NewOge.cpp" />
+    <ClCompile Include="page_settings.cpp" />
+    <ClCompile Include="problem_base.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h" />
@@ -135,7 +138,6 @@
     <ClInclude Include="html_generator.h" />
     <ClInclude Include="math_problem.h" />
     <ClInclude Include="page_setting.h" />
-    <ClInclude Include="problem1.h" />
     <ClInclude Include="problem_base.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

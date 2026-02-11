@@ -11,10 +11,12 @@ namespace OGE {
 
     class MathProblem : public ProblemBase, public DatabaseManager {
     private:
-        PageSettings page_settings;
+        static PageSettings page_settings;
         int operand1;
         int operand2;
         char operation;
+        static std::random_device rd;
+        static std::mt19937 gen;
 
     public:
         // Конструкторы
@@ -24,6 +26,8 @@ namespace OGE {
 
         // Реализация ProblemBase
         void generate(const GenerationConfig& config) override;
+        std::string generate_html() const override;
+        bool check_answer(const std::string& user_answer) const;
 
         // Реализация DatabaseManager
         bool create_stats_table() override;
@@ -36,13 +40,11 @@ namespace OGE {
         // Методы для работы с PageSettings
         void set_page_settings(const PageSettings& settings);
         const PageSettings& get_page_settings() const;
-        std::string generate_html() const;
 
-        // Специфичные методы для математической задачи
+        // Специфичные методы
         int get_operand1() const { return operand1; }
         int get_operand2() const { return operand2; }
         char get_operation() const { return operation; }
-        bool check_answer(const std::string& user_answer) const;
     };
 
 }

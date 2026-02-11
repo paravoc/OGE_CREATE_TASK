@@ -42,13 +42,19 @@
     <ClCompile Include="decimal_problem.cpp">
       <Filter>Исходные файлы\src</Filter>
     </ClCompile>
+    <ClCompile Include="page_settings.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
+    <ClCompile Include="problem_base.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
+    <ClCompile Include="html_generator.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h">
       <Filter>Исходные файлы\include\базы данных</Filter>
-    </ClInclude>
-    <ClInclude Include="problem1.h">
-      <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
     <ClInclude Include="page_setting.h">
       <Filter>Исходные файлы\include</Filter>
@@ -63,7 +69,7 @@
       <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
     <ClInclude Include="decimal_problem.h">
-      <Filter>Исходные файлы\include</Filter>
+      <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

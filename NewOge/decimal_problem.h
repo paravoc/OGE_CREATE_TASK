@@ -26,6 +26,8 @@ namespace OGE {
 
         // Реализация ProblemBase
         void generate(const GenerationConfig& config) override;
+        std::string generate_html() const override;
+        bool check_answer(const std::string& user_answer) const;
 
         // Реализация DatabaseManager
         bool create_stats_table() override;
@@ -38,14 +40,12 @@ namespace OGE {
         // Методы для работы с PageSettings
         void set_page_settings(const PageSettings& settings);
         const PageSettings& get_page_settings() const;
-        std::string generate_html() const;
 
         // Специфичные методы
         double get_operand1() const { return operand1; }
         double get_operand2() const { return operand2; }
         char get_operation() const { return operation; }
         int get_decimal_places() const { return decimal_places; }
-        bool check_answer(const std::string& user_answer) const;
     };
 
 }

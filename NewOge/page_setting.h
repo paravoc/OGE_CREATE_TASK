@@ -64,7 +64,6 @@ namespace OGE {
         bool can_view_solutions() const;
         bool can_view_hints() const;
 
-    private:
         static std::string hash_password(const std::string& password);
     };
 

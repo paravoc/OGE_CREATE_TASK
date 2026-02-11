@@ -52,6 +52,8 @@ namespace OGE {
 
         virtual void generate(const GenerationConfig& config) = 0;
 
+        virtual std::string generate_html() const = 0;
+
         const std::string& get_unique_id() const { return unique_id; }
         const std::string& get_problem_text() const { return problem_text; }
         const std::string& get_correct_answer() const { return correct_answer; }
