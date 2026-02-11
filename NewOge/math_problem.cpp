@@ -7,14 +7,12 @@ namespace OGE {
 
     MathProblem::MathProblem(const ProblemMeta& meta)
         : ProblemBase(meta),  operand1(0), operand2(0), operation('+') {
-        //open_or_create();
-        //create_stats_table();
+
     }
 
     MathProblem::MathProblem(const ProblemMeta& meta, const std::string& db_path)
         : ProblemBase(meta), operand1(0), operand2(0), operation('+') {
-  /*      open_or_create();
-        create_stats_table();*/
+
     }
 
     MathProblem::~MathProblem() {
@@ -91,47 +89,42 @@ namespace OGE {
     }
 
     std::string MathProblem::generate_html() const {
-        std::stringstream html;
-        
-
-        html << R"(
-        <div class='problem-wrapper' data-problem-id=')" << unique_id << R"('>
-            
-            )" << problem_text << R"(
-            
-            <div class='answer-area'>
-                <input type='text' id='answer-)" << unique_id << R"(' 
-                       placeholder='Ваш ответ' 
-                       data-problem-id=')" << unique_id << R"('>
-                <button onclick='checkAnswer(")" << unique_id << R"(", ")"
-            << correct_answer << R"(", )" << score << R"()'>
-                    Проверить
-                </button>
-            </div>
-        )";
-
-        if (page_settings.can_view_solutions()) {
-            html << R"(
-            <div class='solution-wrapper'>
-                )" << solution << R"(
-            </div>
-            )";
-        }
-
-        if (page_settings.show_hints) {
-            html << R"(
-            <div class='hint-wrapper'>
-                )" << hint << R"(
-            </div>
-            )";
-        }
-
-        html << R"(
-        </div>
-        )";
-
-        return html.str();
+    std::string html;
+    html.reserve(1024);  // Предварительное выделение памяти
+    
+    // Ручная конкатенация без stringstream
+    html += "<div class='problem-wrapper' data-problem-id='";
+    html += unique_id;
+    html += "'>\n    ";
+    html += problem_text;
+    html += "\n    <div class='answer-area'>\n        <input type='text' id='answer-";
+    html += unique_id;
+    html += "' placeholder='Ваш ответ' data-problem-id='";
+    html += unique_id;
+    html += "'>\n        <button onclick='checkAnswer(\"";
+    html += unique_id;
+    html += "\", \"";
+    html += correct_answer;
+    html += "\", ";
+    html += std::to_string(score);
+    html += ")'>\n            Проверить\n        </button>\n    </div>\n";
+    
+    if (page_settings.can_view_solutions()) {
+        html += "    <div class='solution-wrapper'>\n        ";
+        html += solution;
+        html += "\n    </div>\n";
     }
+    
+    if (page_settings.show_hints) {
+        html += "    <div class='hint-wrapper'>\n        ";
+        html += hint;
+        html += "\n    </div>\n";
+    }
+    
+    html += "</div>";
+    
+    return html;
+}
 
     bool MathProblem::check_answer(const std::string& user_answer) const {
         return user_answer == correct_answer;
