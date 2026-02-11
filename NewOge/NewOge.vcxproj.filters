@@ -36,6 +36,9 @@
     <ClCompile Include="database_manager.cpp">
       <Filter>Исходные файлы\src\базы данных</Filter>
     </ClCompile>
+    <ClCompile Include="math_problem.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h">
@@ -47,29 +50,17 @@
     <ClInclude Include="page_setting.h">
       <Filter>Исходные файлы\include</Filter>
     </ClInclude>
-    <ClInclude Include="remote_control.h">
-      <Filter>Исходные файлы\include</Filter>
-    </ClInclude>
     <ClInclude Include="html_generator.h">
       <Filter>Исходные файлы\include</Filter>
     </ClInclude>
     <ClInclude Include="problem_base.h">
       <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
-    <ClInclude Include="problem_registry.h">
+    <ClInclude Include="math_problem.h">
       <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
-    <ClInclude Include="problem_factory.h">
-      <Filter>Исходные файлы\include\проблемы</Filter>
-    </ClInclude>
-    <ClInclude Include="variant.h">
+    <ClInclude Include="decimal.h">
       <Filter>Исходные файлы\include</Filter>
-    </ClInclude>
-    <ClInclude Include="variant_generator.h">
-      <Filter>Исходные файлы\include</Filter>
-    </ClInclude>
-    <ClInclude Include="number_system_problem.h">
-      <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

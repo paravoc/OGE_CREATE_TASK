@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <ctime>
+using namespace std;
 
 namespace OGE {
 
@@ -24,7 +25,7 @@ namespace OGE {
     // Настройки страницы варианта
     struct PageSettings {
         std::string teacher_password_hash;   // Хеш пароля учителя
-        std::string student_password_hash;   // Хеш пароля студента (если нужно)
+        std::string student_password_hash;   // Хеш пароля студента 
 
         // Доступ к решениям
         AccessLevel solution_access = AccessLevel::NO_ACCESS;
@@ -38,9 +39,7 @@ namespace OGE {
 
 
         // Задачи
-        std::vector<int> problem_numbers;    // Какие задачи включены (1-16)
-        int tasks_per_variant = 10;          // Сколько задач в варианте
-        bool random_order = true;            // Случайный порядок
+        unordered_map<std::string,int> problem_numbers;    // Какие задачи включены (1-16)  и сколько каких задач
 
         // Статистика и оценка
         bool record_statistics = true;       // Записывать статистику
