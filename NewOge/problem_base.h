@@ -26,7 +26,7 @@ namespace OGE {
 
     struct GenerationConfig {
         Difficulty difficulty = Difficulty::MEDIUM;
-        int seed = 0;
+
         std::unordered_map<std::string, std::string> custom_params;
 
         int get_int_param(const std::string& key, int default_value = 0) const;

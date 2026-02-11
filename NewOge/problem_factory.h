@@ -4,7 +4,7 @@
 #include "problem_base.h"
 #include <vector>
 #include <memory>
-
+ 
 namespace OGE {
 
     class ProblemFactory {
