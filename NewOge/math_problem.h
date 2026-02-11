@@ -12,11 +12,11 @@ namespace OGE {
     class MathProblem : public ProblemBase {
     private:
         static PageSettings page_settings;
+        static std::mt19937& get_random_generator();
         int operand1;
         int operand2;
         char operation;
-        static std::random_device rd;
-        static std::mt19937 gen;
+        
 
     public:
         // Конструкторы

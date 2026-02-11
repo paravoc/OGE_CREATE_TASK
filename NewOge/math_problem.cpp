@@ -2,7 +2,14 @@
 #include "math_problem.h"
 
 namespace OGE {
-    std::mt19937 MathProblem::gen(std::random_device{}());
+
+    std::mt19937& MathProblem::get_random_generator() {
+        // Инициализация при первом вызове, можно обработать ошибки
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        return gen;
+    }
+
     OGE::PageSettings OGE::MathProblem::page_settings;
 
     MathProblem::MathProblem(const ProblemMeta& meta)
@@ -31,6 +38,8 @@ namespace OGE {
 
         std::uniform_int_distribution<> dis_num(1, max_num);
         std::uniform_int_distribution<> dis_op(0, 3);
+
+        auto& gen = get_random_generator();
 
         operand1 = dis_num(gen);
         operand2 = dis_num(gen);
@@ -90,7 +99,7 @@ namespace OGE {
 
     std::string MathProblem::generate_html() const {
     std::string html;
-    html.reserve(1024);  // Предварительное выделение памяти
+    html.reserve(512);  // Предварительное выделение памяти
     
     // Ручная конкатенация без stringstream
     html += "<div class='problem-wrapper' data-problem-id='";
