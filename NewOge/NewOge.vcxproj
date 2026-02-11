@@ -125,12 +125,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="database_manager.cpp" />
+    <ClCompile Include="decimal_problem.cpp" />
     <ClCompile Include="math_problem.cpp" />
     <ClCompile Include="NewOge.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h" />
-    <ClInclude Include="decimal.h" />
+    <ClInclude Include="decimal_problem.h" />
     <ClInclude Include="html_generator.h" />
     <ClInclude Include="math_problem.h" />
     <ClInclude Include="page_setting.h" />

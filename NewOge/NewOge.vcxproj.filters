@@ -39,6 +39,9 @@
     <ClCompile Include="math_problem.cpp">
       <Filter>Исходные файлы\src</Filter>
     </ClCompile>
+    <ClCompile Include="decimal_problem.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h">
@@ -59,7 +62,7 @@
     <ClInclude Include="math_problem.h">
       <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
-    <ClInclude Include="decimal.h">
+    <ClInclude Include="decimal_problem.h">
       <Filter>Исходные файлы\include</Filter>
     </ClInclude>
   </ItemGroup>
