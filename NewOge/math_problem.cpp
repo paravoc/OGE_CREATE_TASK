@@ -13,8 +13,8 @@ namespace OGE {
 
     MathProblem::MathProblem(const ProblemMeta& meta, const std::string& db_path)
         : ProblemBase(meta), DatabaseManager(db_path), operand1(0), operand2(0), operation('+') {
-        open_or_create();
-        create_stats_table();
+  /*      open_or_create();
+        create_stats_table();*/
     }
 
     MathProblem::~MathProblem() {
@@ -92,6 +92,7 @@ namespace OGE {
 
     std::string MathProblem::generate_html() const {
         std::stringstream html;
+        
 
         html << R"(
         <div class='problem-wrapper' data-problem-id=')" << unique_id << R"('>

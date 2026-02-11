@@ -2,12 +2,16 @@
 #include "math_problem.h"
 #include "decimal_problem.h"
 #include "html_generator.h"
+#include<chrono>
 #include <iostream>
 
 using namespace OGE;
 using namespace std;
+using namespace chrono;
+
 
 int main() {
+    auto start = chrono::high_resolution_clock::now();
     setlocale(LC_ALL, "Russian");
 
     // 1. Настройки страницы
@@ -40,7 +44,7 @@ int main() {
         problem->generate(config);
         generator.add_problem(move(problem));
 
-        cout << "  + Математическая задача #" << i + 1 << " сгенерирована" << endl;
+        //cout << "  + Математическая задача #" << i + 1 << " сгенерирована" << endl;
     }
 
     // Задачи с десятичными дробями
@@ -56,7 +60,7 @@ int main() {
         problem->generate(config);
         generator.add_problem(move(problem));
 
-        cout << "  + Задача с десятичными дробями #" << i + 1 << " сгенерирована" << endl;
+        //cout << "  + Задача с десятичными дробями #" << i + 1 << " сгенерирована" << endl;
     }
 
     // 6. Генерируем HTML страницу
@@ -70,5 +74,17 @@ int main() {
     cout << "Готово! Страница сохранена в файл: " << filename << endl;
     cout << "Всего задач: " << generator.get_problems_count() << endl;
 
+
+    // ФИНИШ ТАЙМЕРА
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(end - start);
+    auto duration_us = duration_cast<microseconds>(end - start);
+    auto duration_sec = duration_cast<seconds>(end - start);
+
+    cout << "⏱️  Время выполнения:" << endl;
+    cout << "   • " << duration.count() << " мс" << endl;
+    cout << "   • " << duration_us.count() << " мкс" << endl;
+    cout << "   • " << duration_sec.count() << " сек" << endl;
+    cout << "==================================" << endl;
     return 0;
 }
