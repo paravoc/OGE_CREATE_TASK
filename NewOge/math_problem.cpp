@@ -7,8 +7,8 @@ namespace OGE {
 
     MathProblem::MathProblem(const ProblemMeta& meta)
         : ProblemBase(meta), DatabaseManager(), operand1(0), operand2(0), operation('+') {
-        open_or_create();
-        create_stats_table();
+        //open_or_create();
+        //create_stats_table();
     }
 
     MathProblem::MathProblem(const ProblemMeta& meta, const std::string& db_path)
@@ -87,7 +87,7 @@ namespace OGE {
         unique_id = generate_unique_id();
         generated_at = std::time(nullptr);
 
-        record_generation(meta.problem_number, "math");
+        //record_generation(meta.problem_number, "math");
     }
 
     std::string MathProblem::generate_html() const {

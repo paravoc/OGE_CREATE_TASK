@@ -405,7 +405,7 @@ namespace OGE {
     // Добавление конкретной задачи
     void HtmlGenerator::add_problem(unique_ptr<ProblemBase> problem) {
         if (problem) {
-            all_problems.push_back(std::move(problem));
+            all_problems.emplace_back(std::move(problem));
         }
     }
 
