@@ -17,7 +17,8 @@ namespace OGE {
         VALIDATE_IPV6,          // Проверить корректность IPv6
         SUBNET_MASK,            // Задачи на маску подсети
         IP_CLASS,               // Определить класс IP-адреса
-        BROADCAST_ADDRESS       // Найти broadcast-адрес
+        BROADCAST_ADDRESS,       // Найти broadcast-адрес
+        INVERT_BITS
     };
 
     class IPAddressProblem : public ProblemBase {
@@ -90,6 +91,7 @@ namespace OGE {
         void generate_subnet_mask_task(const GenerationConfig& config);
         void generate_ip_class_task(const GenerationConfig& config);
         void generate_broadcast_task(const GenerationConfig& config);
+        void generate_invert_bits_task(const GenerationConfig& config);
 
     public:
         explicit IPAddressProblem(const ProblemMeta& meta);

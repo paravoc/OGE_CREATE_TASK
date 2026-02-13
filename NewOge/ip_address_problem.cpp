@@ -1,5 +1,6 @@
 ﻿// ip_address_problem.cpp
 #include "ip_address_problem.h"
+#include<bitset>
 #include <algorithm>
 #include <sstream>
 #include <regex>
@@ -814,6 +815,10 @@ namespace OGE {
             task_type = IPTaskType::BROADCAST_ADDRESS;
             generate_broadcast_task(config);
         }
+        else if (task_type_str == "invert_bits") {
+            task_type = IPTaskType::INVERT_BITS;
+            generate_invert_bits_task(config);
+        }
 
         // Подсказка
         std::stringstream hint_ss;
@@ -917,6 +922,77 @@ namespace OGE {
 
     const PageSettings& IPAddressProblem::get_page_settings() const {
         return page_settings;
+    }
+    void IPAddressProblem::generate_invert_bits_task(const GenerationConfig& config) {
+        auto& gen = get_random_generator();
+
+        // Генерируем случайный IP
+        std::uniform_int_distribution<> dis_octet(0, 255);
+        int o1 = dis_octet(gen);
+        int o2 = dis_octet(gen);
+        int o3 = dis_octet(gen);
+        int o4 = dis_octet(gen);
+
+        std::stringstream original_ss;
+        original_ss << o1 << "." << o2 << "." << o3 << "." << o4;
+        std::string original_ip = original_ss.str();
+
+        // Инвертируем биты (0→255, 1→254, ..., 255→0)
+        int inv_o1 = ~o1 & 0xFF;
+        int inv_o2 = ~o2 & 0xFF;
+        int inv_o3 = ~o3 & 0xFF;
+        int inv_o4 = ~o4 & 0xFF;
+
+        std::stringstream inverted_ss;
+        inverted_ss << inv_o1 << "." << inv_o2 << "." << inv_o3 << "." << inv_o4;
+        std::string inverted_ip = inverted_ss.str();
+
+        // Формируем текст задачи
+        std::stringstream ss;
+        ss << "<div class='ip-invert'>";
+        ss << "<h3>Задача #" << meta.problem_number << ": " << meta.display_name << "</h3>";
+        ss << "<p class='problem-text'>IP-адрес зашифровали: в двоичной записи каждого числа заменили все 1 на 0, а все 0 на 1.</p>";
+        ss << "<p>Исходный адрес: <strong>" << original_ip << "</strong></p>";
+        ss << "<p>Напишите получившийся IP-адрес.</p>";
+        ss << "<p class='score'>Баллов: " << score << "</p>";
+        ss << "</div>";
+
+        problem_text = ss.str();
+        correct_answer = inverted_ip;
+
+        // Решение
+        std::stringstream sol;
+        sol << "<div class='solution'>";
+        sol << "<h4>Решение:</h4>";
+
+        // Показываем двоичное представление
+        sol << "<p>Переведем каждый октет в двоичную систему и инвертируем биты:</p>";
+        sol << "<table border='1' cellpadding='5' style='border-collapse: collapse;'>";
+        sol << "<tr><th>Октет</th><th>Десятичное</th><th>Двоичное</th><th>Инвертированное</th><th>Результат</th></tr>";
+
+        auto add_row = [&](int original, int inverted, const std::string& name) {
+            std::bitset<8> orig_bits(original);
+            std::bitset<8> inv_bits(inverted);
+
+            sol << "<tr>";
+            sol << "<td>" << name << "</td>";
+            sol << "<td>" << original << "</td>";
+            sol << "<td>" << orig_bits.to_string() << "</td>";
+            sol << "<td>" << inv_bits.to_string() << "</td>";
+            sol << "<td>" << inverted << "</td>";
+            sol << "</tr>";
+            };
+
+        add_row(o1, inv_o1, "Первый");
+        add_row(o2, inv_o2, "Второй");
+        add_row(o3, inv_o3, "Третий");
+        add_row(o4, inv_o4, "Четвертый");
+
+        sol << "</table>";
+        sol << "<p><strong>Ответ:</strong> " << inverted_ip << "</p>";
+        sol << "</div>";
+
+        solution = sol.str();
     }
 
 }

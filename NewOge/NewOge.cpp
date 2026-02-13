@@ -58,7 +58,11 @@ int main() {
         // 7. Broadcast-адрес
         {"broadcast", Difficulty::EASY},
         {"broadcast", Difficulty::MEDIUM},
-        {"broadcast", Difficulty::HARD}
+        {"broadcast", Difficulty::HARD},
+
+        {"invert_bits", Difficulty::EASY},
+        {"invert_bits", Difficulty::MEDIUM},
+        {"invert_bits", Difficulty::HARD}
     };
 
     int num = 1;
