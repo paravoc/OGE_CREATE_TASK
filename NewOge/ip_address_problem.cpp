@@ -153,75 +153,63 @@ namespace OGE {
         auto& gen = get_random_generator();
 
         // Генерируем 4 случайных числа от 0 до 255
-        std::uniform_int_distribution<> dis_octet(0, 255);
+        std::uniform_int_distribution<> dis_octet(0, 25);
         int o1 = dis_octet(gen);
         int o2 = dis_octet(gen);
-        int o3 = dis_octet(gen);
-        int o4 = dis_octet(gen);
+
+        std::uniform_int_distribution<> dis_octet1(0, 255);
+
+        int o3 = dis_octet1(gen);
+
+        int o4 = dis_octet1(gen);
 
         // Сохраняем оригинальный IP для решения
         std::stringstream ip_ss;
         ip_ss << o1 << "." << o2 << "." << o3 << "." << o4;
         original_ip = ip_ss.str();
 
-        // Создаем 4 части в формате как на фото:
-        // .33  | 3.232 | 3.20 | 23
-        std::vector<std::string> parts = {
-            "." + std::to_string(o1),                          // .175
-            std::to_string(o2).substr(0, 1) + "." + std::to_string(o3), // 3.144 (берем первую цифру от o2)
-            std::to_string(o3).substr(0, 1) + "." + std::to_string(o4).substr(0, 2), // 1.44 (первая цифра o3 + первые две o4)
-            std::to_string(o4)                                   // 141
+        // Преобразуем в строки
+        std::string s1 = std::to_string(o1);
+        std::string s2 = std::to_string(o2);
+        std::string s3 = std::to_string(o3);
+        std::string s4 = std::to_string(o4);
+
+        // вот тут исправить !
+        std::vector<std::pair<std::string, int>> parts_with_pos = {
+            {"." + s1, 1},                          // .199 - позиция 1 (для 1-го октета)
+            {s2.substr(0, 1) + "." + s3, 2},        // 1.159? - позиция 2 (для 2-го октета)
+            {s3.substr(0, 1) + "." + s4.substr(0, std::min(2, (int)s4.length())), 3}, // 4.16 - позиция 3 (для 3-го октета)
+            {s4, 4}                                  // 162 - позиция 4 (для 4-го октета)
         };
 
-        // Корректируем, чтобы все части были уникальными и в правильном формате
-        // Часть 1: .XX (всегда 3 символа: точка + 2 цифры)
-        if (o1 < 10) {
-            parts[0] = ".0" + std::to_string(o1);
+        // Проверяем уникальность
+        for (size_t i = 0; i < parts_with_pos.size(); i++) {
+            for (size_t j = i + 1; j < parts_with_pos.size(); j++) {
+                if (parts_with_pos[i].first == parts_with_pos[j].first) {
+                    // Если есть дубликаты, генерируем заново
+                    generate_restore_ipv4_task(config);
+                    return;
+                }
+            }
         }
-        else if (o1 < 100) {
-            parts[0] = "." + std::to_string(o1);
-        }
-        else {
-            parts[0] = "." + std::to_string(o1); // .175
-        }
 
-        // Часть 2: X.YYY (цифра.три цифры)
-        std::string o2_str = std::to_string(o2);
-        std::string o3_str = std::to_string(o3);
-        parts[1] = o2_str.substr(0, 1) + "." + o3_str;
-
-        // Часть 3: X.YY (цифра.две цифры)
-        std::string o3_first = o3_str.substr(0, 1);
-        std::string o4_str = std::to_string(o4);
-        std::string o4_first_two = o4_str.substr(0, std::min(2, (int)o4_str.length()));
-        parts[2] = o3_first + "." + o4_first_two;
-
-        // Часть 4: XXX (три цифры или меньше)
-        parts[3] = o4_str;
-
-        // Перемешиваем части
-        std::shuffle(parts.begin(), parts.end(), gen);
+        // Перемешиваем части для отображения
+        std::shuffle(parts_with_pos.begin(), parts_with_pos.end(), gen);
 
         // Присваиваем буквы А, Б, В, Г
         shuffled_parts.clear();
         char letter = 'А';
-        for (const auto& part : parts) {
-            shuffled_parts.push_back({ letter++, part });
+        for (const auto& part : parts_with_pos) {
+            shuffled_parts.push_back({ letter++, part.first });
         }
 
-        // Находим правильную последовательность букв
-        std::vector<std::string> correct_order = {
-            "." + std::to_string(o1),
-            std::to_string(o2).substr(0, 1) + "." + std::to_string(o3),
-            std::to_string(o3).substr(0, 1) + "." + std::to_string(o4).substr(0, std::min(2, (int)std::to_string(o4).length())),
-            std::to_string(o4)
-        };
-
+        // Находим правильную последовательность букв по позициям 1,2,3,4
         correct_sequence.clear();
-        for (const auto& target : correct_order) {
-            for (const auto& part : shuffled_parts) {
-                if (part.second == target) {
-                    correct_sequence += part.first;
+        for (int pos = 1; pos <= 4; pos++) {
+            for (size_t i = 0; i < parts_with_pos.size(); i++) {
+                if (parts_with_pos[i].second == pos) {
+                    char part_letter = 'А' + i;
+                    correct_sequence += part_letter;
                     break;
                 }
             }
@@ -253,25 +241,37 @@ namespace OGE {
         sol << "<h4>Решение:</h4>";
         sol << "<p>Правильный IP-адрес: <strong>" << original_ip << "</strong></p>";
         sol << "<table border='1' cellpadding='5' style='border-collapse: collapse; margin-top: 10px;'>";
-        sol << "<tr><th>Позиция</th><th>Часть</th><th>Буква</th></tr>";
+        sol << "<tr><th>Позиция</th><th>Октет</th><th>Часть</th><th>Буква</th></tr>";
 
-        std::vector<std::string> display_order = {
-            std::to_string(o1),
-            std::to_string(o2),
-            std::to_string(o3),
-            std::to_string(o4)
-        };
+        for (int pos = 1; pos <= 4; pos++) {
+            // Находим часть для этой позиции
+            std::string part_str;
+            for (const auto& part : parts_with_pos) {
+                if (part.second == pos) {
+                    part_str = part.first;
+                    break;
+                }
+            }
 
-        for (size_t i = 0; i < correct_order.size(); i++) {
+            // Находим букву
             char found_letter = '?';
             for (const auto& part : shuffled_parts) {
-                if (part.second == correct_order[i]) {
+                if (part.second == part_str) {
                     found_letter = part.first;
                     break;
                 }
             }
-            sol << "<tr><td>" << (i + 1) << " (" << display_order[i] << ")</td><td>"
-                << correct_order[i] << "</td><td><strong>" << found_letter << "</strong></td></tr>";
+
+            std::string octet_str;
+            switch (pos) {
+            case 1: octet_str = std::to_string(o1); break;
+            case 2: octet_str = std::to_string(o2); break;
+            case 3: octet_str = std::to_string(o3); break;
+            case 4: octet_str = std::to_string(o4); break;
+            }
+
+            sol << "<tr><td>" << pos << "</td><td>" << octet_str
+                << "</td><td>" << part_str << "</td><td><strong>" << found_letter << "</strong></td></tr>";
         }
 
         sol << "</table>";
@@ -279,9 +279,7 @@ namespace OGE {
         sol << "</div>";
 
         solution = sol.str();
-    }
-    // ============== ЗАДАЧА 2: ВАЛИДАЦИЯ IPv4 ==============
-    void IPAddressProblem::generate_validate_ipv4_task(const GenerationConfig& config) {
+    }    void IPAddressProblem::generate_validate_ipv4_task(const GenerationConfig& config) {
         auto& gen = get_random_generator();
 
         // Генерируем 5 вариантов IPv4
