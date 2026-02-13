@@ -581,7 +581,7 @@ namespace OGE {
             break;
         case Difficulty::HARD:
             min_base = 2;
-            max_base = 16;
+            max_base = 36;
             min_value = 10000;
             max_value = 100000;
             score = 20;

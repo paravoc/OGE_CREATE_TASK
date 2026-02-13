@@ -57,6 +57,9 @@
     <ClCompile Include="filesystem_problem.cpp">
       <Filter>Исходные файлы\src</Filter>
     </ClCompile>
+    <ClCompile Include="ip_address_problem.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h">
@@ -81,6 +84,9 @@
       <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
     <ClInclude Include="filesystem_problem.h">
+      <Filter>Исходные файлы\include\проблемы</Filter>
+    </ClInclude>
+    <ClInclude Include="ip_address_problem.h">
       <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
   </ItemGroup>

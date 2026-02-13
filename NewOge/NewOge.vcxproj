@@ -128,6 +128,7 @@
     <ClCompile Include="decimal_problem.cpp" />
     <ClCompile Include="filesystem_problem.cpp" />
     <ClCompile Include="html_generator.cpp" />
+    <ClCompile Include="ip_address_problem.cpp" />
     <ClCompile Include="math_problem.cpp" />
     <ClCompile Include="NewOge.cpp" />
     <ClCompile Include="num_system_problem.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="decimal_problem.h" />
     <ClInclude Include="filesystem_problem.h" />
     <ClInclude Include="html_generator.h" />
+    <ClInclude Include="ip_address_problem.h" />
     <ClInclude Include="math_problem.h" />
     <ClInclude Include="num_system_problem.h" />
     <ClInclude Include="page_setting.h" />
