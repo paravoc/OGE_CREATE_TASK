@@ -1,0 +1,18 @@
+/* timer.css - Стили таймера */
+.timer {
+    position: sticky;
+    top: 20px;
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    z-index: 100;
+}
+
+body.dark-mode .timer {
+    background: #2d2d2d;
+}

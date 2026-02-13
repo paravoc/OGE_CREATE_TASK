@@ -1,0 +1,49 @@
+/* forms.css - Стили форм и кнопок */
+input[type="text"] {
+    width: calc(100% - 110px);
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-right: 10px;
+    background: #ffffff;
+    color: #333333;
+    transition: border-color 0.3s ease;
+}
+
+body.dark-mode input[type="text"] {
+    background: #3d3d3d;
+    color: #ffffff;
+    border-color: #555;
+}
+
+input[type="text"].correct {
+    border-color: #4CAF50 !important;
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+input[type="text"].incorrect {
+    border-color: #f44336 !important;
+    background-color: rgba(244, 67, 54, 0.1);
+}
+
+button {
+    padding: 10px 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #45a049;
+}
+
+@media (max-width: 768px) {
+    input[type="text"] {
+        width: calc(100% - 90px);
+    }
+}

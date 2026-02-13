@@ -1,0 +1,52 @@
+/* feedback.css - Стили для обратной связи */
+.score {
+    display: inline-block;
+    padding: 5px 10px;
+    background: #ff9800;
+    color: white;
+    border-radius: 3px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.answer-feedback {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.answer-feedback.correct {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+}
+
+.answer-feedback.incorrect {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid #f44336;
+}
+
+.result-feedback {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+}
+
+.result-feedback.show {
+    display: block;
+}
+
+.result-feedback.correct {
+    background-color: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+}
+
+.result-feedback.incorrect {
+    background-color: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid #f44336;
+}

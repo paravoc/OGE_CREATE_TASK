@@ -18,8 +18,15 @@ int main() {
     PageSettings settings;
 
     // 2. Выбираем какие задачи и сколько
-    settings.problem_numbers["math"] = 70000;      // 3 математические задачи
+    settings.problem_numbers["math"] = 7;      // 3 математические задачи
     settings.problem_numbers["decimal"] = 2;   // 2 задачи с десятичными дробями
+    /*settings.timer_mode = TimerMode::COUNT_DOWN;
+    settings.timer_seconds = 100;*/
+    settings.solution_access = AccessLevel::FULL_ACCESS;
+    settings.show_hints = false;
+    settings.show_progress_bar = true;
+
+
 
 
     // 3. Настройки сложности
@@ -69,7 +76,7 @@ int main() {
     string html = generator.generate_full_page();
 
     // 7. Сохраняем в файл
-    string filename = "variant_oge.html";
+    string filename = "web/variant_oge.html";
     generator.save_to_file(filename);
 
     cout << "Готово! Страница сохранена в файл: " << filename << endl;

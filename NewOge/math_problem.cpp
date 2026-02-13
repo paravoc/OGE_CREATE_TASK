@@ -30,9 +30,9 @@ namespace OGE {
 
         int max_num = 20;
         switch (config.difficulty) {
-        case Difficulty::EASY: max_num = 10; score = 5; break;
-        case Difficulty::MEDIUM: max_num = 50; score = 10; break;
-        case Difficulty::HARD: max_num = 100; score = 15; break;
+        case Difficulty::EASY: max_num = 1000; score = 5; break;
+        case Difficulty::MEDIUM: max_num = 5000; score = 10; break;
+        case Difficulty::HARD: max_num = 100000; score = 15; break;
         default: max_num = 30; score = 10; break;
         }
 
@@ -98,42 +98,40 @@ namespace OGE {
     }
 
     std::string MathProblem::generate_html() const {
-    std::string html;
-    html.reserve(512);  // Предварительное выделение памяти
-    
-    // Ручная конкатенация без stringstream
-    html += "<div class='problem-wrapper' data-problem-id='";
-    html += unique_id;
-    html += "'>\n    ";
-    html += problem_text;
-    html += "\n    <div class='answer-area'>\n        <input type='text' id='answer-";
-    html += unique_id;
-    html += "' placeholder='Ваш ответ' data-problem-id='";
-    html += unique_id;
-    html += "'>\n        <button onclick='checkAnswer(\"";
-    html += unique_id;
-    html += "\", \"";
-    html += correct_answer;
-    html += "\", ";
-    html += std::to_string(score);
-    html += ")'>\n            Проверить\n        </button>\n    </div>\n";
-    
-    if (page_settings.can_view_solutions()) {
-        html += "    <div class='solution-wrapper'>\n        ";
-        html += solution;
-        html += "\n    </div>\n";
+        std::string html;
+        html.reserve(512);
+
+        html += "<div class='problem-wrapper' data-problem-id='";
+        html += unique_id;
+        html += "'>\n    ";
+        html += problem_text;
+        html += "\n    <div class='answer-area'>\n        <input type='text' id='";
+        html += unique_id;  // ID инпута = unique_id, а не answer-math_id
+        html += "' placeholder='Ваш ответ' data-correct-answer='";
+        html += correct_answer;
+        html += "' data-score='";
+        html += std::to_string(score);
+        html += "'>\n        <button onclick='checkAnswer(\"";
+        html += unique_id;
+        html += "\")'>\n            Проверить\n        </button>\n    </div>\n";
+
+        if (page_settings.can_view_solutions()) {
+            html += "    <div class='solution-wrapper'>\n        ";
+            html += solution;
+            html += "\n    </div>\n";
+        }
+
+        if (page_settings.show_hints) {
+            html += "    <div class='hint-wrapper'>\n        ";
+            html += hint;
+            html += "\n    </div>\n";
+        }
+
+        html += "</div>";
+
+        return html;
     }
-    
-    if (page_settings.show_hints) {
-        html += "    <div class='hint-wrapper'>\n        ";
-        html += hint;
-        html += "\n    </div>\n";
-    }
-    
-    html += "</div>";
-    
-    return html;
-}
+
 
     bool MathProblem::check_answer(const std::string& user_answer) const {
         return user_answer == correct_answer;

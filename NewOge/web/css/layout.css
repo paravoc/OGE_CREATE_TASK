@@ -1,0 +1,26 @@
+/* layout.css - Макет страницы */
+.header {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 30px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .header {
+    background: #2d2d2d;
+}
+
+.problems-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .problems-grid {
+        grid-template-columns: 1fr;
+    }
+}

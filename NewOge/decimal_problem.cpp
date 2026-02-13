@@ -216,16 +216,17 @@ namespace OGE {
         std::stringstream html;
 
         html << R"(
-        <div class='problem-wrapper decimal-wrapper' data-problem-id=')" << unique_id << R"('>
+        <div class='problem-wrapper' data-problem-id=')" << unique_id << R"('>
             
             )" << problem_text << R"(
             
             <div class='answer-area'>
-                <input type='text' id='answer-)" << unique_id << R"(' 
-                       placeholder='Введите десятичную дробь' 
-                       data-problem-id=')" << unique_id << R"('>
-                <button onclick='checkDecimalAnswer(")" << unique_id << R"(", ")"
-            << correct_answer << R"(", )" << score << R"()'>
+                <input type='text' id=')" << unique_id << R"(' 
+                       placeholder='Введите десятичную дробь'
+                       data-correct-answer=')" << correct_answer << R"('
+                       data-score=')" << score << R"('
+                       data-decimal-places=')" << decimal_places << R"('>
+                <button onclick='checkDecimalAnswer(")" << unique_id << R"(")'>
                     Проверить
                 </button>
             </div>
@@ -236,7 +237,7 @@ namespace OGE {
             <div class='solution-wrapper'>
                 )" << solution << R"(
             </div>
-            )";
+        )";
         }
 
         if (page_settings.show_hints) {
@@ -244,12 +245,12 @@ namespace OGE {
             <div class='hint-wrapper'>
                 )" << hint << R"(
             </div>
-            )";
+        )";
         }
 
         html << R"(
         </div>
-        )";
+    )";
 
         return html.str();
     }
