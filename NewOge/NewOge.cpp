@@ -4,6 +4,7 @@
 #include "html_generator.h"
 #include<chrono>
 #include <iostream>
+#include"num_system_problem.h"
 
 using namespace OGE;
 using namespace std;
@@ -25,7 +26,7 @@ int main() {
     settings.solution_access = AccessLevel::FULL_ACCESS;
     settings.show_hints = true;
     settings.show_progress_bar = true;
-    settings.dark_mode = true;
+    settings.dark_mode = false;
 
 
 
@@ -41,41 +42,38 @@ int main() {
     // 5. Создаем и генерируем задачи
     cout << "Генерация задач..." << endl;
 
-    // Математические задачи
-    for (int i = 0; i < settings.problem_numbers["math"]; i++) {
+    settings.problem_numbers["numsys"] = 3;    // 3 задачи на системы счисления
+
+    // 2. После задач с десятичными дробями добавьте генерацию задач на СС:
+
+    // Задачи на системы счисления
+    for (int i = 0; i < settings.problem_numbers["numsys"]; i++) {
         ProblemMeta meta;
-        meta.type_id = "math";
-        meta.display_name = "Арифметика";
-        meta.problem_number = i + 1;
-        meta.default_score = 10;
-        meta.is_active = true;
-        
-
-        auto problem = make_unique<MathProblem>(meta);
-        problem->set_page_settings(settings);
-
-        problem->generate(config);
-        generator.add_problem(move(problem));
-
-        //cout << "  + Математическая задача #" << i + 1 << " сгенерирована" << endl;
-    }
-
-    // Задачи с десятичными дробями
-    for (int i = 0; i < settings.problem_numbers["decimal"]; i++) {
-        ProblemMeta meta;
-        meta.type_id = "decimal";
-        meta.display_name = "Десятичные дроби";
+        meta.type_id = "numsys";
+        meta.display_name = "Системы счисления";
         meta.problem_number = i + 1;
         meta.default_score = 15;
         meta.is_active = true;
 
-        auto problem = make_unique<DecimalProblem>(meta);
+        auto problem = make_unique<NumSystemProblem>(meta);
         problem->set_page_settings(settings);
+
+        // Можно настроить тип конверсии через custom_params
+        GenerationConfig config;
+        config.difficulty = Difficulty::MEDIUM;
+
+        // Чередуем типы задач
+        if (i % 2 == 0) {
+            config.custom_params["conversion_direction"] = "to_decimal";  // в десятичную
+        }
+        else {
+            config.custom_params["conversion_direction"] = "from_decimal"; // из десятичной
+        }
+
         problem->generate(config);
         generator.add_problem(move(problem));
-
-        //cout << "  + Задача с десятичными дробями #" << i + 1 << " сгенерирована" << endl;
     }
+
 
     // 6. Генерируем HTML страницу
     cout << "\nСоздание HTML страницы..." << endl;

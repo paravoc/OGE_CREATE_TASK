@@ -129,6 +129,7 @@
     <ClCompile Include="html_generator.cpp" />
     <ClCompile Include="math_problem.cpp" />
     <ClCompile Include="NewOge.cpp" />
+    <ClCompile Include="num_system_problem.cpp" />
     <ClCompile Include="page_settings.cpp" />
     <ClCompile Include="problem_base.cpp" />
   </ItemGroup>
@@ -137,6 +138,7 @@
     <ClInclude Include="decimal_problem.h" />
     <ClInclude Include="html_generator.h" />
     <ClInclude Include="math_problem.h" />
+    <ClInclude Include="num_system_problem.h" />
     <ClInclude Include="page_setting.h" />
     <ClInclude Include="problem_base.h" />
   </ItemGroup>

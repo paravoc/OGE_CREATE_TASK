@@ -51,6 +51,9 @@
     <ClCompile Include="html_generator.cpp">
       <Filter>Исходные файлы\src</Filter>
     </ClCompile>
+    <ClCompile Include="num_system_problem.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h">
@@ -69,6 +72,9 @@
       <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
     <ClInclude Include="decimal_problem.h">
+      <Filter>Исходные файлы\include\проблемы</Filter>
+    </ClInclude>
+    <ClInclude Include="num_system_problem.h">
       <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
   </ItemGroup>

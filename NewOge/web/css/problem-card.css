@@ -38,3 +38,59 @@ body.dark-mode .solution-wrapper,
 body.dark-mode .hint-wrapper {
     background: #3d3d3d;
 }
+
+
+
+
+/* Стили для задач на системы счисления */
+.num-system-problem {
+    padding: 15px;
+}
+
+    .num-system-problem .problem-text {
+        font-size: 1.2em;
+        line-height: 1.6;
+    }
+
+    .num-system-problem sub {
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    .num-system-problem sup {
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    .num-system-problem .solution {
+        background: #f0f0f0;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+
+        .num-system-problem .solution p {
+            margin: 5px 0;
+            font-family: monospace;
+        }
+
+    .num-system-problem .hint-section details {
+        margin-top: 10px;
+        padding: 10px;
+        background: #e8f4f8;
+        border-radius: 5px;
+    }
+
+    .num-system-problem .hint-section summary {
+        cursor: pointer;
+        color: #0066cc;
+        font-weight: 500;
+    }
+
+.dark-mode .num-system-problem .solution {
+    background: #3d3d3d;
+}
+
+.dark-mode .num-system-problem .hint-section details {
+    background: #2d2d2d;
+}
