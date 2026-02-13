@@ -1,5 +1,5 @@
-// handlers.js - РћР±СЂР°Р±РѕС‚С‡РёРєРё РґР»СЏ СЂР°Р·РЅС‹С… С‚РёРїРѕРІ Р·Р°РґР°С‡
-// Р’РђР–РќРћ: Р¤СѓРЅРєС†РёРё РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ РІ РіР»РѕР±Р°Р»СЊРЅРѕР№ РѕР±Р»Р°СЃС‚Рё РІРёРґРёРјРѕСЃС‚Рё!
+// handlers.js - Обработчики для разных типов задач
+// ВАЖНО: Функции должны быть в глобальной области видимости!
 
 window.checkAnswer = function(problemId) {
     const input = document.getElementById(problemId);
@@ -8,7 +8,7 @@ window.checkAnswer = function(problemId) {
         return;
     }
     
-    // РџСЂРѕРІРµСЂСЏРµРј, РѕС‚РІРµС‡Р°Р»Рё Р»Рё СѓР¶Рµ
+    // Проверяем, отвечали ли уже
     if (input.dataset.answered === 'true') {
         return;
     }
@@ -21,13 +21,13 @@ window.checkAnswer = function(problemId) {
     const feedback = Utils.getOrCreateFeedback(problemId, input.parentNode);
     
     if (isCorrect) {
-        feedback.textContent = 'вњ… +' + score + ' Р±Р°Р»Р»РѕРІ';
+        feedback.textContent = '? +' + score + ' баллов';
         feedback.className = 'answer-feedback correct';
         input.classList.add('correct');
         input.style.borderColor = '#4CAF50';
         ProgressManager.incrementCorrect();
     } else {
-        feedback.textContent = 'вќЊ РџСЂР°РІРёР»СЊРЅРѕ: ' + correctAnswer;
+        feedback.textContent = '? Правильно: ' + correctAnswer;
         feedback.className = 'answer-feedback incorrect';
         input.classList.add('incorrect');
         input.style.borderColor = '#f44336';
@@ -44,7 +44,7 @@ window.checkDecimalAnswer = function(problemId) {
         return;
     }
     
-    // РџСЂРѕРІРµСЂСЏРµРј, РѕС‚РІРµС‡Р°Р»Рё Р»Рё СѓР¶Рµ
+    // Проверяем, отвечали ли уже
     if (input.dataset.answered === 'true') {
         return;
     }
@@ -58,13 +58,13 @@ window.checkDecimalAnswer = function(problemId) {
     const feedback = Utils.getOrCreateFeedback(problemId, input.parentNode);
     
     if (isCorrect) {
-        feedback.textContent = 'вњ… +' + score + ' Р±Р°Р»Р»РѕРІ';
+        feedback.textContent = '? +' + score + ' баллов';
         feedback.className = 'answer-feedback correct';
         input.classList.add('correct');
         input.style.borderColor = '#4CAF50';
         ProgressManager.incrementCorrect();
     } else {
-        feedback.textContent = 'вќЊ РџСЂР°РІРёР»СЊРЅРѕ: ' + correctAnswer;
+        feedback.textContent = '? Правильно: ' + correctAnswer;
         feedback.className = 'answer-feedback incorrect';
         input.classList.add('incorrect');
         input.style.borderColor = '#f44336';
