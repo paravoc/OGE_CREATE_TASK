@@ -1,10 +1,10 @@
-// math_problem.cpp
+п»ї// math_problem.cpp
 #include "math_problem.h"
 
 namespace OGE {
 
     std::mt19937& MathProblem::get_random_generator() {
-        // Инициализация при первом вызове, можно обработать ошибки
+        // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїСЂРё РїРµСЂРІРѕРј РІС‹Р·РѕРІРµ, РјРѕР¶РЅРѕ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ РѕС€РёР±РєРё
         static std::random_device rd;
         static std::mt19937 gen(rd());
         return gen;
@@ -64,29 +64,29 @@ namespace OGE {
 
         std::stringstream ss;
         ss << "<div class='math-problem'>";
-        ss << "<h3>Задача #" << meta.problem_number << ": " << meta.display_name << "</h3>";
-        ss << "<p class='problem-text'>Решите пример: <strong>"
+        ss << "<h3>Р—Р°РґР°С‡Р° #" << meta.problem_number << ": " << meta.display_name << "</h3>";
+        ss << "<p class='problem-text'>Р РµС€РёС‚Рµ РїСЂРёРјРµСЂ: <strong>"
             << operand1 << " " << operation << " " << operand2 << " = ?</strong></p>";
-        ss << "<p class='score'>Баллов: " << score << "</p>";
+        ss << "<p class='score'>Р‘Р°Р»Р»РѕРІ: " << score << "</p>";
         ss << "</div>";
 
         problem_text = ss.str();
 
         ss.str("");
         ss << "<div class='solution'>";
-        ss << "<h4>Решение:</h4>";
+        ss << "<h4>Р РµС€РµРЅРёРµ:</h4>";
         ss << "<p>" << operand1 << " " << operation << " " << operand2 << " = " << correct_answer << "</p>";
         ss << "</div>";
         solution = ss.str();
 
         ss.str("");
         ss << "<div class='hint'>";
-        ss << "<h4>Подсказка:</h4>";
+        ss << "<h4>РџРѕРґСЃРєР°Р·РєР°:</h4>";
         ss << "<p>";
-        if (operation == '+') ss << "Сложите два числа";
-        else if (operation == '-') ss << "Вычтите из первого числа второе";
-        else if (operation == '*') ss << "Умножьте числа";
-        else if (operation == '/') ss << "Разделите первое число на второе";
+        if (operation == '+') ss << "РЎР»РѕР¶РёС‚Рµ РґРІР° С‡РёСЃР»Р°";
+        else if (operation == '-') ss << "Р’С‹С‡С‚РёС‚Рµ РёР· РїРµСЂРІРѕРіРѕ С‡РёСЃР»Р° РІС‚РѕСЂРѕРµ";
+        else if (operation == '*') ss << "РЈРјРЅРѕР¶СЊС‚Рµ С‡РёСЃР»Р°";
+        else if (operation == '/') ss << "Р Р°Р·РґРµР»РёС‚Рµ РїРµСЂРІРѕРµ С‡РёСЃР»Рѕ РЅР° РІС‚РѕСЂРѕРµ";
         ss << "</p>";
         ss << "</div>";
         hint = ss.str();
@@ -106,33 +106,37 @@ namespace OGE {
         html += "'>\n    ";
         html += problem_text;
         html += "\n    <div class='answer-area'>\n        <input type='text' id='";
-        html += unique_id;  // ID инпута = unique_id, а не answer-math_id
-        html += "' placeholder='Ваш ответ' data-correct-answer='";
+        html += unique_id;
+        html += "' placeholder='Р’Р°С€ РѕС‚РІРµС‚' data-correct-answer='";
         html += correct_answer;
         html += "' data-score='";
         html += std::to_string(score);
-        html += "'>\n        <button onclick='checkAnswer(\"";
+        html += "' data-answered='false'>\n        <button onclick='checkAnswer(\"";
         html += unique_id;
-        html += "\")'>\n            Проверить\n        </button>\n    </div>\n";
+        html += "\")'>\n            РџСЂРѕРІРµСЂРёС‚СЊ\n        </button>\n    </div>\n";
 
-        if (page_settings.can_view_solutions()) {
-            html += "    <div class='solution-wrapper'>\n        ";
+        // Р‘Р»РѕРє СЃ СЂРµС€РµРЅРёРµРј (РёР·РЅР°С‡Р°Р»СЊРЅРѕ СЃРєСЂС‹С‚)
+        if (get_page_settings().can_view_solutions()) {
+            html += "    <div class='solution-section'>\n";
+            html += "        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution(\"";
+            html += unique_id;
+            html += "\")'>\n";
+            html += "            рџ“љ РџРѕРєР°Р·Р°С‚СЊ СЂРµС€РµРЅРёРµ\n";
+            html += "        </button>\n";
+            html += "        <div id='solution-";
+            html += unique_id;
+            html += "' class='solution-content' style='display: none;'>\n";
+            html += "            ";
             html += solution;
-            html += "\n    </div>\n";
-        }
-
-        if (page_settings.show_hints) {
-            html += "    <div class='hint-wrapper'>\n        ";
-            html += hint;
-            html += "\n    </div>\n";
+            html += "\n";
+            html += "        </div>\n";
+            html += "    </div>\n";
         }
 
         html += "</div>";
 
         return html;
     }
-
-
     bool MathProblem::check_answer(const std::string& user_answer) const {
         return user_answer == correct_answer;
     }

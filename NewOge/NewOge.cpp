@@ -23,8 +23,9 @@ int main() {
     /*settings.timer_mode = TimerMode::COUNT_DOWN;
     settings.timer_seconds = 100;*/
     settings.solution_access = AccessLevel::FULL_ACCESS;
-    settings.show_hints = false;
+    settings.show_hints = true;
     settings.show_progress_bar = true;
+
 
 
 
@@ -47,8 +48,11 @@ int main() {
         meta.problem_number = i + 1;
         meta.default_score = 10;
         meta.is_active = true;
+        
 
         auto problem = make_unique<MathProblem>(meta);
+        problem->set_page_settings(settings);
+
         problem->generate(config);
         generator.add_problem(move(problem));
 
@@ -65,6 +69,7 @@ int main() {
         meta.is_active = true;
 
         auto problem = make_unique<DecimalProblem>(meta);
+        problem->set_page_settings(settings);
         problem->generate(config);
         generator.add_problem(move(problem));
 

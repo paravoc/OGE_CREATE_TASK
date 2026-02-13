@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Инициализация прогресса
     ProgressManager.init();
     
+    // Инициализация менеджера решений
+    // По умолчанию true, но может быть переопределено из C++
+    SolutionManager.init(window.CAN_VIEW_SOLUTIONS !== false);
+    
     // Настройка инпутов
     document.querySelectorAll('input[type="text"]').forEach(input => {
         // Устанавливаем флаг answered, если его нет

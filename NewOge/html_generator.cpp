@@ -21,6 +21,7 @@ namespace OGE {
         <link rel="stylesheet" href="css/forms.css">
         <link rel="stylesheet" href="css/progress.css">
         <link rel="stylesheet" href="css/feedback.css">
+        <link rel="stylesheet" href="css/solution.css"> 
     
 
         <style>
@@ -56,13 +57,18 @@ namespace OGE {
         stringstream js;
         js << R"(
         <!-- Подключаем внешний JavaScript -->
-                <!-- JavaScript - ВАЖЕН ПОРЯДОК! -->
                 <script src="js/config.js"></script>
-                <script src="js/utils.js"></script>
-                <script src="js/progress.js"></script>
-                <script src="js/checkers.js"></script>
-                <script src="js/handlers.js"></script>
-                <script src="js/init.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/progress.js"></script>
+        <script src="js/checkers.js"></script>
+        <script src="js/solution.js"></script>
+        <script src="js/handlers.js"></script>
+        <script src="js/init.js"></script>
+
+         <!-- Передаем параметры из C++ в JavaScript -->
+                <script>
+                    window.CAN_VIEW_SOLUTIONS = )" << (page_settings.can_view_solutions() ? "true" : "false") << R"(;
+                </script>
     )";
         return js.str();
     }

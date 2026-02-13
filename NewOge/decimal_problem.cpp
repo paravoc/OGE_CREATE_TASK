@@ -1,10 +1,12 @@
-// decimal_problem.cpp
+п»ї// decimal_problem.cpp
 #include "decimal_problem.h"
 #include <cmath>
+#include<iostream>
+using namespace std;
 
 namespace OGE {
 
-    // Конструкторы
+    // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹
     DecimalProblem::DecimalProblem(const ProblemMeta& meta)
         : ProblemBase(meta), DatabaseManager(),
         operand1(0.0), operand2(0.0), operation('+'), decimal_places(1) {
@@ -23,12 +25,12 @@ namespace OGE {
         close();
     }
 
-    // Генерация задачи с десятичными дробями
+    // Р“РµРЅРµСЂР°С†РёСЏ Р·Р°РґР°С‡Рё СЃ РґРµСЃСЏС‚РёС‡РЅС‹РјРё РґСЂРѕР±СЏРјРё
     void DecimalProblem::generate(const GenerationConfig& config) {
         std::random_device rd;
         std::mt19937 gen(rd());
 
-        // Настройка сложности
+        // РќР°СЃС‚СЂРѕР№РєР° СЃР»РѕР¶РЅРѕСЃС‚Рё
         int max_num;
         switch (config.difficulty) {
         case Difficulty::EASY:
@@ -56,7 +58,7 @@ namespace OGE {
         std::uniform_int_distribution<> dis_dec(0, 9);
         std::uniform_int_distribution<> dis_op(0, 3);
 
-        // Генерация десятичных чисел
+        // Р“РµРЅРµСЂР°С†РёСЏ РґРµСЃСЏС‚РёС‡РЅС‹С… С‡РёСЃРµР»
         int int_part1 = dis_num(gen);
         int dec_part1 = dis_dec(gen);
         operand1 = int_part1 + static_cast<double>(dec_part1) / 10.0;
@@ -65,7 +67,7 @@ namespace OGE {
         int dec_part2 = dis_dec(gen);
         operand2 = int_part2 + static_cast<double>(dec_part2) / 10.0;
 
-        // Округление до нужного количества знаков
+        // РћРєСЂСѓРіР»РµРЅРёРµ РґРѕ РЅСѓР¶РЅРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° Р·РЅР°РєРѕРІ
         double multiplier = std::pow(10.0, decimal_places);
         operand1 = std::round(operand1 * multiplier) / multiplier;
         operand2 = std::round(operand2 * multiplier) / multiplier;
@@ -94,42 +96,42 @@ namespace OGE {
             break;
         }
 
-        // Округление ответа
+        // РћРєСЂСѓРіР»РµРЅРёРµ РѕС‚РІРµС‚Р°
         double answer = std::stod(correct_answer);
         answer = std::round(answer * multiplier) / multiplier;
         correct_answer = std::to_string(answer);
         correct_answer = correct_answer.substr(0, correct_answer.find('.') + decimal_places + 1);
 
-        // Текст задачи
+        // РўРµРєСЃС‚ Р·Р°РґР°С‡Рё
         ss.str("");
         ss << "<div class='decimal-problem'>";
-        ss << "<h3>Задача #" << meta.problem_number << ": " << meta.display_name << "</h3>";
-        ss << "<p class='problem-text'>Решите пример с десятичными дробями: <br>";
+        ss << "<h3>Р—Р°РґР°С‡Р° #" << meta.problem_number << ": " << meta.display_name << "</h3>";
+        ss << "<p class='problem-text'>Р РµС€РёС‚Рµ РїСЂРёРјРµСЂ СЃ РґРµСЃСЏС‚РёС‡РЅС‹РјРё РґСЂРѕР±СЏРјРё: <br>";
         ss << "<strong>" << std::fixed << std::setprecision(decimal_places)
             << operand1 << " " << operation << " " << operand2 << " = ?</strong></p>";
-        ss << "<p class='score'>Баллов: " << score << "</p>";
-        ss << "<p class='decimal-hint'>Ответ округлите до " << decimal_places << " знаков после запятой</p>";
+        ss << "<p class='score'>Р‘Р°Р»Р»РѕРІ: " << score << "</p>";
+        ss << "<p class='decimal-hint'>РћС‚РІРµС‚ РѕРєСЂСѓРіР»РёС‚Рµ РґРѕ " << decimal_places << " Р·РЅР°РєРѕРІ РїРѕСЃР»Рµ Р·Р°РїСЏС‚РѕР№</p>";
         ss << "</div>";
 
         problem_text = ss.str();
 
-        // Решение
+        // Р РµС€РµРЅРёРµ
         ss.str("");
-        ss << "<div class='solution'>";
-        ss << "<h4>Решение:</h4>";
+        ss << "<div class='solution'>";  
+        ss << "<h4>Р РµС€РµРЅРёРµ:</h4>";
         ss << "<p>" << std::fixed << std::setprecision(decimal_places)
             << operand1 << " " << operation << " " << operand2 << " = " << correct_answer << "</p>";
         ss << "</div>";
         solution = ss.str();
 
-        // Подсказка
+        // РџРѕРґСЃРєР°Р·РєР°
         ss.str("");
         ss << "<div class='hint'>";
-        ss << "<h4>Подсказка:</h4><p>";
-        if (operation == '+') ss << "Сложите числа, сохраняя десятичные разряды";
-        else if (operation == '-') ss << "Вычтите числа, сохраняя десятичные разряды";
-        else if (operation == '*') ss << "Умножьте числа и округлите результат";
-        else if (operation == '/') ss << "Разделите числа и округлите результат";
+        ss << "<h4>РџРѕРґСЃРєР°Р·РєР°:</h4><p>";
+        if (operation == '+') ss << "РЎР»РѕР¶РёС‚Рµ С‡РёСЃР»Р°, СЃРѕС…СЂР°РЅСЏСЏ РґРµСЃСЏС‚РёС‡РЅС‹Рµ СЂР°Р·СЂСЏРґС‹";
+        else if (operation == '-') ss << "Р’С‹С‡С‚РёС‚Рµ С‡РёСЃР»Р°, СЃРѕС…СЂР°РЅСЏСЏ РґРµСЃСЏС‚РёС‡РЅС‹Рµ СЂР°Р·СЂСЏРґС‹";
+        else if (operation == '*') ss << "РЈРјРЅРѕР¶СЊС‚Рµ С‡РёСЃР»Р° Рё РѕРєСЂСѓРіР»РёС‚Рµ СЂРµР·СѓР»СЊС‚Р°С‚";
+        else if (operation == '/') ss << "Р Р°Р·РґРµР»РёС‚Рµ С‡РёСЃР»Р° Рё РѕРєСЂСѓРіР»РёС‚Рµ СЂРµР·СѓР»СЊС‚Р°С‚";
         ss << "</p></div>";
         hint = ss.str();
 
@@ -215,46 +217,40 @@ namespace OGE {
     std::string DecimalProblem::generate_html() const {
         std::stringstream html;
 
-        html << R"(
-        <div class='problem-wrapper' data-problem-id=')" << unique_id << R"('>
-            
-            )" << problem_text << R"(
-            
-            <div class='answer-area'>
-                <input type='text' id=')" << unique_id << R"(' 
-                       placeholder='Введите десятичную дробь'
-                       data-correct-answer=')" << correct_answer << R"('
-                       data-score=')" << score << R"('
-                       data-decimal-places=')" << decimal_places << R"('>
-                <button onclick='checkDecimalAnswer(")" << unique_id << R"(")'>
-                    Проверить
-                </button>
-            </div>
-        )";
+        html << "\n        <div class='problem-wrapper' data-problem-id='" << unique_id << "'>\n";
+        html << "            \n";
+        html << "            " << problem_text << "\n";
+        html << "            \n";
+        html << "            <div class='answer-area'>\n";
+        html << "                <input type='text' id='" << unique_id << "' \n";
+        html << "                       placeholder='Р’РІРµРґРёС‚Рµ РґРµСЃСЏС‚РёС‡РЅСѓСЋ РґСЂРѕР±СЊ'\n";
+        html << "                       data-correct-answer='" << correct_answer << "'\n";
+        html << "                       data-score='" << score << "'\n";
+        html << "                       data-decimal-places='" << decimal_places << "'\n";
+        html << "                       data-answered='false'>\n";
+        html << "                <button onclick='checkDecimalAnswer(\"" << unique_id << "\")'>\n";
+        html << "                    РџСЂРѕРІРµСЂРёС‚СЊ\n";
+        html << "                </button>\n";
+        html << "            </div>\n";
 
-        if (page_settings.can_view_solutions()) {
-            html << R"(
-            <div class='solution-wrapper'>
-                )" << solution << R"(
-            </div>
-        )";
+        // Р‘Р»РѕРє СЃ СЂРµС€РµРЅРёРµРј (РёР·РЅР°С‡Р°Р»СЊРЅРѕ СЃРєСЂС‹С‚)
+        if (get_page_settings().can_view_solutions()) {
+            html << "            <div class='solution-section'>\n";
+            html << "                <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution(\"";
+            html << unique_id;
+            html << "\")'>\n";
+            html << "                    рџ“љ РџРѕРєР°Р·Р°С‚СЊ СЂРµС€РµРЅРёРµ\n";
+            html << "                </button>\n";
+            html << "                <div id='solution-" << unique_id << "' class='solution-content' style='display: none;'>\n";
+            html << "                    " << solution << "\n";
+            html << "                </div>\n";
+            html << "            </div>\n";
         }
 
-        if (page_settings.show_hints) {
-            html << R"(
-            <div class='hint-wrapper'>
-                )" << hint << R"(
-            </div>
-        )";
-        }
-
-        html << R"(
-        </div>
-    )";
+        html << "        </div>\n";
 
         return html.str();
     }
-
     bool DecimalProblem::check_answer(const std::string& user_answer) const {
         try {
             double user_val = std::stod(user_answer);
