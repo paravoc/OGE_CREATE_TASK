@@ -25,6 +25,7 @@ int main() {
     settings.solution_access = AccessLevel::FULL_ACCESS;
     settings.show_hints = true;
     settings.show_progress_bar = true;
+    settings.dark_mode = true;
 
 
 
