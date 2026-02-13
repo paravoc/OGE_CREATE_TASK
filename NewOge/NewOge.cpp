@@ -1,7 +1,6 @@
 ﻿// main.cpp
 #include "html_generator.h"
-#include "num_system_problem.h"
-#include "filesystem_problem.h"
+#include "ip_address_problem.h"
 #include <chrono>
 #include <iostream>
 #include <memory>
@@ -24,62 +23,54 @@ int main() {
     // СОЗДАЕМ ГЕНЕРАТОР
     HtmlGenerator generator(settings);
 
-    // ===== ЗАДАЧИ =====
-    // Системы счисления
-    vector<pair<string, Difficulty>> ns_tasks = {
-        {"conversion", Difficulty::EASY},
-        {"conversion", Difficulty::MEDIUM},
-        {"conversion", Difficulty::HARD},
-        {"comparison", Difficulty::EASY},
-        {"comparison", Difficulty::MEDIUM},
-        {"comparison", Difficulty::HARD},
-        {"equation", Difficulty::EASY},
-        {"equation", Difficulty::MEDIUM},
-        {"equation", Difficulty::HARD}
+    // ===== IP-АДРЕСА: 7 ТИПОВ ПО 3 УРОВНЯ СЛОЖНОСТИ =====
+    vector<pair<string, Difficulty>> ip_tasks = {
+        // 1. Восстановление IPv4
+        {"restore", Difficulty::EASY},
+        {"restore", Difficulty::MEDIUM},
+        {"restore", Difficulty::HARD},
+
+        // 2. Валидация IPv4
+        {"validate", Difficulty::EASY},
+        {"validate", Difficulty::MEDIUM},
+        {"validate", Difficulty::HARD},
+
+        // 3. В одной ли сети
+        {"same_network", Difficulty::EASY},
+        {"same_network", Difficulty::MEDIUM},
+        {"same_network", Difficulty::HARD},
+
+        // 4. Валидация IPv6
+        {"ipv6", Difficulty::EASY},
+        {"ipv6", Difficulty::MEDIUM},
+        {"ipv6", Difficulty::HARD},
+
+        // 5. Маска подсети
+        {"subnet_mask", Difficulty::EASY},
+        {"subnet_mask", Difficulty::MEDIUM},
+        {"subnet_mask", Difficulty::HARD},
+
+        // 6. Класс IP-адреса
+        {"ip_class", Difficulty::EASY},
+        {"ip_class", Difficulty::MEDIUM},
+        {"ip_class", Difficulty::HARD},
+
+        // 7. Broadcast-адрес
+        {"broadcast", Difficulty::EASY},
+        {"broadcast", Difficulty::MEDIUM},
+        {"broadcast", Difficulty::HARD}
     };
 
     int num = 1;
-    for (auto& task : ns_tasks) {
+    for (auto& task : ip_tasks) {
         ProblemMeta meta;
-        meta.type_id = "numsys";
-        meta.display_name = "Системы счисления";
+        meta.type_id = "ipaddress";
+        meta.display_name = "IP-адреса";
         meta.problem_number = num++;
         meta.default_score = 15;
         meta.is_active = true;
 
-        auto problem = make_unique<NumSystemProblem>(meta);
-        problem->set_page_settings(settings);
-
-        GenerationConfig config;
-        config.difficulty = task.second;
-        config.custom_params["task_type"] = task.first;
-        problem->generate(config);
-
-        generator.add_problem(move(problem));
-    }
-
-    // Файловая система
-    vector<pair<string, Difficulty>> fs_tasks = {
-        {"url", Difficulty::EASY},
-        {"url", Difficulty::MEDIUM},
-        {"url", Difficulty::HARD},
-        {"filepath", Difficulty::EASY},
-        {"filepath", Difficulty::MEDIUM},
-        {"filepath", Difficulty::HARD},
-        {"cd", Difficulty::EASY},
-        {"cd", Difficulty::MEDIUM},
-        {"cd", Difficulty::HARD}
-    };
-
-    for (auto& task : fs_tasks) {
-        ProblemMeta meta;
-        meta.type_id = "filesystem";
-        meta.display_name = "Файловая система";
-        meta.problem_number = num++;
-        meta.default_score = 15;
-        meta.is_active = true;
-
-        auto problem = make_unique<FilesystemProblem>(meta);
+        auto problem = make_unique<IPAddressProblem>(meta);
         problem->set_page_settings(settings);
 
         GenerationConfig config;
