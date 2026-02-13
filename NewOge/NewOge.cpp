@@ -81,8 +81,10 @@ int main() {
 
             auto problem = make_unique<NumSystemProblem>(meta);
             problem->set_page_settings(settings);
+            
 
             GenerationConfig ns_config = base_config;
+            ns_config.difficulty = Difficulty::HARD;
             ns_config.custom_params["task_type"] = task_types[type_idx];
 
             // Минимальные настройки для каждого типа

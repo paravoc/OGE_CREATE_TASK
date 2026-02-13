@@ -24,12 +24,7 @@ namespace OGE {
     };
 
     struct NumSystemConfig {
-        ConversionDirection direction = ConversionDirection::TO_DECIMAL;
-        NumSystemTaskType task_type = NumSystemTaskType::CONVERSION;
-        int min_base = 2;
-        int max_base = 16;
-        int min_value = 10;
-        int max_value = 10000;
+        
     };
 
     class NumSystemProblem : public ProblemBase {
@@ -37,14 +32,20 @@ namespace OGE {
         static PageSettings page_settings;
         static std::mt19937& get_random_generator();
 
+        ConversionDirection direction = ConversionDirection::TO_DECIMAL;
+        NumSystemTaskType task_type = NumSystemTaskType::CONVERSION;
+        int min_base = 2;
+        int max_base = 16;
+        int min_value = 10;
+        int max_value = 10000;
+
         // Основные параметры задачи
         int source_base;
         int target_base;
         int decimal_value;
         std::string source_number;
         std::string target_number;
-        ConversionDirection direction;
-        NumSystemTaskType task_type;
+        NumSystemConfig system_config;
         bool is_valid_problem;
 
         // Для задачи сравнения

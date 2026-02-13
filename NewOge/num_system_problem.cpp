@@ -565,12 +565,25 @@ namespace OGE {
         // Настройка сложности
         switch (config.difficulty) {
         case Difficulty::EASY:
+            min_base = 2;
+            max_base = 8;
+            min_value = 10;
+            max_value = 100;
             score = 10;
+            
             break;
         case Difficulty::MEDIUM:
+            min_base = 2;
+            max_base = 16;
+            min_value = 1000;
+            max_value = 10000;
             score = 15;
             break;
         case Difficulty::HARD:
+            min_base = 2;
+            max_base = 16;
+            min_value = 10000;
+            max_value = 100000;
             score = 20;
             break;
         }
@@ -600,10 +613,6 @@ namespace OGE {
                 direction = ConversionDirection::TO_DECIMAL;
             }
 
-            int min_base = std::stoi(config.get_string_param("min_base", "2"));
-            int max_base = std::stoi(config.get_string_param("max_base", "16"));
-            int min_value = std::stoi(config.get_string_param("min_value", "10"));
-            int max_value = std::stoi(config.get_string_param("max_value", "1000"));
 
             std::uniform_int_distribution<> dis_base(min_base, max_base);
             source_base = dis_base(gen);
@@ -779,6 +788,8 @@ namespace OGE {
 
         return html.str();
     }
+
+
 
     bool NumSystemProblem::check_answer(const std::string& user_answer) const {
         std::string trimmed = user_answer;
