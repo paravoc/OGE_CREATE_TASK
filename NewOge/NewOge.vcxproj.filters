@@ -54,6 +54,9 @@
     <ClCompile Include="num_system_problem.cpp">
       <Filter>Исходные файлы\src</Filter>
     </ClCompile>
+    <ClCompile Include="filesystem_problem.cpp">
+      <Filter>Исходные файлы\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="database_manager.h">
@@ -75,6 +78,9 @@
       <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
     <ClInclude Include="num_system_problem.h">
+      <Filter>Исходные файлы\include\проблемы</Filter>
+    </ClInclude>
+    <ClInclude Include="filesystem_problem.h">
       <Filter>Исходные файлы\include\проблемы</Filter>
     </ClInclude>
   </ItemGroup>

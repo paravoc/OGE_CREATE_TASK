@@ -1,6 +1,6 @@
 ﻿// main.cpp
 #include "html_generator.h"
-#include "num_system_problem.h"
+#include "filesystem_problem.h"
 #include <chrono>
 #include <iostream>
 #include <vector>
@@ -16,12 +16,12 @@ int main() {
     setlocale(LC_ALL, "Russian");
 
     // =========================================
-    // 1. НАСТРОЙКИ СТРАНИЦЫ - ТОЛЬКО СИСТЕМЫ СЧИСЛЕНИЯ
+    // 1. НАСТРОЙКИ СТРАНИЦЫ - ТОЛЬКО ФАЙЛОВАЯ СИСТЕМА
     // =========================================
     PageSettings settings;
 
-    // Только задачи на системы счисления
-    settings.problem_numbers["numsys"] = 10;     // 10 задач на системы счисления
+    // Только задачи на файловую систему
+    settings.problem_numbers["filesystem"] = 9;     // 9 задач на файловую систему
 
     // Минимальные настройки интерфейса
     settings.solution_access = AccessLevel::FULL_ACCESS;
@@ -42,82 +42,71 @@ int main() {
     HtmlGenerator generator(settings);
 
     cout << "==================================" << endl;
-    cout << "   СИСТЕМЫ СЧИСЛЕНИЯ - ГЕНЕРАЦИЯ" << endl;
+    cout << "   ФАЙЛОВАЯ СИСТЕМА - ГЕНЕРАЦИЯ" << endl;
     cout << "==================================" << endl;
     cout << "Начинаем генерацию..." << endl << endl;
 
     // =========================================
-    // 4. ЗАДАЧИ НА СИСТЕМЫ СЧИСЛЕНИЯ
+    // 4. ЗАДАЧИ НА ФАЙЛОВУЮ СИСТЕМУ
     // =========================================
-    cout << "💻 Задачи на системы счисления:" << endl;
+    cout << "📁 Задачи на файловую систему:" << endl;
 
-    // Типы задач для систем счисления
+    // Типы задач для файловой системы
     vector<string> task_types = {
-        "conversion",    // Простой перевод
-        "comparison",    // Сравнение чисел
-        "equation",      // Уравнение
-        "arithmetic",    // Арифметика в СС
-        "monotonic"      // Монотонный ряд
+        "url",          // URL адреса
+        "filepath",     // Пути к файлам
+        "cd"            // Команды cd
     };
 
     vector<string> task_names = {
-        "Перевод чисел",
-        "Сравнение чисел",
-        "Уравнение",
-        "Арифметика",
-        "Монотонный ряд"
+        "URL адреса",
+        "Пути к файлам",
+        "Команды cd"
     };
 
-    // Генерируем по 2 задачи каждого типа
+    vector<Difficulty> difficulties = {
+        Difficulty::EASY,
+        Difficulty::MEDIUM,
+        Difficulty::HARD
+    };
+
+    // Генерируем по 3 задачи каждого типа (по одной на каждый уровень сложности)
     int problem_counter = 0;
     for (int type_idx = 0; type_idx < task_types.size(); type_idx++) {
-        for (int variant = 0; variant < 2; variant++) {
+        for (int diff_idx = 0; diff_idx < 3; diff_idx++) {
             ProblemMeta meta;
-            meta.type_id = "numsys";
+            meta.type_id = "filesystem";
             meta.display_name = task_names[type_idx];
             meta.problem_number = ++problem_counter;
-            meta.default_score = 15;
+
+            // Баллы в зависимости от сложности
+            switch (difficulties[diff_idx]) {
+            case Difficulty::EASY: meta.default_score = 10; break;
+            case Difficulty::MEDIUM: meta.default_score = 15; break;
+            case Difficulty::HARD: meta.default_score = 20; break;
+            }
+
             meta.is_active = true;
 
-            auto problem = make_unique<NumSystemProblem>(meta);
+            auto problem = make_unique<FilesystemProblem>(meta);
             problem->set_page_settings(settings);
-            
 
-            GenerationConfig ns_config = base_config;
-            ns_config.difficulty = Difficulty::HARD;
-            ns_config.custom_params["task_type"] = task_types[type_idx];
+            GenerationConfig fs_config = base_config;
+            fs_config.difficulty = difficulties[diff_idx];
+            fs_config.custom_params["task_type"] = task_types[type_idx];
 
-            // Минимальные настройки для каждого типа
-            if (task_types[type_idx] == "conversion") {
-                if (variant == 0) {
-                    ns_config.custom_params["conversion_direction"] = "to_decimal";
-                }
-                else {
-                    ns_config.custom_params["conversion_direction"] = "from_decimal";
-                }
-            }
-            else if (task_types[type_idx] == "comparison") {
-                if (variant == 0) {
-                    ns_config.custom_params["comparison_criteria"] = "maximum";
-                }
-                else {
-                    ns_config.custom_params["comparison_criteria"] = "minimum";
-                }
-            }
-            else if (task_types[type_idx] == "arithmetic") {
-                if (variant == 0) {
-                    ns_config.custom_params["arithmetic_operation"] = "addition";
-                }
-                else {
-                    ns_config.custom_params["arithmetic_operation"] = "subtraction";
-                }
-            }
-
-            problem->generate(ns_config);
+            problem->generate(fs_config);
             generator.add_problem(move(problem));
 
+            string difficulty_str;
+            switch (difficulties[diff_idx]) {
+            case Difficulty::EASY: difficulty_str = "легкая"; break;
+            case Difficulty::MEDIUM: difficulty_str = "средняя"; break;
+            case Difficulty::HARD: difficulty_str = "сложная"; break;
+            }
+
             cout << "  + Задача #" << problem_counter << ": "
-                << task_names[type_idx] << endl;
+                << task_names[type_idx] << " (" << difficulty_str << ")" << endl;
         }
     }
     cout << endl;

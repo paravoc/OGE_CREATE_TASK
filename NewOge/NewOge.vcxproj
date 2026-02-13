@@ -126,6 +126,7 @@
   <ItemGroup>
     <ClCompile Include="database_manager.cpp" />
     <ClCompile Include="decimal_problem.cpp" />
+    <ClCompile Include="filesystem_problem.cpp" />
     <ClCompile Include="html_generator.cpp" />
     <ClCompile Include="math_problem.cpp" />
     <ClCompile Include="NewOge.cpp" />
@@ -136,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="database_manager.h" />
     <ClInclude Include="decimal_problem.h" />
+    <ClInclude Include="filesystem_problem.h" />
     <ClInclude Include="html_generator.h" />
     <ClInclude Include="math_problem.h" />
     <ClInclude Include="num_system_problem.h" />
