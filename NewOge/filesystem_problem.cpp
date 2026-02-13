@@ -340,6 +340,7 @@ namespace OGE {
         solution = solution_ss.str();
     }    // Генерация задачи на команды CD
 // Генерация задачи на команды CD
+// Генерация задачи на команды CD
     void FilesystemProblem::generate_cd_task(const GenerationConfig& config) {
         auto& gen = get_random_generator();
 
@@ -360,6 +361,7 @@ namespace OGE {
         std::string drive = drives[dis_drive(gen)];
 
         // Создаем начальный путь
+        current_path.clear();
         current_path.push_back(drive);
         std::vector<std::string> initial_folders;
 
@@ -380,6 +382,9 @@ namespace OGE {
         }
         initial_path_str += ">";
 
+        // Определяем домашнюю папку (для cd ~)
+        std::string home_folder = "Users"; // или можно сделать случайным
+
         // Количество команд зависит от сложности
         int cmd_count = 3;
         switch (config.difficulty) {
@@ -389,20 +394,23 @@ namespace OGE {
         }
 
         std::vector<std::string> command_descriptions;
+        std::vector<std::string> command_targets; // Для хранения целевых папок
         commands.clear();
 
         // Генерируем команды и сразу применяем их к current_path
         for (int i = 0; i < cmd_count; i++) {
-            std::uniform_int_distribution<> dis_cmd(0, 3); // 4 типа команд
+            std::uniform_int_distribution<> dis_cmd(0, 4); // 5 типов команд
 
             int cmd_type = dis_cmd(gen);
             std::string cmd;
             std::string description;
+            std::string target;
 
             switch (cmd_type) {
             case 0: // cd ..
                 cmd = "cd ..";
                 description = "перейти на уровень вверх";
+                target = "";
                 if (current_path.size() > 1) {
                     current_path.pop_back();
                 }
@@ -413,7 +421,8 @@ namespace OGE {
                 std::string new_folder = folders[dis_folder(gen)];
                 cmd = "cd " + new_folder;
                 description = "перейти в папку " + new_folder;
-                if (current_path.size() < 7) { // Не уходим слишком глубоко
+                target = new_folder;
+                if (current_path.size() < 7) {
                     current_path.push_back(new_folder);
                 }
             }
@@ -422,26 +431,41 @@ namespace OGE {
             case 2: // cd \
                                 cmd = "cd \\";
                 description = "перейти в корень диска";
-                current_path.resize(1); // Только диск
+                target = "корень";
+                current_path.resize(1);
                 break;
 
-            case 3: // cd ..
-                cmd = "cd ..";
-                description = "перейти на уровень вверх";
-                if (current_path.size() > 1) {
-                    current_path.pop_back();
-                }
+            case 3: // cd ~
+                cmd = "cd ~";
+                description = "перейти в домашнюю папку " + home_folder;
+                target = home_folder;
+                // Переходим в домашнюю папку (предполагаем, что она в корне)
+                current_path.resize(1);
+                current_path.push_back(home_folder);
                 break;
+
+            case 4: // cd folder (другой вариант)
+            {
+                std::string new_folder = folders[dis_folder(gen)];
+                cmd = "cd " + new_folder;
+                description = "перейти в папку " + new_folder;
+                target = new_folder;
+                if (current_path.size() < 7) {
+                    current_path.push_back(new_folder);
+                }
+            }
+            break;
             }
 
             commands.push_back(cmd);
             command_descriptions.push_back(description);
+            command_targets.push_back(target);
         }
 
         // Результат - где мы оказались после всех команд
         std::string result;
         if (current_path.size() == 1) {
-            result = current_path[0]; // Название диска (например, "G:")
+            result = current_path[0]; // Название диска (например, "E:")
         }
         else {
             result = current_path.back(); // Название последней папки
@@ -455,12 +479,17 @@ namespace OGE {
         question << "<h3>Задача #" << meta.problem_number << ": " << meta.display_name << "</h3>";
         question << "<p class='problem-text'>Мы находимся в папке: <strong>"
             << initial_path_str << "</strong></p>";
+
+        // Добавляем пояснение про домашнюю папку
+        question << "<p><em>Примечание: домашняя папка - <strong>" << home_folder
+            << "</strong> (находится в корне диска)</em></p>";
+
         question << "<p>Выполните последовательно команды:</p>";
         question << "<div class='commands-list'>";
 
         for (size_t i = 0; i < commands.size(); i++) {
             question << "<p><strong>" << (i + 1) << ".</strong> " << commands[i]
-                << " (" << command_descriptions[i] << ")</p>";
+                << " <em>(" << command_descriptions[i] << ")</em></p>";
         }
 
         question << "</div>";
@@ -487,29 +516,34 @@ namespace OGE {
             if (commands[i] == "cd ..") {
                 if (solution_path.size() > 1) {
                     solution_path.pop_back();
-                    solution_ss << "поднимаемся в " << solution_path.back();
+                    solution_ss << "поднимаемся в <strong>" << solution_path.back() << "</strong>";
                 }
                 else {
-                    solution_ss << "остаемся в корне " << solution_path[0];
+                    solution_ss << "остаемся в корне <strong>" << solution_path[0] << "</strong>";
                 }
-            }
-            else if (commands[i].substr(0, 3) == "cd " && commands[i] != "cd .." && commands[i] != "cd \\") {
-                std::string folder = commands[i].substr(3);
-                solution_path.push_back(folder);
-                solution_ss << "переходим в " << folder;
             }
             else if (commands[i] == "cd \\") {
                 solution_path.resize(1);
-                solution_ss << "переходим в корень " << solution_path[0];
+                solution_ss << "переходим в корень <strong>" << solution_path[0] << "</strong>";
+            }
+            else if (commands[i] == "cd ~") {
+                solution_path.resize(1);
+                solution_path.push_back(home_folder);
+                solution_ss << "переходим в домашнюю папку <strong>" << home_folder << "</strong>";
+            }
+            else if (commands[i].substr(0, 3) == "cd ") {
+                std::string folder = commands[i].substr(3);
+                solution_path.push_back(folder);
+                solution_ss << "переходим в папку <strong>" << folder << "</strong>";
             }
 
             // Показываем текущий путь после команды
-            solution_ss << " (текущий путь: ";
+            solution_ss << " (текущий путь: <strong>";
             for (size_t j = 0; j < solution_path.size(); j++) {
                 solution_ss << solution_path[j];
                 if (j < solution_path.size() - 1) solution_ss << "\\";
             }
-            solution_ss << ">)";
+            solution_ss << "></strong>)";
 
             solution_ss << "</li>";
         }
