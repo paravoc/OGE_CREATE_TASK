@@ -1,102 +1,156 @@
 ﻿// main.cpp
-#include "math_problem.h"
-#include "decimal_problem.h"
 #include "html_generator.h"
-#include<chrono>
+#include "num_system_problem.h"
+#include <chrono>
 #include <iostream>
-#include"num_system_problem.h"
+#include <vector>
+#include <string>
+#include <memory>
 
 using namespace OGE;
 using namespace std;
 using namespace chrono;
 
-
 int main() {
     auto start = chrono::high_resolution_clock::now();
     setlocale(LC_ALL, "Russian");
 
-    // 1. Настройки страницы
+    // =========================================
+    // 1. НАСТРОЙКИ СТРАНИЦЫ - ТОЛЬКО СИСТЕМЫ СЧИСЛЕНИЯ
+    // =========================================
     PageSettings settings;
 
-    // 2. Выбираем какие задачи и сколько
-    settings.problem_numbers["math"] = 7;      // 3 математические задачи
-    settings.problem_numbers["decimal"] = 2;   // 2 задачи с десятичными дробями
-    /*settings.timer_mode = TimerMode::COUNT_DOWN;
-    settings.timer_seconds = 100;*/
+    // Только задачи на системы счисления
+    settings.problem_numbers["numsys"] = 10;     // 10 задач на системы счисления
+
+    // Минимальные настройки интерфейса
     settings.solution_access = AccessLevel::FULL_ACCESS;
     settings.show_hints = true;
     settings.show_progress_bar = true;
     settings.dark_mode = false;
+    settings.show_score = true;
 
+    // =========================================
+    // 2. НАСТРОЙКИ СЛОЖНОСТИ
+    // =========================================
+    GenerationConfig base_config;
+    base_config.difficulty = Difficulty::MEDIUM;
 
-
-
-
-    // 3. Настройки сложности
-    GenerationConfig config;
-    config.difficulty = Difficulty::MEDIUM;    // EASY, MEDIUM, HARD
-
-    // 4. Создаем генератор HTML
+    // =========================================
+    // 3. СОЗДАЕМ ГЕНЕРАТОР HTML
+    // =========================================
     HtmlGenerator generator(settings);
 
-    // 5. Создаем и генерируем задачи
-    cout << "Генерация задач..." << endl;
+    cout << "==================================" << endl;
+    cout << "   СИСТЕМЫ СЧИСЛЕНИЯ - ГЕНЕРАЦИЯ" << endl;
+    cout << "==================================" << endl;
+    cout << "Начинаем генерацию..." << endl << endl;
 
-    settings.problem_numbers["numsys"] = 3;    // 3 задачи на системы счисления
+    // =========================================
+    // 4. ЗАДАЧИ НА СИСТЕМЫ СЧИСЛЕНИЯ
+    // =========================================
+    cout << "💻 Задачи на системы счисления:" << endl;
 
-    // 2. После задач с десятичными дробями добавьте генерацию задач на СС:
+    // Типы задач для систем счисления
+    vector<string> task_types = {
+        "conversion",    // Простой перевод
+        "comparison",    // Сравнение чисел
+        "equation",      // Уравнение
+        "arithmetic",    // Арифметика в СС
+        "monotonic"      // Монотонный ряд
+    };
 
-    // Задачи на системы счисления
-    for (int i = 0; i < settings.problem_numbers["numsys"]; i++) {
-        ProblemMeta meta;
-        meta.type_id = "numsys";
-        meta.display_name = "Системы счисления";
-        meta.problem_number = i + 1;
-        meta.default_score = 15;
-        meta.is_active = true;
+    vector<string> task_names = {
+        "Перевод чисел",
+        "Сравнение чисел",
+        "Уравнение",
+        "Арифметика",
+        "Монотонный ряд"
+    };
 
-        auto problem = make_unique<NumSystemProblem>(meta);
-        problem->set_page_settings(settings);
+    // Генерируем по 2 задачи каждого типа
+    int problem_counter = 0;
+    for (int type_idx = 0; type_idx < task_types.size(); type_idx++) {
+        for (int variant = 0; variant < 2; variant++) {
+            ProblemMeta meta;
+            meta.type_id = "numsys";
+            meta.display_name = task_names[type_idx];
+            meta.problem_number = ++problem_counter;
+            meta.default_score = 15;
+            meta.is_active = true;
 
-        // Можно настроить тип конверсии через custom_params
-        GenerationConfig config;
-        config.difficulty = Difficulty::MEDIUM;
+            auto problem = make_unique<NumSystemProblem>(meta);
+            problem->set_page_settings(settings);
 
-        // Чередуем типы задач
-        if (i % 2 == 0) {
-            config.custom_params["conversion_direction"] = "to_decimal";  // в десятичную
+            GenerationConfig ns_config = base_config;
+            ns_config.custom_params["task_type"] = task_types[type_idx];
+
+            // Минимальные настройки для каждого типа
+            if (task_types[type_idx] == "conversion") {
+                if (variant == 0) {
+                    ns_config.custom_params["conversion_direction"] = "to_decimal";
+                }
+                else {
+                    ns_config.custom_params["conversion_direction"] = "from_decimal";
+                }
+            }
+            else if (task_types[type_idx] == "comparison") {
+                if (variant == 0) {
+                    ns_config.custom_params["comparison_criteria"] = "maximum";
+                }
+                else {
+                    ns_config.custom_params["comparison_criteria"] = "minimum";
+                }
+            }
+            else if (task_types[type_idx] == "arithmetic") {
+                if (variant == 0) {
+                    ns_config.custom_params["arithmetic_operation"] = "addition";
+                }
+                else {
+                    ns_config.custom_params["arithmetic_operation"] = "subtraction";
+                }
+            }
+
+            problem->generate(ns_config);
+            generator.add_problem(move(problem));
+
+            cout << "  + Задача #" << problem_counter << ": "
+                << task_names[type_idx] << endl;
         }
-        else {
-            config.custom_params["conversion_direction"] = "from_decimal"; // из десятичной
-        }
-
-        problem->generate(config);
-        generator.add_problem(move(problem));
     }
+    cout << endl;
 
-
-    // 6. Генерируем HTML страницу
-    cout << "\nСоздание HTML страницы..." << endl;
+    // =========================================
+    // 5. ГЕНЕРАЦИЯ HTML СТРАНИЦЫ
+    // =========================================
+    cout << "📄 Создание HTML страницы..." << endl;
     string html = generator.generate_full_page();
+    cout << "   ✓ HTML сгенерирован" << endl;
 
-    // 7. Сохраняем в файл
+    // =========================================
+    // 6. СОХРАНЕНИЕ В ФАЙЛ
+    // =========================================
     string filename = "web/variant_oge.html";
-    generator.save_to_file(filename);
+    if (generator.save_to_file(filename)) {
+        cout << "   ✓ Файл сохранен: " << filename << endl;
+    }
+    else {
+        cout << "   ❌ Ошибка сохранения файла!" << endl;
+    }
+    cout << endl;
 
-    cout << "Готово! Страница сохранена в файл: " << filename << endl;
-    cout << "Всего задач: " << generator.get_problems_count() << endl;
-
-
-    // ФИНИШ ТАЙМЕРА
+    // =========================================
+    // 7. ВРЕМЯ ВЫПОЛНЕНИЯ
+    // =========================================
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<milliseconds>(end - start);
-    auto duration_us = duration_cast<microseconds>(end - start);
-    auto duration_sec = duration_cast<seconds>(end - start);
 
-    cout << "⏱️  Время выполнения:" << endl;
-    cout << "   • " << duration.count() << " мс" << endl;
-    cout << "   • " << duration_us.count() << " мкс" << endl;
-    cout << "   • " << duration_sec.count() << " сек" << endl;
     cout << "==================================" << endl;
+    cout << "   ГОТОВО!" << endl;
+    cout << "==================================" << endl;
+    cout << "⏱️  Время: " << duration.count() << " мс" << endl;
+    cout << "✅ Всего задач: " << generator.get_problems_count() << endl;
+    cout << "==================================" << endl;
+
     return 0;
 }
