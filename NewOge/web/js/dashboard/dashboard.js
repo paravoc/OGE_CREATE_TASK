@@ -1,3 +1,110 @@
+// dashboard.js - исправленная версия с загрузкой данных с сервера
+
+// Получаем ID пользователя из URL
+const userId = window.USER_ID;
+
+// Если нет ID - перенаправляем на вход
+if (!userId) {
+    window.location.href = '/login';
+}
+
+// Элементы для заполнения данными
+const elements = {
+    userFullName: document.getElementById('userFullName'),
+    userNickname: document.getElementById('userNickname'),
+    userRegisteredDate: document.getElementById('userRegisteredDate'),
+    userStatus: document.getElementById('userStatus'),
+    premiumIndicator: document.getElementById('premiumIndicator'),
+    tasksSolved: document.getElementById('tasksSolved'),
+    generationsLeft: document.getElementById('generationsLeft'),
+    userFirstName: document.getElementById('userFirstName'),
+    welcomeSubtitle: document.getElementById('welcomeSubtitle'),
+    informaticsProgress: document.getElementById('informaticsProgress')
+};
+
+// Загружаем данные пользователя с сервера
+async function loadUserData() {
+    try {
+        const response = await fetch(`/api/user?user_id=${userId}`);
+        const userData = await response.json();
+        
+        // Обновляем интерфейс
+        updateUI(userData);
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+    }
+}
+
+// Обновление интерфейса
+function updateUI(user) {
+    // Основная информация
+    if (elements.userFullName) {
+        elements.userFullName.textContent = user.full_name || user.username;
+    }
+    
+    if (elements.userNickname) {
+        elements.userNickname.textContent = '@' + user.username;
+    }
+    
+    if (elements.userRegisteredDate) {
+        const date = new Date(user.registered_at * 1000);
+        elements.userRegisteredDate.textContent = `📅 С нами с ${date.toLocaleDateString()}`;
+    }
+    
+    // Статус и премиум
+    if (user.is_premium) {
+        if (elements.userStatus) {
+            elements.userStatus.className = 'user-status premium-status';
+            elements.userStatus.innerHTML = '⭐ PREMIUM';
+        }
+        if (elements.premiumIndicator) {
+            elements.premiumIndicator.style.display = 'flex';
+        }
+    } else {
+        if (elements.userStatus) {
+            elements.userStatus.className = 'user-status';
+            elements.userStatus.textContent = 'FREE';
+        }
+    }
+    
+    // Статистика
+    if (elements.tasksSolved) {
+        elements.tasksSolved.textContent = user.tasks_solved || 0;
+    }
+    
+    if (elements.generationsLeft) {
+        const maxGen = user.is_premium ? 1000 : 3;
+        const left = maxGen - (user.generations_today || 0);
+        elements.generationsLeft.textContent = `${left}/${maxGen}`;
+    }
+    
+    // Приветствие
+    if (elements.userFirstName) {
+        const firstName = (user.full_name || user.username).split(' ')[0];
+        elements.userFirstName.textContent = firstName;
+    }
+    
+    if (elements.welcomeSubtitle) {
+        const maxGen = user.is_premium ? 1000 : 3;
+        const left = maxGen - (user.generations_today || 0);
+        elements.welcomeSubtitle.textContent = `Продолжим подготовку? У вас ${left} попыток генерации на сегодня`;
+    }
+    
+    // Прогресс по информатике (пример)
+    if (elements.informaticsProgress) {
+        // Здесь можно загрузить реальный прогресс из БД
+        elements.informaticsProgress.textContent = '0/12 тем';
+    }
+    
+    // Обновляем ссылки с user_id
+    document.querySelectorAll('a[href*="/generate"]').forEach(link => {
+        link.href = `/generate?user_id=${userId}`;
+    });
+}
+
+// Загружаем данные при загрузке страницы
+document.addEventListener('DOMContentLoaded', loadUserData);
+
 // Элементы модального окна
 const logoutBtn = document.getElementById('logoutBtn');
 const logoutModal = document.getElementById('logoutModal');
@@ -9,11 +116,13 @@ const modalOverlay = document.querySelector('.modal-overlay');
 const premiumIndicator = document.querySelector('.premium-indicator');
 
 // Открытие модального окна
-logoutBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    logoutModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-});
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        logoutModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+}
 
 // Закрытие модального окна
 function closeModal() {
@@ -21,21 +130,22 @@ function closeModal() {
     document.body.style.overflow = '';
 }
 
-cancelLogout.addEventListener('click', closeModal);
-modalOverlay.addEventListener('click', closeModal);
+if (cancelLogout) cancelLogout.addEventListener('click', closeModal);
+if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
 
 // Подтверждение выхода
-confirmLogout.addEventListener('click', () => {
-    confirmLogout.style.transform = 'scale(0.95)';
-    
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 300);
-});
+if (confirmLogout) {
+    confirmLogout.addEventListener('click', () => {
+        confirmLogout.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 300);
+    });
+}
 
 // Закрытие по Escape
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && logoutModal.classList.contains('active')) {
+    if (e.key === 'Escape' && logoutModal?.classList.contains('active')) {
         closeModal();
     }
 });
@@ -46,25 +156,28 @@ if (premiumIndicator) {
         e.preventDefault();
         e.stopPropagation();
         
-        // Анимация клика
         this.style.transform = 'scale(0.95)';
         setTimeout(() => {
             this.style.transform = '';
         }, 200);
         
-        // Здесь можно открыть модальное окно с информацией о премиум
-        // или перейти на страницу тарифов
-        alert('✨ Премиум подписка активна! Спасибо что вы с нами!');
-        
-        // Или можно открыть модальное окно с информацией
-        // showPremiumInfo();
+        // Проверяем реальный премиум статус через API
+        fetch(`/api/user?user_id=${userId}`)
+            .then(res => res.json())
+            .then(user => {
+                if (user.is_premium) {
+                    showPremiumInfo();
+                } else {
+                    window.location.href = `/upgrade?user_id=${userId}`;
+                }
+            });
     });
 }
 
 // Функция для показа информации о премиум
 function showPremiumInfo() {
     const premiumModal = document.createElement('div');
-    premiumModal.className = 'logout-modal active'; // Используем те же стили что и для выхода
+    premiumModal.className = 'logout-modal active';
     premiumModal.innerHTML = `
         <div class="modal-overlay"></div>
         <div class="modal-content" style="background: linear-gradient(135deg, #1a1e2a, #2a1e3a);">
@@ -88,15 +201,15 @@ function showPremiumInfo() {
     document.body.appendChild(premiumModal);
     document.body.style.overflow = 'hidden';
     
-    // Закрытие модального окна
     const closeBtn = document.getElementById('closePremiumModal');
-    closeBtn.addEventListener('click', () => {
-        premiumModal.remove();
-        document.body.style.overflow = '';
-    });
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            premiumModal.remove();
+            document.body.style.overflow = '';
+        });
+    }
     
-    // Закрытие по клику на оверлей
-    premiumModal.querySelector('.modal-overlay').addEventListener('click', () => {
+    premiumModal.querySelector('.modal-overlay')?.addEventListener('click', () => {
         premiumModal.remove();
         document.body.style.overflow = '';
     });
@@ -105,14 +218,20 @@ function showPremiumInfo() {
 // Клик по заблокированным материалам
 document.querySelectorAll('.premium-locked').forEach(card => {
     card.addEventListener('click', function() {
-        // Анимация
         this.style.transform = 'scale(1.02)';
         setTimeout(() => {
             this.style.transform = '';
         }, 200);
         
-        // Проверяем премиум статус (временно всегда показываем сообщение о необходимости премиум)
-        alert('⭐ Этот материал доступен только с PREMIUM подпиской! Оформите подписку чтобы получить доступ.');
+        fetch(`/api/user?user_id=${userId}`)
+            .then(res => res.json())
+            .then(user => {
+                if (user.is_premium) {
+                    alert('✨ У вас уже есть премиум! Наслаждайтесь материалами.');
+                } else {
+                    window.location.href = `/upgrade?user_id=${userId}`;
+                }
+            });
     });
 });
 
@@ -121,26 +240,15 @@ document.querySelectorAll('.category-card:not(.coming-soon) .category-btn').forE
     btn.addEventListener('click', function(e) {
         e.stopPropagation();
         const card = this.closest('.category-card');
-        const category = card.dataset.category;
+        const category = card?.dataset.category;
         
         this.style.transform = 'scale(0.95)';
         setTimeout(() => {
             this.style.transform = '';
-            window.location.href = `category.html?cat=${category}`;
+            if (category) {
+                window.location.href = `/category?cat=${category}&user_id=${userId}`;
+            }
         }, 300);
-    });
-});
-
-// Открытие материалов
-document.querySelectorAll('.material-card:not(.premium-locked) .material-btn').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        
-        this.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            this.style.transform = '';
-            alert('Открытие материала...');
-        }, 200);
     });
 });
 
@@ -149,23 +257,18 @@ function updateTimer() {
     const timerElement = document.querySelector('.stat-mini-item:last-child .stat-mini-value');
     if (!timerElement) return;
     
-    let hours = 2;
-    let minutes = 15;
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
     
-    setInterval(() => {
-        minutes--;
-        if (minutes < 0) {
-            minutes = 59;
-            hours--;
-        }
-        
-        if (hours < 0) {
-            hours = 2;
-            minutes = 15;
-        }
-        
-        timerElement.textContent = `${hours}ч ${minutes}м`;
-    }, 60000);
+    const diffMs = midnight - now;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    timerElement.textContent = `${diffHours}ч ${diffMinutes}м`;
+    
+    // Обновляем каждую минуту
+    setTimeout(updateTimer, 60000);
 }
 
 updateTimer();
@@ -197,12 +300,11 @@ setInterval(() => {
     }
 }, 3000);
 
-// Добавляем стили для курсора на премиум индикатор
+// Стили для курсора на премиум индикатор
 if (premiumIndicator) {
     premiumIndicator.style.cursor = 'pointer';
     premiumIndicator.style.transition = 'all 0.3s ease';
     
-    // Эффект при наведении
     premiumIndicator.addEventListener('mouseenter', function() {
         this.style.transform = 'scale(1.05)';
         this.style.boxShadow = '0 0 30px rgba(255, 215, 0, 0.8)';
