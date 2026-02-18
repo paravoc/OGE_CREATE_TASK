@@ -1,4 +1,6 @@
-// Обработка соцсетей
+// register.js - исправленная версия
+
+// Обработка соцсетей (оставляем как есть)
 function handleSocial(provider) {
     const btn = event.currentTarget;
     const originalText = btn.innerHTML;
@@ -18,81 +20,10 @@ function handleSocial(provider) {
     }, 1500);
 }
 
-// Обработка формы регистрации
-document.addEventListener('DOMContentLoaded', function() {
-    const registerForm = document.getElementById('registerForm');
-    
-    if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const confirm = document.getElementById('regConfirm').value;
-            
-            // Валидация
-            if (!name || !email || !password || !confirm) {
-                showNotification('Заполните все поля!', 'error');
-                return;
-            }
-            
-            if (password !== confirm) {
-                showNotification('Пароли не совпадают!', 'error');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showNotification('Пароль минимум 6 символов', 'error');
-                return;
-            }
-            
-            if (!isValidEmail(email)) {
-                showNotification('Некорректный email', 'error');
-                return;
-            }
-            
-            // Показываем загрузку
-            const submitBtn = document.querySelector('.submit-btn-reg');
-            submitBtn.textContent = '⏳ РЕГИСТРАЦИЯ...';
-            submitBtn.disabled = true;
-            
-            // Успешная регистрация
-            setTimeout(() => {
-                showNotification('Регистрация успешна!', 'success');
-                
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-            }, 1500);
-        });
-    }
-    
-    // Анимация полей
-    const inputs = document.querySelectorAll('.form-group-reg input');
-    inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-            this.parentElement.style.transform = 'scale(1.02)';
-        });
-        
-        input.addEventListener('blur', function() {
-            this.parentElement.style.transform = 'scale(1)';
-        });
-    });
-});
-
 // Валидация email
 function isValidEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
-}
-
-// Переход на логин
-function goToLogin() {
-    showNotification('Переход на страницу входа', 'info');
-    setTimeout(() => {
-        window.location.href = 'login.html';
-    }, 500);
 }
 
 // Уведомления
@@ -112,9 +43,101 @@ function showNotification(message, type) {
 // Добавляем стили уведомлений
 const style = document.createElement('style');
 style.textContent = `
+    .register-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+        z-index: 9999;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+    }
+    
+    .register-notification.show {
+        transform: translateX(0);
+    }
+    
     .register-notification.info {
-        background: #3b82f6;
+        background: linear-gradient(45deg, #3b82f6, #8b5cf6);
         box-shadow: 0 0 20px #3b82f6;
+    }
+    
+    .register-notification.success {
+        background: linear-gradient(45deg, #10b981, #34d399);
+        box-shadow: 0 0 20px #10b981;
+    }
+    
+    .register-notification.error {
+        background: linear-gradient(45deg, #ef4444, #f87171);
+        box-shadow: 0 0 20px #ef4444;
     }
 `;
 document.head.appendChild(style);
+
+// ⚠️ ВАЖНО: НЕ БЛОКИРУЕМ ОТПРАВКУ ФОРМЫ!
+document.addEventListener('DOMContentLoaded', function() {
+    const registerForm = document.getElementById('registerForm');
+    
+    if (registerForm) {
+        // Только проверяем данные перед отправкой, но не блокируем
+        registerForm.addEventListener('submit', function(e) {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirm').value;
+            
+            // Валидация
+            if (!name || !email || !password || !confirm) {
+                e.preventDefault(); // БЛОКИРУЕМ только если поля пустые
+                showNotification('Заполните все поля!', 'error');
+                return;
+            }
+            
+            if (password !== confirm) {
+                e.preventDefault(); // БЛОКИРУЕМ если пароли не совпадают
+                showNotification('Пароли не совпадают!', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                e.preventDefault(); // БЛОКИРУЕМ если пароль короткий
+                showNotification('Пароль минимум 6 символов', 'error');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                e.preventDefault(); // БЛОКИРУЕМ если email невалидный
+                showNotification('Некорректный email', 'error');
+                return;
+            }
+            
+            // Если всё ок - НЕ вызываем preventDefault()
+            // Форма отправится на сервер нормально
+            
+            // Показываем загрузку
+            const submitBtn = document.querySelector('.submit-btn-reg');
+            submitBtn.textContent = '⏳ РЕГИСТРАЦИЯ...';
+            submitBtn.disabled = true;
+            
+            showNotification('Отправка данных...', 'info');
+        });
+    }
+    
+    // Анимация полей (оставляем)
+    const inputs = document.querySelectorAll('.form-group-reg input');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+});
+
+// Удаляем функцию goToLogin если она не нужна (вы используете прямые ссылки)
+// function goToLogin() { ... } // МОЖНО УДАЛИТЬ
