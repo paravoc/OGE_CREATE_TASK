@@ -1,0 +1,227 @@
+/* контейнер для 3D-букв */
+.three-d-title {
+    position: relative;
+    cursor: default;
+    transform: skewY(0deg) rotateX(2deg);
+    display: block;
+    max-width: 100%;
+    width: 100%; /* Добавил */
+    white-space: normal;
+    word-break: break-word;
+    padding-right: 20px; /* Добавил отступ справа */
+}
+
+/* каждая буква — inline-block для 3D-трансформации */
+.three-d-title span {
+    position: relative;
+    display: inline-block;
+    /* УМЕНЬШИЛ РАЗМЕР БУКВ */
+    font-size: clamp(1.8rem, 5vw, 3.5rem); /* Было: clamp(2.5rem, 8vw, 5rem) */
+    font-weight: 900;
+    line-height: 1.4; /* Увеличил межстрочный интервал */
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    transform-style: preserve-3d;
+    transform: perspective(800px) rotateY(-15deg) translateZ(15px); /* Уменьшил глубину */
+    /* анимация выезда справа налево */
+    animation: slideInRight 0.9s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    opacity: 0;
+    transform-origin: left center;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    vertical-align: middle;
+    margin-bottom: 8px; /* Увеличил отступ снизу */
+    margin-right: 2px; /* Добавил небольшой отступ между буквами */
+}
+
+/* ============================================= */
+/* АНИМАЦИЯ ДЛЯ ВСЕХ БУКВ (до 120) */
+/* ============================================= */
+
+/* С 1 по 50 */
+.three-d-title span:nth-child(1) { animation-delay: 0.0s; }
+.three-d-title span:nth-child(2) { animation-delay: 0.03s; } /* Уменьшил шаг */
+.three-d-title span:nth-child(3) { animation-delay: 0.06s; }
+.three-d-title span:nth-child(4) { animation-delay: 0.09s; }
+.three-d-title span:nth-child(5) { animation-delay: 0.12s; }
+.three-d-title span:nth-child(6) { animation-delay: 0.15s; }
+.three-d-title span:nth-child(7) { animation-delay: 0.18s; }
+.three-d-title span:nth-child(8) { animation-delay: 0.21s; }
+.three-d-title span:nth-child(9) { animation-delay: 0.24s; }
+.three-d-title span:nth-child(10) { animation-delay: 0.27s; }
+.three-d-title span:nth-child(11) { animation-delay: 0.30s; }
+.three-d-title span:nth-child(12) { animation-delay: 0.33s; }
+.three-d-title span:nth-child(13) { animation-delay: 0.36s; }
+.three-d-title span:nth-child(14) { animation-delay: 0.39s; }
+.three-d-title span:nth-child(15) { animation-delay: 0.42s; }
+.three-d-title span:nth-child(16) { animation-delay: 0.45s; }
+.three-d-title span:nth-child(17) { animation-delay: 0.48s; }
+.three-d-title span:nth-child(18) { animation-delay: 0.51s; }
+.three-d-title span:nth-child(19) { animation-delay: 0.54s; }
+.three-d-title span:nth-child(20) { animation-delay: 0.57s; }
+.three-d-title span:nth-child(21) { animation-delay: 0.60s; }
+.three-d-title span:nth-child(22) { animation-delay: 0.63s; }
+.three-d-title span:nth-child(23) { animation-delay: 0.66s; }
+.three-d-title span:nth-child(24) { animation-delay: 0.69s; }
+.three-d-title span:nth-child(25) { animation-delay: 0.72s; }
+.three-d-title span:nth-child(26) { animation-delay: 0.75s; }
+.three-d-title span:nth-child(27) { animation-delay: 0.78s; }
+.three-d-title span:nth-child(28) { animation-delay: 0.81s; }
+.three-d-title span:nth-child(29) { animation-delay: 0.84s; }
+.three-d-title span:nth-child(30) { animation-delay: 0.87s; }
+.three-d-title span:nth-child(31) { animation-delay: 0.90s; }
+.three-d-title span:nth-child(32) { animation-delay: 0.93s; }
+.three-d-title span:nth-child(33) { animation-delay: 0.96s; }
+.three-d-title span:nth-child(34) { animation-delay: 0.99s; }
+.three-d-title span:nth-child(35) { animation-delay: 1.02s; }
+.three-d-title span:nth-child(36) { animation-delay: 1.05s; }
+.three-d-title span:nth-child(37) { animation-delay: 1.08s; }
+.three-d-title span:nth-child(38) { animation-delay: 1.11s; }
+.three-d-title span:nth-child(39) { animation-delay: 1.14s; }
+.three-d-title span:nth-child(40) { animation-delay: 1.17s; }
+.three-d-title span:nth-child(41) { animation-delay: 1.20s; }
+.three-d-title span:nth-child(42) { animation-delay: 1.23s; }
+.three-d-title span:nth-child(43) { animation-delay: 1.26s; }
+.three-d-title span:nth-child(44) { animation-delay: 1.29s; }
+.three-d-title span:nth-child(45) { animation-delay: 1.32s; }
+.three-d-title span:nth-child(46) { animation-delay: 1.35s; }
+.three-d-title span:nth-child(47) { animation-delay: 1.38s; }
+.three-d-title span:nth-child(48) { animation-delay: 1.41s; }
+.three-d-title span:nth-child(49) { animation-delay: 1.44s; }
+.three-d-title span:nth-child(50) { animation-delay: 1.47s; }
+
+/* С 51 по 75 */
+.three-d-title span:nth-child(51) { animation-delay: 1.50s; }
+.three-d-title span:nth-child(52) { animation-delay: 1.53s; }
+.three-d-title span:nth-child(53) { animation-delay: 1.56s; }
+.three-d-title span:nth-child(54) { animation-delay: 1.59s; }
+.three-d-title span:nth-child(55) { animation-delay: 1.62s; }
+.three-d-title span:nth-child(56) { animation-delay: 1.65s; }
+.three-d-title span:nth-child(57) { animation-delay: 1.68s; }
+.three-d-title span:nth-child(58) { animation-delay: 1.71s; }
+.three-d-title span:nth-child(59) { animation-delay: 1.74s; }
+.three-d-title span:nth-child(60) { animation-delay: 1.77s; }
+.three-d-title span:nth-child(61) { animation-delay: 1.80s; }
+.three-d-title span:nth-child(62) { animation-delay: 1.83s; }
+.three-d-title span:nth-child(63) { animation-delay: 1.86s; }
+.three-d-title span:nth-child(64) { animation-delay: 1.89s; }
+.three-d-title span:nth-child(65) { animation-delay: 1.92s; }
+.three-d-title span:nth-child(66) { animation-delay: 1.95s; }
+.three-d-title span:nth-child(67) { animation-delay: 1.98s; }
+.three-d-title span:nth-child(68) { animation-delay: 2.01s; }
+.three-d-title span:nth-child(69) { animation-delay: 2.04s; }
+.three-d-title span:nth-child(70) { animation-delay: 2.07s; }
+.three-d-title span:nth-child(71) { animation-delay: 2.10s; }
+.three-d-title span:nth-child(72) { animation-delay: 2.13s; }
+.three-d-title span:nth-child(73) { animation-delay: 2.16s; }
+.three-d-title span:nth-child(74) { animation-delay: 2.19s; }
+.three-d-title span:nth-child(75) { animation-delay: 2.22s; }
+
+/* С 76 по 100 */
+.three-d-title span:nth-child(76) { animation-delay: 2.25s; }
+.three-d-title span:nth-child(77) { animation-delay: 2.28s; }
+.three-d-title span:nth-child(78) { animation-delay: 2.31s; }
+.three-d-title span:nth-child(79) { animation-delay: 2.34s; }
+.three-d-title span:nth-child(80) { animation-delay: 2.37s; }
+.three-d-title span:nth-child(81) { animation-delay: 2.40s; }
+.three-d-title span:nth-child(82) { animation-delay: 2.43s; }
+.three-d-title span:nth-child(83) { animation-delay: 2.46s; }
+.three-d-title span:nth-child(84) { animation-delay: 2.49s; }
+.three-d-title span:nth-child(85) { animation-delay: 2.52s; }
+.three-d-title span:nth-child(86) { animation-delay: 2.55s; }
+.three-d-title span:nth-child(87) { animation-delay: 2.58s; }
+.three-d-title span:nth-child(88) { animation-delay: 2.61s; }
+.three-d-title span:nth-child(89) { animation-delay: 2.64s; }
+.three-d-title span:nth-child(90) { animation-delay: 2.67s; }
+.three-d-title span:nth-child(91) { animation-delay: 2.70s; }
+.three-d-title span:nth-child(92) { animation-delay: 2.73s; }
+.three-d-title span:nth-child(93) { animation-delay: 2.76s; }
+.three-d-title span:nth-child(94) { animation-delay: 2.79s; }
+.three-d-title span:nth-child(95) { animation-delay: 2.82s; }
+.three-d-title span:nth-child(96) { animation-delay: 2.85s; }
+.three-d-title span:nth-child(97) { animation-delay: 2.88s; }
+.three-d-title span:nth-child(98) { animation-delay: 2.91s; }
+.three-d-title span:nth-child(99) { animation-delay: 2.94s; }
+.three-d-title span:nth-child(100) { animation-delay: 2.97s; }
+
+/* С 101 по 120 */
+.three-d-title span:nth-child(101) { animation-delay: 3.00s; }
+.three-d-title span:nth-child(102) { animation-delay: 3.03s; }
+.three-d-title span:nth-child(103) { animation-delay: 3.06s; }
+.three-d-title span:nth-child(104) { animation-delay: 3.09s; }
+.three-d-title span:nth-child(105) { animation-delay: 3.12s; }
+.three-d-title span:nth-child(106) { animation-delay: 3.15s; }
+.three-d-title span:nth-child(107) { animation-delay: 3.18s; }
+.three-d-title span:nth-child(108) { animation-delay: 3.21s; }
+.three-d-title span:nth-child(109) { animation-delay: 3.24s; }
+.three-d-title span:nth-child(110) { animation-delay: 3.27s; }
+.three-d-title span:nth-child(111) { animation-delay: 3.30s; }
+.three-d-title span:nth-child(112) { animation-delay: 3.33s; }
+.three-d-title span:nth-child(113) { animation-delay: 3.36s; }
+.three-d-title span:nth-child(114) { animation-delay: 3.39s; }
+.three-d-title span:nth-child(115) { animation-delay: 3.42s; }
+.three-d-title span:nth-child(116) { animation-delay: 3.45s; }
+.three-d-title span:nth-child(117) { animation-delay: 3.48s; }
+.three-d-title span:nth-child(118) { animation-delay: 3.51s; }
+.three-d-title span:nth-child(119) { animation-delay: 3.54s; }
+.three-d-title span:nth-child(120) { animation-delay: 3.57s; }
+
+/* Анимация выезда справа налево */
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: perspective(800px) rotateY(-25deg) translateX(200px) translateZ(25px);
+    }
+    40% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+        transform: perspective(800px) rotateY(-15deg) translateX(0) translateZ(15px);
+    }
+}
+
+/* Псевдоэлемент, создающий чёрную «заднюю часть» (левая грань объёма) */
+.three-d-title span::before {
+    content: attr(data-letter);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    color: black;
+    transform: rotateY(90deg) translateZ(-0.1em) translateX(-0.15em); /* Уменьшил смещение */
+    transform-origin: left center;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-shadow: none;
+    -webkit-text-fill-color: black;
+    color: black;
+    box-shadow: inset 0px 0px 8px rgba(0,0,0,0.9);
+    border-left: 1px solid rgba(255,255,255,0.2);
+}
+
+/* правые грани букв */
+.three-d-title span::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.1);
+    transform: rotateY(-90deg) translateZ(-0.1em) translateX(0.15em); /* Уменьшил смещение */
+    transform-origin: right center;
+    opacity: 0.3;
+}
+
+/* адаптация для мобильных */
+@media (max-width: 700px) {
+    .three-d-title span {
+        font-size: clamp(1.4rem, 4vw, 2.2rem);
+        margin-bottom: 5px;
+    }
+}

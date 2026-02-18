@@ -1,0 +1,1 @@
+console.log('Тестовый скрипт загружен');document.addEventListener('DOMContentLoaded', function() {    console.log('Страница загружена');    document.body.innerHTML += '<p>JS работает!</p>';});

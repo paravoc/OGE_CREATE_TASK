@@ -1,0 +1,11 @@
+{
+  "1": {
+    "id": "1",
+    "email": "test@mail.ru",
+    "name": "Тестовый пользователь",
+    "password": "123",
+    "generations_today": 0,
+    "last_generation_date": "",
+    "is_premium": false
+  }
+}

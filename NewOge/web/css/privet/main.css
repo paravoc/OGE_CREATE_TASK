@@ -1,0 +1,105 @@
+/* Базовый сброс и основные стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0b0c10;
+    font-family: 'Segoe UI', 'Arial Black', 'Impact', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* сцена-контейнер на весь экран */
+.scene {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 20% 30%, #1a1e2a, #030405);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3vw; /* Уменьшил отступы по бокам */
+}
+
+/* левая часть с текстом */
+.left-content {
+    flex: 1.2;  /* УВЕЛИЧИЛ: было flex: 1, стало больше места для текста */
+    display: flex;
+    align-items: center;
+    transition: all 1s ease-in-out;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    max-width: 65%; /* Добавил ограничение */
+}
+
+.left-content::-webkit-scrollbar {
+    display: none;
+}
+
+.left-content.shrink {
+    transform: scale(0.7) translateX(-10%);
+}
+
+/* правая часть с тарифом */
+.right-content {
+    flex: 0 0 45%; /* Уменьшил: было 40%, теперь 35% */
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.8s ease-in-out 0.5s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 150px;     /* ← опустить вниз */
+    margin-bottom: 10px;  /* ← поднять вверх */
+}
+
+.right-content.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* тонкая подсказка */
+.hint {
+    position: absolute;
+    bottom: 20px;
+    left: 30px;
+    color: #6f7a8a;
+    font-family: monospace;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    background: rgba(0,0,0,0.3);
+    padding: 6px 12px;
+    border-radius: 30px;
+    border-left: 3px solid #ffb347;
+    z-index: 10;
+}
+
+/* адаптация для мобильных */
+@media (max-width: 900px) {
+    .scene {
+        flex-direction: column;
+        justify-content: center;
+        gap: 2rem;
+        padding: 2vw;
+    }
+    
+    .left-content {
+        max-width: 100%;
+        flex: auto;
+    }
+    
+    .left-content.shrink {
+        transform: scale(0.7) translateY(-10%);
+    }
+    
+    .right-content {
+        flex: 0 0 auto;
+    }
+}
