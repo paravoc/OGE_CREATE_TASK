@@ -1,0 +1,40 @@
+{
+    "users": [
+        {
+            "credits": 10,
+            "email": "veronica@mail.ru",
+            "full_name": "Veronika",
+            "generations_today": 3,
+            "id": "1771447137063275",
+            "is_premium": false,
+            "last_generation_date": "2026-02-18",
+            "last_login": 1771447348,
+            "password_hash": "4394756850024",
+            "phone": "",
+            "premium_until": 0,
+            "registered_at": 1771447137,
+            "tasks_correct": 0,
+            "tasks_solved": 0,
+            "total_generations": 3,
+            "username": "Veronika"
+        },
+        {
+            "credits": 10,
+            "email": "danoda2004@gmail.com",
+            "full_name": "dalipin",
+            "generations_today": 3,
+            "id": "177144577507130",
+            "is_premium": false,
+            "last_generation_date": "2026-02-18",
+            "last_login": 1771447069,
+            "password_hash": "1905235540959",
+            "phone": "",
+            "premium_until": 0,
+            "registered_at": 1771445775,
+            "tasks_correct": 0,
+            "tasks_solved": 0,
+            "total_generations": 3,
+            "username": "dalipin"
+        }
+    ]
+}
