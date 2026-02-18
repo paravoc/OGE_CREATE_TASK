@@ -66,38 +66,3 @@
     initQuickStart();
 })();
 
-// Добавляем обработчики для кнопок входа и регистрации
-document.addEventListener('DOMContentLoaded', function() {
-    const registerBtn = document.getElementById('registerBtn');
-    const loginBtn = document.getElementById('loginBtn');
-    
-    if (registerBtn) {
-        registerBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Эффект нажатия
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 200);
-            
-            // Переход на регистрацию
-            window.location.href = 'register.html';
-        });
-    }
-    
-    if (loginBtn) {
-        loginBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Эффект нажатия
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 200);
-            
-            // Пока уведомление, потом переход
-            alert('Страница входа в разработке');
-        });
-    }
-});
