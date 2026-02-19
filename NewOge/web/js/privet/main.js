@@ -1,24 +1,34 @@
 // Главный файл, инициализация всего
-(function() {
+(async function() {
     // Инициализация UI
     initUI();
     
-    // Инициализация текстовой анимации
-    const allSpans = initTextAnimation('animatedText');
+    // Проверяем авторизацию для определения скорости анимации
+    let isAuthenticated = false;
+    try {
+        const response = await fetch('/api/user/me');
+        isAuthenticated = response.ok;
+    } catch (error) {
+        console.error('Ошибка проверки авторизации:', error);
+    }
+    
+    // Инициализация текстовой анимации с нужной скоростью
+    const speed = isAuthenticated ? 'normal' : 'fast';
+    const allSpans = initTextAnimation('animatedText', speed);
     const lastSpan = getLastSpan();
     
     // Функция активации всех элементов
     function activateAll() {
-        // Делаем буквы видимыми (на всякий случай)
         makeAllSpansVisible();
         
-        // Показываем меню и тариф
+        // Показываем меню и контент
         showElements(() => {
-            // Добавляем радужную анимацию
             addRainbowAnimation(300);
             
-            // Показываем кнопку быстрого старта
-            showQuickStart();
+            // Для неавторизованных показываем кнопку быстрого старта
+            if (!isAuthenticated) {
+                showQuickStart();
+            }
         });
     }
     
@@ -31,11 +41,11 @@
             }
         });
     } else {
-        setTimeout(activateAll, 1000);
+        setTimeout(activateAll, isAuthenticated ? 1000 : 500);
     }
     
-    // Страховочный таймер
-    setTimeout(activateAll, 5000);
+    // Страховочный таймер (быстрее для неавторизованных)
+    setTimeout(activateAll, isAuthenticated ? 5000 : 2000);
     
     // Клик по hint для теста
     const hint = document.querySelector('.hint');
@@ -50,7 +60,7 @@
             });
             
             // Тест показа/скрытия кнопки
-            if (document.querySelector('.quick-start-btn').classList.contains('hidden')) {
+            if (document.querySelector('.quick-start-btn')?.classList.contains('hidden')) {
                 showQuickStart();
             } else {
                 hideQuickStart();
@@ -59,10 +69,9 @@
     }
     
     // Инициализация искр для кнопки
-    addSparkleCSS(); // Если нужно добавить CSS для искр
+    addSparkleCSS();
     initSparkles('.sparkle-btn', 10);
     
     // Инициализация кнопки быстрого старта
     initQuickStart();
 })();
-

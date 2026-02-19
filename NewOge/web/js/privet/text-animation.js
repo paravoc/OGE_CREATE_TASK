@@ -12,12 +12,15 @@ let container;
 let allSpans = [];
 
 // Инициализация текстовой анимации
-function initTextAnimation(containerId) {
+function initTextAnimation(containerId, speed = 'normal') {
     container = document.getElementById(containerId);
-    if (!container) return;
+    if (!container) return [];
     
     container.innerHTML = '';
-    let letterCounter = 0;
+    
+    // Определяем скорость анимации
+    const duration = speed === 'fast' ? '0.3s' : '0.5s';
+    const delay = speed === 'fast' ? '0.02s' : '0.03s';
     
     // Проходим по каждой строке
     textLines.forEach((line, lineIndex) => {
@@ -31,11 +34,11 @@ function initTextAnimation(containerId) {
                 span.textContent = char;
             }
             span.setAttribute('data-letter', (char === ' ') ? ' ' : char);
+            span.style.animationDuration = duration;
             container.appendChild(span);
-            letterCounter++;
         }
         
-        // Добавляем перенос строки, если это не последняя строка
+        // Добавляем перенос строки
         if (lineIndex < textLines.length - 1) {
             const lineBreak = document.createElement('span');
             lineBreak.innerHTML = '&nbsp;';
@@ -61,11 +64,25 @@ function initTextAnimation(containerId) {
         
         .three-d-title span {
             display: inline-block;
+            opacity: 0;
+            animation: slideInRight var(--duration, 0.5s) ease forwards;
+            animation-delay: calc(var(--index, 0) * var(--delay, 0.03s));
         }
     `;
     document.head.appendChild(style);
     
     allSpans = document.querySelectorAll('#animatedText span');
+    
+    // Устанавливаем индивидуальные задержки
+    allSpans.forEach((span, index) => {
+        span.style.setProperty('--index', index);
+    });
+    
+    if (speed === 'fast') {
+        container.style.setProperty('--duration', '0.3s');
+        container.style.setProperty('--delay', '0.02s');
+    }
+    
     return allSpans;
 }
 
