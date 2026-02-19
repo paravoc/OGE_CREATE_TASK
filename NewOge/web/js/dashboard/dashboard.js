@@ -1,4 +1,4 @@
-// dashboard.js - обновлённая версия с использованием window.USER_DATA
+// dashboard.js - обновлённая версия
 
 // Получаем данные пользователя из window.USER_DATA (переданы с сервера)
 const userData = window.USER_DATA;
@@ -25,41 +25,34 @@ const elements = {
 
 // Функция для обновления всех ссылок (убираем ?user_id=)
 function updateAllLinks() {
-    // Обновляем ссылки на генератор
     document.querySelectorAll('a[href*="/generate"]').forEach(link => {
-        // Убираем все query параметры
-        const baseUrl = link.href.split('?')[0];
-        link.href = baseUrl;
+        link.href = '/generate';
     });
-    
-    // Обновляем ссылки на профиль
     document.querySelectorAll('a[href*="/profile"]').forEach(link => {
-        const baseUrl = link.href.split('?')[0];
-        link.href = baseUrl;
+        link.href = '/profile';
     });
-    
-    // Обновляем ссылки на статус
     document.querySelectorAll('a[href*="/status"]').forEach(link => {
-        const baseUrl = link.href.split('?')[0];
-        link.href = baseUrl;
+        link.href = '/status';
     });
-    
+    document.querySelectorAll('a[href*="/buy_credits"]').forEach(link => {
+        link.href = '/buy_credits';
+    });
+    document.querySelectorAll('a[href*="/upgrade"]').forEach(link => {
+        link.href = '/upgrade';
+    });
     console.log('✅ Ссылки обновлены');
 }
 
-// Функция для загрузки дополнительных данных с сервера (если нужно)
+// Функция для загрузки данных с сервера
 async function loadUserData() {
     try {
-        // Если у нас уже есть данные из window.USER_DATA, используем их сразу
-        if (userData) {
-            updateUI(userData);
-        }
-        
-        // Можно также запросить свежие данные с сервера
         const response = await fetch('/api/user/me');
         if (response.ok) {
-            const freshData = await response.json();
-            updateUI(freshData);
+            const userData = await response.json();
+            updateUI(userData);
+        } else {
+            console.error('Ошибка загрузки данных');
+            window.location.href = '/login';
         }
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
@@ -70,21 +63,17 @@ async function loadUserData() {
 function updateUI(user) {
     console.log('Обновление UI с данными:', user);
     
-    // Основная информация
     if (elements.userFullName) {
         elements.userFullName.textContent = user.full_name || user.username;
     }
-    
     if (elements.userNickname) {
         elements.userNickname.textContent = '@' + user.username;
     }
-    
     if (elements.userRegisteredDate) {
         const date = new Date(user.registered_at * 1000);
         elements.userRegisteredDate.textContent = `📅 С нами с ${date.toLocaleDateString()}`;
     }
     
-    // Статус и премиум
     if (user.is_premium) {
         if (elements.userStatus) {
             elements.userStatus.className = 'user-status premium-status';
@@ -103,34 +92,32 @@ function updateUI(user) {
         }
     }
     
-    // Статистика
     if (elements.tasksSolved) {
         elements.tasksSolved.textContent = user.tasks_solved || 0;
     }
-    
     if (elements.generationsLeft) {
         const maxGen = user.is_premium ? 1000 : 3;
         const left = maxGen - (user.generations_today || 0);
         elements.generationsLeft.textContent = `${left}/${maxGen}`;
     }
-    
-    // Приветствие
     if (elements.userFirstName) {
         const firstName = (user.full_name || user.username).split(' ')[0];
         elements.userFirstName.textContent = firstName;
     }
-    
     if (elements.welcomeSubtitle) {
         const maxGen = user.is_premium ? 1000 : 3;
         const left = maxGen - (user.generations_today || 0);
         elements.welcomeSubtitle.textContent = `Продолжим подготовку? У вас ${left} попыток генерации на сегодня`;
     }
-    
-    // Прогресс по информатике
-    if (elements.informaticsProgress) {
-        elements.informaticsProgress.textContent = '0/12 тем';
-    }
 }
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard загружен');
+    updateAllLinks();
+    loadUserData();
+    updateTimer();
+});
 
 // Элементы модального окна
 const logoutBtn = document.getElementById('logoutBtn');
