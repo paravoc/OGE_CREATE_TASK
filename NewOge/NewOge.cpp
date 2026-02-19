@@ -86,7 +86,7 @@ int main() {
     }
 
     // ГЕНЕРАЦИЯ И СОХРАНЕНИЕ
-    string filename = "web/variant_oge.html";
+    string filename = "C:/Users/smidr/source/repos/NewOge/NewOge/web/oge_tasks.html";
     generator.generate_full_page();
 
     if (generator.save_to_file(filename)) {
