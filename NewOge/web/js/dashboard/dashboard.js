@@ -1,12 +1,48 @@
-// dashboard.js - исправленная версия с загрузкой данных с сервера
+// dashboard.js - исправленная версия с защитой от кликов
 
-// Получаем ID пользователя из URL
-const userId = window.USER_ID;
+// Получаем ID пользователя
+const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
 
 // Если нет ID - перенаправляем на вход
 if (!userId) {
     window.location.href = '/login';
 }
+
+// Функция для обновления всех ссылок
+function updateAllLinks() {
+    if (!userId) return;
+    document.querySelectorAll('a[href*="USER_ID_PLACEHOLDER"]').forEach(link => {
+        link.href = link.href.replace('USER_ID_PLACEHOLDER', userId);
+    });
+}
+
+// ПЕРЕХВАТ КЛИКОВ - самое важное!
+document.addEventListener('click', function(e) {
+    // Ищем ближайшую ссылку, по которой кликнули
+    const link = e.target.closest('a');
+    if (!link) return;
+    
+    const href = link.getAttribute('href');
+    if (!href) return;
+    
+    // Если в ссылке есть плейсхолдер
+    if (href.includes('USER_ID_PLACEHOLDER')) {
+        e.preventDefault(); // Останавливаем переход
+        
+        // Исправляем ссылку
+        const correctHref = href.replace('USER_ID_PLACEHOLDER', userId);
+        link.href = correctHref;
+        
+        // Переходим по исправленной ссылке
+        window.location.href = correctHref;
+    }
+});
+
+// Обновляем ссылки при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    updateAllLinks();
+    loadUserData(); // ваша существующая функция
+});
 
 // Элементы для заполнения данными
 const elements = {
@@ -27,8 +63,6 @@ async function loadUserData() {
     try {
         const response = await fetch(`/api/user?user_id=${userId}`);
         const userData = await response.json();
-        
-        // Обновляем интерфейс
         updateUI(userData);
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
@@ -90,20 +124,11 @@ function updateUI(user) {
         elements.welcomeSubtitle.textContent = `Продолжим подготовку? У вас ${left} попыток генерации на сегодня`;
     }
     
-    // Прогресс по информатике (пример)
+    // Прогресс по информатике
     if (elements.informaticsProgress) {
-        // Здесь можно загрузить реальный прогресс из БД
         elements.informaticsProgress.textContent = '0/12 тем';
     }
-    
-    // Обновляем ссылки с user_id
-    document.querySelectorAll('a[href*="/generate"]').forEach(link => {
-        link.href = `/generate?user_id=${userId}`;
-    });
 }
-
-// Загружаем данные при загрузке страницы
-document.addEventListener('DOMContentLoaded', loadUserData);
 
 // Элементы модального окна
 const logoutBtn = document.getElementById('logoutBtn');
@@ -161,7 +186,6 @@ if (premiumIndicator) {
             this.style.transform = '';
         }, 200);
         
-        // Проверяем реальный премиум статус через API
         fetch(`/api/user?user_id=${userId}`)
             .then(res => res.json())
             .then(user => {
@@ -267,7 +291,6 @@ function updateTimer() {
     
     timerElement.textContent = `${diffHours}ч ${diffMinutes}м`;
     
-    // Обновляем каждую минуту
     setTimeout(updateTimer, 60000);
 }
 
