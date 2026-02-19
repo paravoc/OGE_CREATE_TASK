@@ -1,48 +1,13 @@
-// dashboard.js - исправленная версия с защитой от кликов
+// dashboard.js - обновлённая версия с использованием window.USER_DATA
 
-// Получаем ID пользователя
-const userId = window.USER_ID || new URLSearchParams(window.location.search).get('user_id');
+// Получаем данные пользователя из window.USER_DATA (переданы с сервера)
+const userData = window.USER_DATA;
 
-// Если нет ID - перенаправляем на вход
-if (!userId) {
+// Если нет данных - перенаправляем на вход
+if (!userData) {
+    console.error('❌ Нет данных пользователя');
     window.location.href = '/login';
 }
-
-// Функция для обновления всех ссылок
-function updateAllLinks() {
-    if (!userId) return;
-    document.querySelectorAll('a[href*="USER_ID_PLACEHOLDER"]').forEach(link => {
-        link.href = link.href.replace('USER_ID_PLACEHOLDER', userId);
-    });
-}
-
-// ПЕРЕХВАТ КЛИКОВ - самое важное!
-document.addEventListener('click', function(e) {
-    // Ищем ближайшую ссылку, по которой кликнули
-    const link = e.target.closest('a');
-    if (!link) return;
-    
-    const href = link.getAttribute('href');
-    if (!href) return;
-    
-    // Если в ссылке есть плейсхолдер
-    if (href.includes('USER_ID_PLACEHOLDER')) {
-        e.preventDefault(); // Останавливаем переход
-        
-        // Исправляем ссылку
-        const correctHref = href.replace('USER_ID_PLACEHOLDER', userId);
-        link.href = correctHref;
-        
-        // Переходим по исправленной ссылке
-        window.location.href = correctHref;
-    }
-});
-
-// Обновляем ссылки при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-    updateAllLinks();
-    loadUserData(); // ваша существующая функция
-});
 
 // Элементы для заполнения данными
 const elements = {
@@ -58,12 +23,44 @@ const elements = {
     informaticsProgress: document.getElementById('informaticsProgress')
 };
 
-// Загружаем данные пользователя с сервера
+// Функция для обновления всех ссылок (убираем ?user_id=)
+function updateAllLinks() {
+    // Обновляем ссылки на генератор
+    document.querySelectorAll('a[href*="/generate"]').forEach(link => {
+        // Убираем все query параметры
+        const baseUrl = link.href.split('?')[0];
+        link.href = baseUrl;
+    });
+    
+    // Обновляем ссылки на профиль
+    document.querySelectorAll('a[href*="/profile"]').forEach(link => {
+        const baseUrl = link.href.split('?')[0];
+        link.href = baseUrl;
+    });
+    
+    // Обновляем ссылки на статус
+    document.querySelectorAll('a[href*="/status"]').forEach(link => {
+        const baseUrl = link.href.split('?')[0];
+        link.href = baseUrl;
+    });
+    
+    console.log('✅ Ссылки обновлены');
+}
+
+// Функция для загрузки дополнительных данных с сервера (если нужно)
 async function loadUserData() {
     try {
-        const response = await fetch(`/api/user?user_id=${userId}`);
-        const userData = await response.json();
-        updateUI(userData);
+        // Если у нас уже есть данные из window.USER_DATA, используем их сразу
+        if (userData) {
+            updateUI(userData);
+        }
+        
+        // Можно также запросить свежие данные с сервера
+        const response = await fetch('/api/user/me');
+        if (response.ok) {
+            const freshData = await response.json();
+            updateUI(freshData);
+        }
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
     }
@@ -71,6 +68,8 @@ async function loadUserData() {
 
 // Обновление интерфейса
 function updateUI(user) {
+    console.log('Обновление UI с данными:', user);
+    
     // Основная информация
     if (elements.userFullName) {
         elements.userFullName.textContent = user.full_name || user.username;
@@ -98,6 +97,9 @@ function updateUI(user) {
         if (elements.userStatus) {
             elements.userStatus.className = 'user-status';
             elements.userStatus.textContent = 'FREE';
+        }
+        if (elements.premiumIndicator) {
+            elements.premiumIndicator.style.display = 'none';
         }
     }
     
@@ -162,9 +164,10 @@ if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
 if (confirmLogout) {
     confirmLogout.addEventListener('click', () => {
         confirmLogout.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 300);
+        confirmLogout.textContent = '⏳ Выход...';
+        
+        // Вызываем logout
+        logout();
     });
 }
 
@@ -186,15 +189,11 @@ if (premiumIndicator) {
             this.style.transform = '';
         }, 200);
         
-        fetch(`/api/user?user_id=${userId}`)
-            .then(res => res.json())
-            .then(user => {
-                if (user.is_premium) {
-                    showPremiumInfo();
-                } else {
-                    window.location.href = `/upgrade?user_id=${userId}`;
-                }
-            });
+        if (userData && userData.is_premium) {
+            showPremiumInfo();
+        } else {
+            window.location.href = '/upgrade';
+        }
     });
 }
 
@@ -247,15 +246,11 @@ document.querySelectorAll('.premium-locked').forEach(card => {
             this.style.transform = '';
         }, 200);
         
-        fetch(`/api/user?user_id=${userId}`)
-            .then(res => res.json())
-            .then(user => {
-                if (user.is_premium) {
-                    alert('✨ У вас уже есть премиум! Наслаждайтесь материалами.');
-                } else {
-                    window.location.href = `/upgrade?user_id=${userId}`;
-                }
-            });
+        if (userData && userData.is_premium) {
+            alert('✨ У вас уже есть премиум! Наслаждайтесь материалами.');
+        } else {
+            window.location.href = '/upgrade';
+        }
     });
 });
 
@@ -270,7 +265,7 @@ document.querySelectorAll('.category-card:not(.coming-soon) .category-btn').forE
         setTimeout(() => {
             this.style.transform = '';
             if (category) {
-                window.location.href = `/category?cat=${category}&user_id=${userId}`;
+                window.location.href = `/category?cat=${category}`;
             }
         }, 300);
     });
@@ -294,7 +289,19 @@ function updateTimer() {
     setTimeout(updateTimer, 60000);
 }
 
-updateTimer();
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Dashboard загружен, userData:', userData);
+    
+    // Обновляем ссылки
+    updateAllLinks();
+    
+    // Загружаем данные
+    loadUserData();
+    
+    // Запускаем таймер
+    updateTimer();
+});
 
 // Анимация появления при скролле
 const observer = new IntersectionObserver((entries) => {
@@ -338,3 +345,27 @@ if (premiumIndicator) {
         this.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.5)';
     });
 }
+
+// В функции logout:
+async function logout() {
+    try {
+        // Показываем индикатор загрузки
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.textContent = '⏳ Выход...';
+            logoutBtn.style.pointerEvents = 'none';
+        }
+        
+        // Отправляем запрос на выход
+        await fetch('/logout');
+        
+        // Перенаправляем на страницу входа
+        window.location.href = '/login';
+        
+    } catch (error) {
+        console.error('Ошибка при выходе:', error);
+        // Даже при ошибке пытаемся перенаправить
+        window.location.href = '/login';
+    }
+}
+

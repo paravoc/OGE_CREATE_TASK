@@ -1,3 +1,25 @@
+// Функция для отладки
+function debugCookieStatus() {
+    const consent = localStorage.getItem('cookieConsent');
+    const userId = window.USER_ID;
+    
+    console.log('%c=== COOKIE DEBUG ===', 'color: #8b5cf6; font-size: 14px');
+    console.log('localStorage cookieConsent:', consent);
+    console.log('Тип значения:', typeof consent);
+    console.log('Длина:', consent ? consent.length : 0);
+    console.log('USER_ID:', userId);
+    console.log('Авторизован:', !!userId);
+    
+    if (consent === 'true') {
+        console.log('%c✅ СОГЛАСИЕ ДАНО', 'color: #10b981');
+    } else if (consent === null) {
+        console.log('%c❌ СОГЛАСИЕ НЕ ДАНО (первый визит)', 'color: #ef4444');
+    } else {
+        console.log('%c⚠️ НЕИЗВЕСТНОЕ ЗНАЧЕНИЕ: ' + consent, 'color: #f59e0b');
+    }
+}
+
+
 // Cookie Banner Management
 const CookieBanner = {
     init: function() {
@@ -138,6 +160,7 @@ const CookieBanner = {
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
+    debugCookieStatus();
     CookieBanner.init();
 });
 
