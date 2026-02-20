@@ -12,6 +12,7 @@ function showMessage(text, type) {
     msg.style.zIndex = '9999';
     msg.style.fontWeight = 'bold';
     msg.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+    msg.style.animation = 'slideIn 0.3s ease';
     
     if (type === 'error') msg.style.background = '#ef4444';
     else if (type === 'success') msg.style.background = '#10b981';
@@ -20,12 +21,57 @@ function showMessage(text, type) {
     msg.textContent = text;
     document.body.appendChild(msg);
     
-    setTimeout(() => msg.remove(), 3000);
+    setTimeout(() => {
+        msg.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => msg.remove(), 300);
+    }, 3000);
 }
+
+// Добавляем стили для анимации
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
 
 // При загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ auth.js загружен');
+    
+    // Проверка URL параметров ошибок
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    
+    if (error) {
+        let message = '';
+        switch(error) {
+            case 'empty':
+                message = '❌ Заполните все поля';
+                break;
+            case 'email_exists':
+                message = '❌ Этот email уже зарегистрирован';
+                break;
+            case 'invalid':
+                message = '❌ Неверный email или пароль';
+                break;
+            case 'password_mismatch':
+                message = '❌ Пароли не совпадают';
+                break;
+            case 'password_short':
+                message = '❌ Пароль должен быть минимум 6 символов';
+                break;
+            default:
+                message = '❌ Ошибка: ' + error;
+        }
+        showMessage(message, 'error');
+    }
     
     // Обработка формы регистрации
     const registerForm = document.getElementById('registerForm');
@@ -33,16 +79,29 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('📝 Форма регистрации найдена');
         
         registerForm.addEventListener('submit', function(event) {
-            // Не отменяем стандартную отправку - пусть сервер обрабатывает
             console.log('📤 Отправка формы регистрации');
             
-            // Можно добавить проверку паролей
+            const username = document.getElementById('regName')?.value;
+            const email = document.getElementById('regEmail')?.value;
             const pass = document.getElementById('regPassword')?.value;
             const confirm = document.getElementById('regConfirm')?.value;
             
-            if (pass && confirm && pass !== confirm) {
+            // Клиентская валидация
+            if (!username || !email || !pass || !confirm) {
+                event.preventDefault();
+                showMessage('❌ Заполните все поля', 'error');
+                return;
+            }
+            
+            if (pass !== confirm) {
                 event.preventDefault();
                 showMessage('❌ Пароли не совпадают', 'error');
+                return;
+            }
+            
+            if (pass.length < 6) {
+                event.preventDefault();
+                showMessage('❌ Пароль должен быть минимум 6 символов', 'error');
                 return;
             }
             
@@ -58,8 +117,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         loginForm.addEventListener('submit', function(event) {
             console.log('📤 Отправка формы входа');
+            
+            const email = document.getElementById('loginEmail')?.value;
+            const password = document.getElementById('loginPassword')?.value;
+            
+            if (!email || !password) {
+                event.preventDefault();
+                showMessage('❌ Заполните все поля', 'error');
+                return;
+            }
+            
             showMessage('⏳ Вход...', 'info');
-            // Не отменяем - пусть сервер обрабатывает
         });
     }
     
@@ -67,7 +135,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const socialButtons = document.querySelectorAll('.social-btn-reg');
     socialButtons.forEach(btn => {
         btn.addEventListener('click', function() {
-            showMessage('⚡ Вход через соцсети будет позже', 'info');
+            const provider = this.textContent.trim();
+            showMessage(`⚡ Вход через ${provider} будет доступен позже`, 'info');
         });
     });
 });
