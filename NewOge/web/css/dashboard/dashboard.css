@@ -1,12 +1,38 @@
+/* ============================================
+   DASHBOARD.CSS - Полные стили для личного кабинета
+   ============================================ */
 
+/* --------------------------------------------
+   ОСНОВНЫЕ СТИЛИ
+   -------------------------------------------- */
 
-/* Верхний ряд */
+body {
+    overflow: auto !important;
+    height: auto !important;
+    min-height: 100vh;
+    background: #0f1219;  /* тёмный, почти чёрный с синеватым оттенком */
+}
+
+.dashboard-container {
+    max-width: 1300px;
+    margin: 12vh auto 2rem;
+    padding: 0 2rem 4rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* --------------------------------------------
+   ВЕРХНИЙ РЯД (карточка пользователя + статистика)
+   -------------------------------------------- */
+
 .dashboard-top-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
     animation: fadeInDown 0.8s ease;
+    gap: 2rem;
+    flex-wrap: wrap;
 }
 
 /* Карточка пользователя */
@@ -20,8 +46,11 @@
     align-items: center;
     gap: 1.5rem;
     box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255, 180, 70, 0.2);
-    min-width: 400px;
+    min-width: 500px;
+    flex: 2;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .user-card:hover {
@@ -79,6 +108,19 @@
     gap: 0.3rem;
 }
 
+.user-status {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffb347;
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    border: 1px solid rgba(255, 180, 70, 0.3);
+}
+
 .premium-status {
     background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
     color: #000;
@@ -103,11 +145,14 @@
     align-items: center;
     gap: 1.5rem;
     box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255, 180, 70, 0.2);
+    flex: 1;
+    min-width: 400px;
+    justify-content: space-around;
 }
 
 .stat-mini-item {
     text-align: center;
-    min-width: 80px;
+    min-width: 70px;
 }
 
 .stat-mini-value {
@@ -131,19 +176,68 @@
     background: linear-gradient(to bottom, transparent, #ffb347, transparent);
 }
 
-/* Приветствие */
-.welcome-message {
-    margin-bottom: 3rem;
-    padding: 2rem;
+/* Кнопка смены пароля в карточке */
+.user-card .quick-action-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+    background: linear-gradient(135deg, #2a1e3a, #1a1e2a);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 40px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.user-card .quick-action-btn:hover {
+    transform: translateY(-2px);
+    border-color: #8b5cf6;
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+}
+
+.user-card .quick-action-icon {
+    font-size: 1.1rem;
+}
+
+.user-card .quick-action-text {
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, #fff, #e0e0e0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+/* --------------------------------------------
+   WELCOME SECTION - Приветствие + быстрые действия
+   -------------------------------------------- */
+
+.welcome-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem 0 3rem;
+    padding: 1.5rem 2rem;
     background: rgba(20, 25, 35, 0.7);
     backdrop-filter: blur(5px);
-    border-radius: 30px;
+    border-radius: 50px;
     border: 2px solid rgba(255, 180, 70, 0.2);
     animation: fadeInUp 0.8s ease;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.welcome-message {
+    flex: 2;
+    min-width: 300px;
 }
 
 .welcome-title {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 800;
     color: white;
     margin-bottom: 0.5rem;
@@ -153,6 +247,11 @@
 .username {
     color: #ffb347;
     text-shadow: 0 0 20px #ffb347;
+    background: linear-gradient(135deg, #ffb347, #ff8c00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
 }
 
 .welcome-subtitle {
@@ -160,15 +259,97 @@
     font-size: 1.1rem;
 }
 
-/* Заголовки секций */
+/* Быстрые действия */
+.quick-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex: 1;
+    min-width: 300px;
+}
+
+.quick-action-btn {
+    background: linear-gradient(135deg, #2a1e3a, #1a1e2a);
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    border-radius: 50px;
+    padding: 0.9rem 1.8rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.quick-action-btn:hover {
+    transform: translateY(-3px);
+    border-color: #8b5cf6;
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+    background: linear-gradient(135deg, #3a2e4a, #2a2e3a);
+}
+
+.quick-action-btn:active {
+    transform: translateY(0);
+}
+
+.quick-action-icon {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 0 5px rgba(139, 92, 246, 0.5));
+    animation: gentlePulse 3s infinite;
+}
+
+.quick-action-text {
+    background: linear-gradient(135deg, #fff, #e0e0e0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Индивидуальные цвета для кнопок */
+.quick-action-btn:first-child {
+    border-color: rgba(139, 92, 246, 0.4);
+}
+.quick-action-btn:first-child:hover {
+    border-color: #8b5cf6;
+}
+
+.quick-action-btn:last-child {
+    border-color: rgba(245, 158, 11, 0.4);
+}
+.quick-action-btn:last-child:hover {
+    border-color: #f59e0b;
+}
+.quick-action-btn:last-child .quick-action-icon {
+    filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.5));
+}
+
+/* --------------------------------------------
+   СТАТИСТИКА (карточки с кнопками)
+   -------------------------------------------- */
+
+.stats-section {
+    margin: 3rem 0;
+}
+
 .section-title {
     font-size: 2rem;
-    font-weight: 700;
-    color: white;
+    font-weight: 800;
     margin-bottom: 2rem;
+    background: linear-gradient(135deg, #ffb347, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    display: inline-block;
     position: relative;
     padding-bottom: 0.5rem;
-    text-shadow: 0 0 10px rgba(255,180,70,0.3);
 }
 
 .section-title::after {
@@ -182,7 +363,185 @@
     border-radius: 2px;
 }
 
-/* Категории */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.stat-card {
+    background: rgba(20, 25, 35, 0.95);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 180, 70, 0.2);
+    border-radius: 30px;
+    padding: 2rem 1.8rem 1.5rem 1.8rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    animation: fadeInUp 0.8s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffb347, #8b5cf6);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+}
+
+.stat-card:hover::before {
+    transform: translateX(0);
+}
+
+.stat-card:hover {
+    transform: translateY(-8px);
+    border-color: #ffb347;
+    box-shadow: 0 30px 50px rgba(255, 180, 70, 0.3);
+}
+
+/* Верхняя часть карточки */
+.stat-card .stat-icon {
+    font-size: 2.8rem;
+    background: rgba(255, 180, 70, 0.1);
+    width: 80px;
+    height: 80px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 180, 70, 0.3);
+    margin-bottom: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.1) rotate(5deg);
+    border-color: #ffb347;
+    box-shadow: 0 0 30px rgba(255, 180, 70, 0.5);
+}
+
+.stat-details {
+    margin-bottom: 1.5rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ffffff, #ffb347);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+}
+
+.stat-label {
+    color: #aaa;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 500;
+}
+
+/* Кнопка под карточкой */
+.stat-card-btn {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px solid rgba(255, 180, 70, 0.2);
+    border-radius: 25px;
+    padding: 0.9rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+    background: linear-gradient(135deg, rgba(255, 180, 70, 0.05), rgba(139, 92, 246, 0.05));
+}
+
+.stat-card-btn .btn-arrow {
+    transition: transform 0.3s ease;
+    opacity: 0;
+    transform: translateX(-10px);
+    font-size: 1.2rem;
+}
+
+.stat-card-btn:hover {
+    background: linear-gradient(135deg, rgba(255, 180, 70, 0.15), rgba(139, 92, 246, 0.15));
+    border-color: #ffb347;
+    box-shadow: 0 5px 20px rgba(255, 180, 70, 0.3);
+}
+
+.stat-card-btn:hover .btn-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Индивидуальные цвета для карточек */
+.stat-card:nth-child(1) .stat-icon {
+    border-color: rgba(139, 92, 246, 0.3);
+}
+.stat-card:nth-child(1):hover .stat-icon {
+    border-color: #8b5cf6;
+}
+
+.stat-card:nth-child(2) .stat-icon {
+    border-color: rgba(16, 185, 129, 0.3);
+}
+.stat-card:nth-child(2):hover .stat-icon {
+    border-color: #10b981;
+}
+.stat-card:nth-child(2) .stat-value {
+    background: linear-gradient(135deg, #ffffff, #10b981);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.stat-card:nth-child(3) .stat-icon {
+    border-color: rgba(245, 158, 11, 0.3);
+}
+.stat-card:nth-child(3):hover .stat-icon {
+    border-color: #f59e0b;
+}
+.stat-card:nth-child(3) .stat-value {
+    background: linear-gradient(135deg, #ffffff, #f59e0b);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.stat-card:nth-child(4) .stat-icon {
+    border-color: rgba(236, 72, 153, 0.3);
+}
+.stat-card:nth-child(4):hover .stat-icon {
+    border-color: #ec4899;
+}
+.stat-card:nth-child(4) .stat-value {
+    background: linear-gradient(135deg, #ffffff, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* --------------------------------------------
+   КАТЕГОРИИ ОБУЧЕНИЯ
+   -------------------------------------------- */
+
+.categories-section {
+    margin: 4rem 0;
+}
+
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -326,7 +685,14 @@
     box-shadow: 0 0 20px rgba(139,92,246,0.5);
 }
 
-/* Обучающие материалы */
+/* --------------------------------------------
+   ОБУЧАЮЩИЕ МАТЕРИАЛЫ
+   -------------------------------------------- */
+
+.materials-section {
+    margin: 4rem 0;
+}
+
 .materials-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -343,7 +709,7 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    min-height: 250px;
+    min-height: 280px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -445,7 +811,10 @@
     opacity: 0.5;
 }
 
-/* Премиум индикатор в меню */
+/* --------------------------------------------
+   ПРЕМИУМ ИНДИКАТОР
+   -------------------------------------------- */
+
 .premium-indicator {
     display: flex;
     align-items: center;
@@ -471,7 +840,10 @@
     letter-spacing: 1px;
 }
 
-/* Модальное окно выхода */
+/* --------------------------------------------
+   МОДАЛЬНОЕ ОКНО ВЫХОДА
+   -------------------------------------------- */
+
 .logout-modal {
     display: none;
     position: fixed;
@@ -570,16 +942,9 @@
     box-shadow: 0 0 30px #ff4757;
 }
 
-/* Анимации */
-@keyframes premiumGlow {
-    0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-    50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
-}
-
-@keyframes starSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
+/* --------------------------------------------
+   АНИМАЦИИ
+   -------------------------------------------- */
 
 @keyframes fadeInDown {
     from {
@@ -603,55 +968,147 @@
     }
 }
 
-/* Переопределяем глобальные стили для страницы дашборда */
-body {
-    overflow: auto !important; /* Разрешаем скролл */
-    height: auto !important;
-    min-height: 100vh;
+@keyframes premiumGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+    50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
 }
 
-/* Основные стили дашборда */
-.dashboard-container {
-    max-width: 1300px;
-    margin: 12vh auto 2rem;
-    padding: 0 2rem 4rem; /* Добавил отступ снизу */
-    position: relative;
-    z-index: 1;
+@keyframes starSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
-
-
-
-/* Адаптивность */
-@media (max-width: 900px) {
-    .dashboard-container {
-        margin-top: 15vh !important;
+@keyframes gentlePulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 5px currentColor);
     }
-    
+    50% {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 15px currentColor);
+    }
+}
+
+/* --------------------------------------------
+   АДАПТИВНОСТЬ
+   -------------------------------------------- */
+
+@media (max-width: 1200px) {
     .dashboard-top-row {
         flex-direction: column;
-        gap: 1rem;
+        align-items: stretch;
     }
     
     .user-card {
-        width: 100%;
         min-width: auto;
+        width: 100%;
     }
     
     .stats-mini {
+        min-width: auto;
         width: 100%;
+    }
+}
+
+@media (max-width: 900px) {
+    .dashboard-container {
+        margin-top: 15vh !important;
+        padding: 0 1rem 2rem;
+    }
+    
+    .welcome-section {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.5rem;
+    }
+    
+    .quick-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+    
+    .quick-action-btn {
+        flex: 1;
         justify-content: center;
     }
     
     .welcome-title {
+        font-size: 1.8rem;
+    }
+    
+    .categories-grid,
+    .materials-grid,
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-mini {
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .stat-mini-divider {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .user-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+    
+    .user-meta {
+        justify-content: center;
+    }
+    
+    .quick-actions {
+        flex-direction: column;
+    }
+    
+    .quick-action-btn {
+        width: 100%;
+    }
+    
+    .welcome-title {
+        font-size: 1.5rem;
+    }
+    
+    .welcome-subtitle {
+        font-size: 1rem;
+    }
+    
+    .stat-mini-item {
+        min-width: 60px;
+    }
+    
+    .stat-mini-value {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: 1.5rem 1.2rem 1.2rem;
+    }
+    
+    .stat-card .stat-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2.2rem;
+    }
+    
+    .stat-value {
         font-size: 2rem;
     }
-    
-    .categories-grid {
-        grid-template-columns: 1fr;
+}
+
+@media (max-width: 400px) {
+    .stats-mini {
+        flex-direction: column;
     }
     
-    .materials-grid {
-        grid-template-columns: 1fr;
+    .stat-mini-item {
+        width: 100%;
     }
 }

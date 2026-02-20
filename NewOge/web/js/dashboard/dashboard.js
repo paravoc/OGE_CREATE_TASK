@@ -28,8 +28,8 @@ function updateAllLinks() {
     document.querySelectorAll('a[href*="/generate"]').forEach(link => {
         link.href = '/generate';
     });
-    document.querySelectorAll('a[href*="/profile"]').forEach(link => {
-        link.href = '/profile';
+    document.querySelectorAll('a[href*="/dashboard"]').forEach(link => {
+        link.href = '/dashboard';
     });
     document.querySelectorAll('a[href*="/status"]').forEach(link => {
         link.href = '/status';

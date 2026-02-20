@@ -1,5 +1,5 @@
 // auth-aware.js - управление контентом в зависимости от авторизации
-// В начало файла добавим проверку и подключение CSS
+
 (function() {
     // Подключаем CSS для категорий, если его нет
     if (!document.querySelector('link[href*="categories.css"]')) {
@@ -10,7 +10,6 @@
     }
 })();
 
-// ... остальной код auth-aware.js
 // Функция для проверки авторизации
 async function checkAuth() {
     try {
@@ -27,16 +26,15 @@ async function checkAuth() {
 
 // Функция для обновления меню
 function updateMenu(authenticated, user) {
-    const menuContent = document.getElementById('menuContent');
     const authButtons = document.getElementById('authButtons');
     
     if (!authButtons) return;
     
     if (authenticated && user) {
-        // Авторизован - показываем имя и кнопку выхода
+        // Авторизован - показываем имя и ссылку на dashboard
         authButtons.innerHTML = `
             <span class="user-greeting">👤 ${user.username}</span>
-            <a href="/profile" class="auth">Профиль</a>
+            <a href="/dashboard" class="auth">Личный кабинет</a>
             <a href="/logout" class="auth logout">Выйти</a>
         `;
     } else {
@@ -48,7 +46,39 @@ function updateMenu(authenticated, user) {
     }
 }
 
-// Функция для получения тарифного контента (для неавторизованных)
+// Функция для получения контента для авторизованных
+function getAuthorizedContent(user) {
+    return `
+        <div class="categories-container">
+            <h2 class="categories-title">С возвращением, ${user.username}!</h2>
+            <p class="categories-subtitle">Продолжите подготовку</p>
+            <div class="categories-grid">
+                <!-- Генератор задач -->
+                <div class="category-card" onclick="location.href='/generate'">
+                    <div class="category-icon">⚡</div>
+                    <h3 class="category-name">Генератор</h3>
+                    <p class="category-desc">Создать новый вариант</p>
+                </div>
+                
+                <!-- Мои результаты -->
+                <div class="category-card" onclick="location.href='/dashboard'">
+                    <div class="category-icon">📊</div>
+                    <h3 class="category-name">Статистика</h3>
+                    <p class="category-desc">Мои результаты</p>
+                </div>
+                
+                <!-- Задачи -->
+                <div class="category-card" onclick="location.href='/tasks'">
+                    <div class="category-icon">📋</div>
+                    <h3 class="category-name">Задачи</h3>
+                    <p class="category-desc">Все типы заданий</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Функция для получения контента для неавторизованных (тариф)
 function getTariffContent() {
     return `
         <div class="tarif-container">
@@ -70,10 +100,10 @@ function getTariffContent() {
                     <h2>ПОДГОТОВКА ЗА<br><span class="highlight">72 ЧАСА</span></h2>
                 </div>
                 <ul class="tarif-features">
-                    <li>✓ Полный доступ ко всем решениям и обучающим материалам</li>
-                    <li>✓ Безлимитная генерация вариантов до 100 задач в каждом</li>
-                    <li>✓ Хранение всех сгенерированных вариантов</li>
-                    <li>✓ Возможность печати уникальных именных вариантов</li>
+                    <li>✓ Полный доступ ко всем решениям</li>
+                    <li>✓ Безлимитная генерация вариантов</li>
+                    <li>✓ Хранение всех вариантов</li>
+                    <li>✓ Печать именных вариантов</li>
                 </ul>
                 <div class="tarif-price">
                     <span class="old-price">1000 ₽</span>
@@ -83,156 +113,6 @@ function getTariffContent() {
                 <button class="tarif-btn sparkle-btn" onclick="location.href='/upgrade'">
                     <span class="btn-text">ВЫБРАТЬ ТАРИФ</span>
                 </button>
-            </div>
-        </div>
-    `;
-}
-
-// Функция для получения контента категорий (для авторизованных)
-function getCategoriesContent(user) {
-    return `
-        <div class="categories-container">
-            <h2 class="categories-title">📚 Навигация</h2>
-            <div class="categories-grid">
-                <!-- Генератор задач -->
-                <div class="category-card" data-category="generator">
-                    <div class="category-icon">⚡</div>
-                    <h3 class="category-name">Генератор задач</h3>
-                    <p class="category-desc">Создавайте уникальные варианты под свои нужды</p>
-                    <div class="category-expand" id="expand-generator">
-                        <div class="subcategory-grid">
-                            <div class="subcategory-item" data-topic="informatics">
-                                <span class="subcategory-icon">💻</span>
-                                <span>Информатика</span>
-                            </div>
-                            <div class="subcategory-item" data-topic="algebra">
-                                <span class="subcategory-icon">📐</span>
-                                <span>Алгебра</span>
-                            </div>
-                            <div class="subcategory-item" data-topic="geometry">
-                                <span class="subcategory-icon">📏</span>
-                                <span>Геометрия</span>
-                            </div>
-                            <div class="subcategory-item" data-topic="python">
-                                <span class="subcategory-icon">🐍</span>
-                                <span>Python</span>
-                            </div>
-                            <div class="subcategory-item coming-soon">
-                                <span class="subcategory-icon">🔮</span>
-                                <span>В разработке</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Обучающие материалы -->
-                <div class="category-card" data-category="materials">
-                    <div class="category-icon">📚</div>
-                    <h3 class="category-name">Обучающие материалы</h3>
-                    <p class="category-desc">Видеоуроки, шпаргалки, теория</p>
-                    <div class="category-expand" id="expand-materials">
-                        <div class="subcategory-grid">
-                            <div class="subcategory-item" data-material="video">
-                                <span class="subcategory-icon">📹</span>
-                                <span>Видеоуроки</span>
-                            </div>
-                            <div class="subcategory-item" data-material="cheatsheets">
-                                <span class="subcategory-icon">📝</span>
-                                <span>Шпаргалки</span>
-                            </div>
-                            <div class="subcategory-item" data-material="theory">
-                                <span class="subcategory-icon">📖</span>
-                                <span>Теория</span>
-                            </div>
-                            <div class="subcategory-item" data-material="examples">
-                                <span class="subcategory-icon">💡</span>
-                                <span>Примеры</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Уровни сложности -->
-                <div class="category-card" data-category="levels">
-                    <div class="category-icon">📊</div>
-                    <h3 class="category-name">Уровни сложности</h3>
-                    <p class="category-desc">От новичка до эксперта</p>
-                    <div class="category-expand" id="expand-levels">
-                        <div class="levels-container">
-                            <div class="level-item" data-level="beginner">
-                                <div class="level-info">
-                                    <span class="level-name">Новичок</span>
-                                    <span class="level-desc">Базовые задачи</span>
-                                </div>
-                                <div class="level-progress">
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 30%"></div>
-                                    </div>
-                                    <span class="progress-text">3/10</span>
-                                </div>
-                            </div>
-                            <div class="level-item" data-level="intermediate">
-                                <div class="level-info">
-                                    <span class="level-name">Средний</span>
-                                    <span class="level-desc">Повышенная сложность</span>
-                                </div>
-                                <div class="level-progress">
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 15%"></div>
-                                    </div>
-                                    <span class="progress-text">2/13</span>
-                                </div>
-                            </div>
-                            <div class="level-item" data-level="advanced">
-                                <div class="level-info">
-                                    <span class="level-name">Эксперт</span>
-                                    <span class="level-desc">Сложные задачи</span>
-                                </div>
-                                <div class="level-progress">
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 5%"></div>
-                                    </div>
-                                    <span class="progress-text">1/20</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Магазин -->
-                <div class="category-card" data-category="shop">
-                    <div class="category-icon">🛒</div>
-                    <h3 class="category-name">Магазин</h3>
-                    <p class="category-desc">Кредиты, премиум, особые возможности</p>
-                    <div class="category-expand" id="expand-shop">
-                        <div class="shop-items">
-                            <div class="shop-item" data-item="credits">
-                                <div class="shop-item-icon">💰</div>
-                                <div class="shop-item-info">
-                                    <span class="shop-item-name">Кредиты</span>
-                                    <span class="shop-item-price">100 ₽</span>
-                                </div>
-                                <button class="shop-item-btn">Купить</button>
-                            </div>
-                            <div class="shop-item" data-item="premium">
-                                <div class="shop-item-icon">⭐</div>
-                                <div class="shop-item-info">
-                                    <span class="shop-item-name">Премиум</span>
-                                    <span class="shop-item-price">600 ₽/мес</span>
-                                </div>
-                                <button class="shop-item-btn">Оформить</button>
-                            </div>
-                            <div class="shop-item" data-item="tasks">
-                                <div class="shop-item-icon">📋</div>
-                                <div class="shop-item-info">
-                                    <span class="shop-item-name">Пакеты задач</span>
-                                    <span class="shop-item-price">от 50 ₽</span>
-                                </div>
-                                <button class="shop-item-btn">Выбрать</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     `;
@@ -250,35 +130,14 @@ async function initAuthAware() {
     const dynamicContent = document.getElementById('dynamicContent');
     if (!dynamicContent) return;
     
-    // Ускоряем анимацию для неавторизованных
-    if (!authenticated) {
-        // Ускоряем появление текста
-        const spans = document.querySelectorAll('#animatedText span');
-        spans.forEach((span, index) => {
-            span.style.animationDuration = '0.3s';
-            span.style.animationDelay = `${index * 0.02}s`;
-        });
-    }
-    
     // Показываем соответствующий контент
     if (authenticated && user) {
-        // Авторизован - показываем категории
-        dynamicContent.innerHTML = getCategoriesContent(user);
-        
-        // ВАЖНО: Инициализируем категории ПОСЛЕ добавления в DOM
-        if (typeof initCategories === 'function') {
-            setTimeout(() => {
-                initCategories();
-                console.log('✅ Категории инициализированы');
-            }, 100);
-        }
+        // Авторизован - показываем приветствие и ссылки
+        dynamicContent.innerHTML = getAuthorizedContent(user);
         
         // Прячем кнопку быстрого старта
         const quickStartBtn = document.getElementById('quickStartBtn');
         if (quickStartBtn) quickStartBtn.classList.add('hidden');
-        
-        // Показываем приветствие
-        console.log(`👋 С возвращением, ${user.username}!`);
     } else {
         // Не авторизован - показываем тариф
         dynamicContent.innerHTML = getTariffContent();
@@ -288,13 +147,6 @@ async function initAuthAware() {
             const quickStartBtn = document.getElementById('quickStartBtn');
             if (quickStartBtn) quickStartBtn.classList.remove('hidden');
         }, 2000);
-        
-        // Инициализируем искры для кнопки тарифа
-        setTimeout(() => {
-            if (typeof initSparkles === 'function') {
-                initSparkles('.sparkle-btn', 10);
-            }
-        }, 500);
     }
     
     // Добавляем класс visible для анимации
@@ -313,7 +165,6 @@ window.acceptCookies = function() {
     document.getElementById('cookieConsentBanner').style.display = 'none';
     localStorage.setItem('cookieConsent', 'true');
     
-    // Если пользователь авторизован - отправляем на сервер
     fetch('/api/user/me')
         .then(res => res.json())
         .then(user => {
