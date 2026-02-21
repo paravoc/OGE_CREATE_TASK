@@ -26,6 +26,18 @@ function isValidEmail(email) {
     return re.test(email);
 }
 
+// Проверка капчи
+function validateCaptcha() {
+    if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse) {
+        const response = grecaptcha.getResponse();
+        if (response.length === 0) {
+            showNotification('❌ Подтвердите, что вы не робот', 'error');
+            return false;
+        }
+    }
+    return true;
+}
+
 // Уведомления
 function showNotification(message, type) {
     const notif = document.createElement('div');
@@ -81,6 +93,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (registerForm) {
         registerForm.addEventListener('submit', function(e) {
+            // Проверка капчи
+            if (!validateCaptcha()) {
+                e.preventDefault();
+                return;
+            }
+            
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;

@@ -41,6 +41,18 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+// Проверка капчи
+function validateCaptcha() {
+    if (typeof grecaptcha !== 'undefined' && grecaptcha.getResponse) {
+        const response = grecaptcha.getResponse();
+        if (response.length === 0) {
+            showMessage('❌ Пожалуйста, подтвердите, что вы не робот', 'error');
+            return false;
+        }
+    }
+    return true;
+}
+
 // При загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ auth.js загружен');
@@ -81,6 +93,12 @@ document.addEventListener('DOMContentLoaded', function() {
         registerForm.addEventListener('submit', function(event) {
             console.log('📤 Отправка формы регистрации');
             
+            // Проверка капчи
+            if (!validateCaptcha()) {
+                event.preventDefault();
+                return;
+            }
+            
             const username = document.getElementById('regName')?.value;
             const email = document.getElementById('regEmail')?.value;
             const pass = document.getElementById('regPassword')?.value;
@@ -117,6 +135,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         loginForm.addEventListener('submit', function(event) {
             console.log('📤 Отправка формы входа');
+            
+            // Проверка капчи
+            if (!validateCaptcha()) {
+                event.preventDefault();
+                return;
+            }
             
             const email = document.getElementById('loginEmail')?.value;
             const password = document.getElementById('loginPassword')?.value;
