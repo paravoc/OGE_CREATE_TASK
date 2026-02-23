@@ -169,6 +169,7 @@
             "generations_today": 3,
             "id": "1771600462368808",
             "is_premium": false,
+            "is_admin" :  true,
             "last_generation_date": "2026-02-20",
             "last_login": 1771606700,
             "password_hash": "$argon2id$v=19$m=65536,t=2,p=1$fbCRheKdgMgV05X4T2TUuQ$UWSgtPS5vHCdU0E9HBkOjSmV+1CgpO4hNtp1JlqrFdw",
