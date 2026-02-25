@@ -19,7 +19,7 @@
             color: white;
         }
 
-        /* macOS стильное верхнее меню с элементами Яндекс Музыки */
+        /* macOS стильное верхнее меню */
         .top-menu {
             background: rgba(22, 26, 35, 0.85);
             backdrop-filter: blur(20px);
@@ -75,7 +75,6 @@
             filter: brightness(1.2);
         }
 
-        /* Яндекс стиль меню */
         .menu-content {
             display: flex;
             gap: 2rem;
@@ -126,7 +125,6 @@
             gap: 1.5rem;
         }
 
-        /* Яндекс-style кнопка */
         .yandex-btn {
             background: linear-gradient(135deg, #ffb347, #ff8c00);
             color: #000;
@@ -213,7 +211,6 @@
             margin: 0 auto;
         }
 
-        /* Яндекс-стиль заголовок */
         .page-header {
             margin-bottom: 2rem;
         }
@@ -393,7 +390,7 @@
             padding: 0 2rem 2rem;
         }
 
-        /* Сетка тем (Яндекс-стиль) */
+        /* Сетка тем */
         .topics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -436,6 +433,16 @@
             border-color: #ffb347;
             background: rgba(255, 200, 80, 0.08);
             box-shadow: 0 5px 20px rgba(255, 180, 70, 0.15);
+        }
+
+        .topic-card.locked {
+            opacity: 0.6;
+            filter: grayscale(0.5);
+            border-color: rgba(255, 71, 87, 0.3);
+        }
+
+        .topic-card.locked::before {
+            background: linear-gradient(90deg, transparent, #ff4757, transparent);
         }
 
         .topic-header {
@@ -489,7 +496,19 @@
             transition: width 0.3s;
         }
 
-        /* Яндекс-style контролы */
+        .locked-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: rgba(255, 71, 87, 0.2);
+            border: 1px solid #ff4757;
+            border-radius: 20px;
+            color: #ff4757;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        /* Контролы */
         .generation-controls {
             margin-top: 1rem;
             padding-top: 1rem;
@@ -555,7 +574,15 @@
             text-align: center;
         }
 
-        /* Яндекс-style селект */
+        .cost-badge {
+            font-size: 0.8rem;
+            color: #48bb78;
+            background: rgba(72, 187, 120, 0.15);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid rgba(72, 187, 120, 0.3);
+        }
+
         .difficulty-select {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 200, 80, 0.2);
@@ -568,58 +595,19 @@
             transition: all 0.2s;
         }
 
-        .difficulty-select:hover {
+        .difficulty-select:hover:not(:disabled) {
             border-color: #ffb347;
             background: rgba(255, 200, 80, 0.05);
+        }
+
+        .difficulty-select:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
 
         .difficulty-select option {
             background: #1a1e2a;
             color: white;
-        }
-
-        /* Чекбокс в стиле Яндекс */
-        .yandex-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .yandex-checkbox input {
-            display: none;
-        }
-
-        .checkmark {
-            width: 20px;
-            height: 20px;
-            border-radius: 6px;
-            border: 2px solid rgba(255, 200, 80, 0.3);
-            background: rgba(0, 0, 0, 0.3);
-            position: relative;
-            transition: all 0.2s;
-        }
-
-        .yandex-checkbox input:checked + .checkmark {
-            background: #ffb347;
-            border-color: #ffb347;
-        }
-
-        .yandex-checkbox input:checked + .checkmark::after {
-            content: '✓';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #000;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .checkmark-text {
-            color: #aaa;
-            font-size: 0.9rem;
         }
 
         /* Итоговая панель */
@@ -876,7 +864,7 @@
                 <div class="stats-grid">
                     <div class="stat-item">
                         <span class="stat-label">Первые 5 задач</span>
-                        <span class="stat-value">бесплатно</span>
+                        <span class="stat-value">0 кредитов</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Далее</span>
@@ -960,6 +948,7 @@
         let userData = null;
         let userProgress = null;
         let userVariantsCount = 0;
+        let availableLessons = []; // ID доступных уроков
         
         // Список всех уроков
         const lessons = [
@@ -988,8 +977,17 @@
             lessonId: lesson.id,
             count: 0,
             difficulty: 'medium',
-            selected: false
+            selected: false,
+            isAvailable: true
         }));
+
+       // Функция расчёта стоимости
+            function calculateCost(lesson, count) {
+                // Если больше 5 задач, то каждая задача = 1 кредит (после 5)
+                // 6 задач = 1 кредит, 7 задач = 2 кредита, 8 задач = 3 кредита и т.д.
+                if (count <= 5) return 0;
+                return count - 5;
+}
 
         // Инициализация
         document.addEventListener('DOMContentLoaded', () => {
@@ -1035,6 +1033,28 @@
                 } catch (e) {
                     console.warn('Не удалось загрузить прогресс');
                 }
+
+                // Загружаем доступные уроки
+                try {
+                    const progressResponse = await fetch('/api/user/progress');
+                    if (progressResponse.ok) {
+                        const progressData = await progressResponse.json();
+                        if (progressData?.subjects?.informatics?.lessons) {
+                            availableLessons = progressData.subjects.informatics.lessons
+                                .filter(l => l.status === 'available' || l.status === 'completed')
+                                .map(l => l.lesson_id);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Не удалось загрузить доступные уроки');
+                }
+                
+                // Обновляем доступность в настройках
+                generationSettings.forEach((settings, index) => {
+                    settings.isAvailable = lessons[index].free || availableLessons.includes(lessons[index].id);
+                });
+                
+                renderTopics();
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
             }
@@ -1066,18 +1086,30 @@
 
             lessons.forEach((lesson, index) => {
                 const settings = generationSettings[index];
+                const isAvailable = settings.isAvailable;
                 const percent = (lesson.solved / lesson.total) * 100;
                 const isSelected = settings.count > 0;
+                const cost = calculateCost(lesson, settings.count);
 
                 const card = document.createElement('div');
-                card.className = `topic-card ${isSelected ? 'selected' : ''}`;
+                card.className = `topic-card ${isSelected ? 'selected' : ''} ${!isAvailable ? 'locked' : ''}`;
+
+                let priceHtml = '';
+                if (!lesson.free) {
+                    if (settings.count > 5) {
+                        priceHtml = `<span class="cost-badge">💰 ${cost}</span>`;
+                    }
+                }
+
+                let lockHtml = '';
+                if (!isAvailable) {
+                    lockHtml = '<span class="locked-badge">🔒 Недоступно</span>';
+                }
 
                 card.innerHTML = `
                     <div class="topic-header">
-                        <span class="topic-title">${lesson.title}</span>
-                        <span class="topic-price ${lesson.free ? 'free' : ''}">
-                            ${lesson.free ? '🆓 Бесплатно' : `💰 ${lesson.price} ₽`}
-                        </span>
+                        <span class="topic-title">${lesson.title} ${lockHtml}</span>
+                        ${priceHtml}
                     </div>
                     <div class="topic-progress">
                         <span>${lesson.solved}/${lesson.total}</span>
@@ -1092,9 +1124,9 @@
                                 Количество
                             </span>
                             <div class="count-control">
-                                <button class="count-btn" onclick="adjustCount(${index}, -1)" ${settings.count === 0 ? 'disabled' : ''}>−</button>
+                                <button class="count-btn" onclick="adjustCount(${index}, -1)" ${settings.count === 0 || !isAvailable ? 'disabled' : ''}>−</button>
                                 <span class="count-value" id="count-${index}">${settings.count}</span>
-                                <button class="count-btn" onclick="adjustCount(${index}, 1)">+</button>
+                                <button class="count-btn" onclick="adjustCount(${index}, 1)" ${!isAvailable ? 'disabled' : ''}>+</button>
                             </div>
                         </div>
                         <div class="control-row">
@@ -1102,7 +1134,7 @@
                                 <span>🎯</span>
                                 Сложность
                             </span>
-                            <select class="difficulty-select" onchange="changeDifficulty(${index}, this.value)">
+                            <select class="difficulty-select" onchange="changeDifficulty(${index}, this.value)" ${!isAvailable ? 'disabled' : ''}>
                                 <option value="easy" ${settings.difficulty === 'easy' ? 'selected' : ''}>Лёгкая</option>
                                 <option value="medium" ${settings.difficulty === 'medium' ? 'selected' : ''}>Средняя</option>
                                 <option value="hard" ${settings.difficulty === 'hard' ? 'selected' : ''}>Сложная</option>
@@ -1118,6 +1150,8 @@
         // Регулировка количества задач
         function adjustCount(index, delta) {
             const settings = generationSettings[index];
+            if (!settings.isAvailable) return;
+            
             const newCount = Math.max(0, Math.min(20, settings.count + delta));
             
             settings.count = newCount;
@@ -1125,37 +1159,40 @@
             
             document.getElementById(`count-${index}`).textContent = newCount;
             updateGlobalStats();
-            renderTopics(); // Обновляем класс selected
+            renderTopics();
         }
 
         // Изменение сложности
         function changeDifficulty(index, value) {
-            generationSettings[index].difficulty = value;
+            const settings = generationSettings[index];
+            if (!settings.isAvailable) return;
+            
+            settings.difficulty = value;
             updateGlobalStats();
         }
 
         // Обновление глобальной статистики
         function updateGlobalStats() {
+            console.log('updateGlobalStats вызван');
+            console.log('generationSettings:', generationSettings);
             let totalQuestions = 0;
             let totalCost = 0;
             const difficulties = new Set();
 
             generationSettings.forEach((settings, index) => {
-                if (settings.count > 0) {
+                if (settings.count > 0 && settings.isAvailable) {
                     totalQuestions += settings.count;
                     
-                    // Расчет стоимости: первые 5 задач бесплатно, дальше 1 кредит за 5 задач
-                    if (!lessons[index].free) {
-                        const paidCount = Math.max(0, settings.count - 5);
-                        totalCost += Math.ceil(paidCount / 5) * (lessons[index].price / 20); // 100 кредитов за 20 задач = 5 за задачу
-                    }
+                    // Расчет стоимости
+                    const lesson = lessons[index];
+                    totalCost += calculateCost(lesson, settings.count);
                     
                     difficulties.add(settings.difficulty);
                 }
             });
 
             document.getElementById('totalQuestions').textContent = totalQuestions;
-            document.getElementById('totalCost').textContent = Math.round(totalCost);
+            document.getElementById('totalCost').textContent = totalCost;
 
             let difficultyText = 'Смешанная';
             if (difficulties.size === 1) {
@@ -1176,6 +1213,9 @@
             } else if (remainingSlots <= 0) {
                 generateBtn.disabled = true;
                 generateBtn.title = 'Достигнут лимит вариантов (максимум 10)';
+            } else if (userData && userData.credits < totalCost) {
+                generateBtn.disabled = true;
+                generateBtn.title = 'Недостаточно кредитов';
             } else {
                 generateBtn.disabled = false;
                 generateBtn.title = '';
@@ -1232,14 +1272,15 @@
             };
 
             generationSettings.forEach((settings, index) => {
-                if (settings.count > 0) {
+                if (settings.count > 0 && settings.isAvailable) {
                     variantConfig.topics.push({
                         lessonId: lessons[index].id,
                         title: lessons[index].title,
                         count: settings.count,
                         difficulty: settings.difficulty,
                         price: lessons[index].price,
-                        free: lessons[index].free
+                        free: lessons[index].free,
+                        cost: calculateCost(lessons[index], settings.count)
                     });
                 }
             });
@@ -1290,8 +1331,15 @@
                 lessonId: lesson.id,
                 count: 0,
                 difficulty: 'medium',
-                selected: false
+                selected: false,
+                isAvailable: true
             }));
+            
+            // Восстанавливаем доступность
+            generationSettings.forEach((settings, index) => {
+                settings.isAvailable = lessons[index].free || availableLessons.includes(lessons[index].id);
+            });
+            
             renderTopics();
             updateGlobalStats();
             showNotification('🔄 Сброс', 'Все настройки сброшены', '✅');
