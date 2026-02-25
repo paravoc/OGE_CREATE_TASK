@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генерация...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0b0c10;
+            font-family: 'Segoe UI', 'Arial Black', 'Impact', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .card {
+            background: rgba(20, 25, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 180, 70, 0.3);
+            border-radius: 40px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255,180,70,0.3);
+            animation: fadeInUp 0.8s ease;
+        }
+        .card img {
+            max-width: 150px;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 30px #ffb347);
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #ffb347;
+        }
+        p {
+            color: #aaa;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .loader {
+            border: 5px solid rgba(255,255,255,0.1);
+            border-top: 5px solid #ffb347;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ffb347, #ff8c00);
+            transition: width 0.3s ease;
+        }
+        .attempts {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255,180,70,0.5);
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #ffb347;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <img src="/images/computer1.png" alt="Computer">
+        <h1>⏳ Генерация варианта</h1>
+        <p id="status">Запуск генерации...</p>
+        <div class="loader"></div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+        <div class="attempts" id="attempts">Попытка 1/30</div>
+        <a href="#" class="btn" id="manualRefresh" style="display: none;">Обновить вручную</a>
+    </div>
+
+    <script>
+        const userId = '{{user_id}}';
+        let attempts = 0;
+        const maxAttempts = 30;
+        let checkInterval;
+
+        function updateProgress(percent) {
+            document.getElementById('progress').style.width = percent + '%';
+        }
+
+        function updateStatus(text, isError = false) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = text;
+            statusEl.style.color = isError ? '#ef4444' : '#aaa';
+        }
+
+        function checkStatus() {
+            attempts++;
+            document.getElementById('attempts').textContent = `Попытка ${attempts}/${maxAttempts}`;
+            updateProgress((attempts / maxAttempts) * 100);
+
+            fetch('/check_generation?user_id=' + userId)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Status:', data);
+                    if (data.status === 'ready') {
+                        updateStatus('✅ Готово! Перенаправление...');
+                        clearInterval(checkInterval);
+                        setTimeout(() => {
+                            window.location.href = data.redirect;
+                        }, 500);
+                    } else if (data.status === 'waiting') {
+                        updateStatus('⏳ Генерация...');
+                        if (attempts >= maxAttempts) {
+                            updateStatus('❌ Превышено время ожидания', true);
+                            document.getElementById('manualRefresh').style.display = 'inline-block';
+                            document.getElementById('manualRefresh').onclick = function(e) {
+                                e.preventDefault();
+                                window.location.reload();
+                            };
+                            clearInterval(checkInterval);
+                        }
+                    } else if (data.status === 'error') {
+                        updateStatus('❌ Ошибка: ' + data.message, true);
+                        document.getElementById('manualRefresh').style.display = 'inline-block';
+                        clearInterval(checkInterval);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    updateStatus('❌ Ошибка соединения', true);
+                    document.getElementById('manualRefresh').style.display = 'inline-block';
+                    clearInterval(checkInterval);
+                });
+        }
+
+        updateStatus('⏳ Проверка готовности...');
+        checkInterval = setInterval(checkStatus, 2000);
+        setTimeout(checkStatus, 500);
+    </script>
+</body>
+</html>

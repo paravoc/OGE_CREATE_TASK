@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Успешный вход</title>
+    <!-- Мета-редирект на dashboard через 3 секунды -->
+    <meta http-equiv="refresh" content="3;/dashboard">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: auto;
+            height: auto;
+            min-height: 100vh;
+            background: #0f1219;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* macOS стильная карточка с тёмным фоном */
+        .macos-card {
+            background: rgba(30, 35, 45, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 50px rgba(255, 180, 70, 0.2);
+            animation: fadeInUp 0.8s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .macos-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            animation: gradientMove 3s linear infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* macOS точки */
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .macos-dot.red {
+            background: #ff5f56;
+            border: 1px solid #e0443e;
+        }
+        .macos-dot.yellow {
+            background: #ffbd2e;
+            border: 1px solid #df9f23;
+        }
+        .macos-dot.green {
+            background: #27c93f;
+            border: 1px solid #1aab2f;
+        }
+
+        .macos-dot:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            margin: 1rem 0 1.5rem;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .username {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffb347;
+            margin: 1rem 0;
+        }
+
+        p {
+            color: #aaa;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #ffb347;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .redirect-message {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+            color: #ccc;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+        }
+
+        .button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.3);
+            margin-top: 1rem;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 180, 70, 0.5);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="macos-card">
+        <div class="macos-dots">
+            <div class="macos-dot red" onclick="window.location.href='/'" title="На главную"></div>
+            <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+            <div class="macos-dot green" onclick="window.history.back()" title="Назад"></div>
+        </div>
+        
+        <div class="success-icon">✅</div>
+        <h1>Успешный вход!</h1>
+        
+        <div class="username" id="username">Пользователь</div>
+        
+        <p>Добро пожаловать обратно!</p>
+        
+        <div class="loader"></div>
+        
+        <div class="redirect-message">
+            Вы будете перенаправлены в личный кабинет через 3 секунды
+        </div>
+        
+        <a href="/dashboard" class="button">Перейти сейчас</a>
+    </div>
+
+    <script>
+        // Получаем имя пользователя из URL (если передано)
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+        
+        if (username) {
+            document.getElementById('username').textContent = decodeURIComponent(username);
+            localStorage.setItem('last_username', username);
+        } else {
+            // Пробуем получить из localStorage
+            const savedUsername = localStorage.getItem('last_username');
+            if (savedUsername) {
+                document.getElementById('username').textContent = savedUsername;
+            }
+        }
+        
+        // Сохраняем имя пользователя при загрузке страницы
+        window.addEventListener('load', function() {
+            console.log('✅ Страница успешного входа загружена');
+        });
+    </script>
+</body>
+</html>

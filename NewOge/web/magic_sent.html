@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Письмо отправлено</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: auto;
+            height: auto;
+            min-height: 100vh;
+            background: #0f1219;  /* тёмный фон как в админке */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .macos-card {
+            background: rgba(30, 35, 45, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 50px rgba(255, 180, 70, 0.2);
+            animation: fadeInUp 0.8s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .macos-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            animation: gradientMove 3s linear infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .macos-dot.red {
+            background: #ff5f56;
+            border: 1px solid #e0443e;
+        }
+        .macos-dot.yellow {
+            background: #ffbd2e;
+            border: 1px solid #df9f23;
+        }
+        .macos-dot.green {
+            background: #27c93f;
+            border: 1px solid #1aab2f;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            margin: 1rem 0 1.5rem;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .email-highlight {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            color: #ffb347;
+            display: inline-block;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 180, 70, 0.3);
+        }
+
+        p {
+            color: #aaa;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .info-text {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+            color: #ccc;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+        }
+
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #ffb347;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .back-link {
+            margin-top: 2rem;
+        }
+
+        .back-link a {
+            color: #ffb347;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .back-link a:hover {
+            color: #8b5cf6;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="macos-card">
+        <div class="macos-dots">
+            <div class="macos-dot red" onclick="window.location.href='/'" title="На главную"></div>
+            <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+            <div class="macos-dot green" onclick="window.history.back()" title="Назад"></div>
+        </div>
+        
+        <div class="success-icon">✉️</div>
+        <h1>Письмо отправлено!</h1>
+        
+        <div class="email-highlight" id="userEmail">danoda2004@gmail.com</div>
+        
+        <p>Мы отправили ссылку для входа на указанный адрес.</p>
+        
+        <div class="info-text">
+            <strong>📌 Проверьте папку "Спам"</strong>, если письмо не приходит в течение минуты.
+            <br><br>
+            Ссылка действительна <strong>15 минут</strong>.
+        </div>
+        
+        <div class="loader"></div>
+        
+        <div class="back-link">
+            <a href="/magic-login">← Отправить другому адресу</a>
+        </div>
+    </div>
+
+    <script>
+        // Получаем email из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        
+        if (email) {
+            document.getElementById('userEmail').textContent = decodeURIComponent(email);
+            // Сохраняем для возможного использования
+            localStorage.setItem('magic_email', email);
+        } else {
+            // Пробуем получить из localStorage
+            const savedEmail = localStorage.getItem('magic_email');
+            if (savedEmail) {
+                document.getElementById('userEmail').textContent = savedEmail;
+            }
+        }
+    </script>
+</body>
+</html>

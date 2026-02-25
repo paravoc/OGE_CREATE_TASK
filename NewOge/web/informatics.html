@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информатика Информатика — уроки</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #0f1219;
+            color: white;
+        }
+
+        /* macOS стильное верхнее меню */
+        .top-menu {
+            background: rgba(30, 35, 45, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 180, 70, 0.2);
+            padding: 0.8rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+                /* Стили для прогресса уроков */
+        .lesson-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 60px;
+        }
+
+        .progress-circle {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+
+        .progress-circle svg {
+            width: 50px;
+            height: 50px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle circle {
+            transition: stroke-dashoffset 0.3s;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #ffb347;
+        }
+
+        .lesson-status.completed {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(72, 187, 120, 0.2);
+            border: 2px solid #48bb78;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #48bb78;
+        }
+
+        .lesson-price {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .macos-dot.red {
+            background: #ff5f56;
+            border: 1px solid #e0443e;
+        }
+        .macos-dot.yellow {
+            background: #ffbd2e;
+            border: 1px solid #df9f23;
+        }
+        .macos-dot.green {
+            background: #27c93f;
+            border: 1px solid #1aab2f;
+        }
+
+        .macos-dot:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        .menu-content {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .menu-content a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .menu-content a:hover {
+            color: #ffb347;
+        }
+
+        .menu-content a.active {
+            color: #ffb347;
+        }
+
+        .menu-content a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffb347, #ff8c00);
+            border-radius: 2px;
+        }
+
+        .menu-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 180, 70, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .user-name {
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        /* Боковая панель с уроками */
+        .main-container {
+            display: flex;
+            margin-top: 64px;
+            height: calc(100vh - 64px);
+        }
+
+        .lessons-sidebar {
+            width: 380px;
+            background: rgba(20, 25, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 180, 70, 0.2);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 180, 70, 0.1);
+        }
+
+        .sidebar-header h2 {
+            color: #ffb347;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .credits-container {
+            background: linear-gradient(135deg, rgba(255, 180, 70, 0.15), rgba(255, 140, 0, 0.15));
+            border-radius: 20px;
+            padding: 1.2rem;
+            border: 1px solid rgba(255, 180, 70, 0.3);
+        }
+
+        .credits-label {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 0.5rem;
+        }
+
+        .credits-value {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .credits-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .buy-credits-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .buy-credits-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 180, 70, 0.4);
+        }
+
+        .lessons-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        /* Стилизация скроллбара */
+        .lessons-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .lessons-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .lessons-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 180, 70, 0.3);
+            border-radius: 10px;
+        }
+
+        .lessons-list::-webkit-scrollbar-thumb:hover {
+            background: #ffb347;
+        }
+
+        /* УВЕЛИЧЕННЫЕ КАРТОЧКИ УРОКОВ */
+        .lesson-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 20px;
+            padding: 1.2rem 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 90px;
+        }
+
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 180, 70, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .lesson-card:hover:not(.locked)::before {
+            transform: translateX(100%);
+        }
+
+        .lesson-card:hover:not(.locked) {
+            border-color: #ffb347;
+            transform: translateX(5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(255, 180, 70, 0.25);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .lesson-card.completed {
+            border-color: #48bb78;
+            background: rgba(72, 187, 120, 0.1);
+        }
+
+        .lesson-card.locked {
+            opacity: 0.7;
+            cursor: not-allowed;
+            border-color: rgba(255, 71, 87, 0.3);
+            filter: grayscale(0.5);
+        }
+
+        .lesson-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .lesson-number {
+            font-size: 0.9rem;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .completed-badge {
+            background: #48bb78;
+            color: #000;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .lesson-title {
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .lesson-price {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .lesson-card.free .lesson-price {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+        }
+
+        .lesson-card.completed .lesson-price {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+        }
+
+        /* Основной контент */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .content-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content-area::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .content-area::-webkit-scrollbar-thumb {
+            background: rgba(255, 180, 70, 0.3);
+            border-radius: 10px;
+        }
+
+        .content-area::-webkit-scrollbar-thumb:hover {
+            background: #ffb347;
+        }
+
+        .lesson-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 180, 70, 0.2);
+        }
+
+        .lesson-header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #ffb347, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 180, 70, 0.5);
+        }
+
+        /* Теория */
+        .theory-section {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 30px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .theory-menu {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 180, 70, 0.2);
+            padding-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .theory-tab {
+            color: #aaa;
+            cursor: pointer;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .theory-tab:hover {
+            color: #ffb347;
+            background: rgba(255, 180, 70, 0.1);
+        }
+
+        .theory-tab.active {
+            color: #ffb347;
+            background: rgba(255, 180, 70, 0.15);
+            font-weight: 600;
+            border: 1px solid rgba(255, 180, 70, 0.3);
+        }
+
+        .theory-content {
+            color: #ccc;
+            line-height: 1.7;
+        }
+
+        .theory-content h2 {
+            color: #ffb347;
+            margin: 1.5rem 0 1rem;
+            font-size: 1.5rem;
+        }
+
+        .theory-content h3 {
+            color: #8b5cf6;
+            margin: 1.2rem 0 0.8rem;
+        }
+
+        .theory-content p {
+            margin-bottom: 1rem;
+        }
+
+        .theory-content ul, .theory-content ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .theory-content li {
+            margin: 0.5rem 0;
+        }
+
+        .theory-content code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            color: #ffb347;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        /* Задачи */
+        .tasks-section {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 30px;
+            padding: 2rem;
+        }
+
+        .tasks-section h2 {
+            color: #ffb347;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .task-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 180, 70, 0.15);
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .task-card:hover {
+            border-color: rgba(255, 180, 70, 0.4);
+            box-shadow: 0 5px 20px rgba(255, 180, 70, 0.1);
+        }
+
+        .task-question {
+            color: white;
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .task-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .task-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #aaa;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .task-option:hover {
+            background: rgba(255, 180, 70, 0.1);
+            color: #fff;
+        }
+
+        .task-option input[type="radio"] {
+            accent-color: #ffb347;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .task-submit {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 180, 70, 0.2);
+        }
+
+        .task-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 180, 70, 0.4);
+        }
+
+        .task-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 16px;
+            display: none;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .task-result.correct {
+            background: rgba(72, 187, 120, 0.15);
+            border: 1px solid #48bb78;
+            color: #48bb78;
+        }
+
+        .task-result.incorrect {
+            background: rgba(255, 71, 87, 0.15);
+            border: 1px solid #ff4757;
+            color: #ff4757;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            border-radius: 40px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            transform: scale(0.9);
+            animation: scaleIn 0.3s ease forwards;
+        }
+
+        @keyframes scaleIn {
+            to { transform: scale(1); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #ffb347;
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-text {
+            color: #ccc;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.3);
+        }
+
+        .modal-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid rgba(255, 180, 70, 0.3);
+        }
+
+        .modal-btn.secondary:hover {
+            background: rgba(255, 180, 70, 0.1);
+            border-color: #ffb347;
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            border-radius: 30px;
+            padding: 1rem 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            font-size: 1rem;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .notification-close:hover {
+            color: #ffb347;
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхнее меню -->
+    <div class="top-menu">
+        <div class="menu-left">
+            <div class="macos-dots">
+                <div class="macos-dot red" onclick="window.location.href='/dashboard'" title="На дашборд"></div>
+                <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+                <div class="macos-dot green" onclick="window.history.back()" title="Назад"></div>
+            </div>
+            <div class="menu-content">
+                <a href="/">🏠 Главная</a>
+                <a href="/informatics" class="active">📚 Информатика</a>
+                <a href="/ege">📖 ЕГЭ</a>
+                <a href="/tasks">📋 ОГЭ</a>
+                <a href="/generate">⚡ Генератор</a>
+            </div>
+        </div>
+        <div class="menu-right">
+            <div class="user-profile" onclick="window.location.href='/dashboard'">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Загрузка...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-container">
+        <!-- Боковая панель с уроками -->
+        <div class="lessons-sidebar">
+            <div class="sidebar-header">
+                <h2>
+                    <span>📚</span>
+                    Уроки информатики
+                </h2>
+                <div class="credits-container">
+                    <div class="credits-label">Ваш баланс</div>
+                    <div class="credits-value">
+                        <span class="credits-amount" id="userCredits">0</span>
+                        <a href="/buy_credits" class="buy-credits-btn">
+                            <span>💰</span>
+                            Пополнить
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="lessons-list" id="lessonsList">
+                <!-- Уроки будут загружены через JS -->
+                <div style="text-align: center; color: #aaa; padding: 2rem;">Загрузка уроков...</div>
+            </div>
+        </div>
+
+        <!-- Основная область контента -->
+        <div class="content-area" id="contentArea">
+            <!-- Контент будет загружаться динамически -->
+            <div style="text-align: center; color: #aaa; padding: 4rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📖</div>
+                <div style="font-size: 1.2rem;">Выберите урок из списка</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для покупки кредитов -->
+    <div class="modal" id="creditsModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCreditsModal()">×</button>
+            <div class="modal-icon">💰</div>
+            <h2 class="modal-title">Недостаточно кредитов</h2>
+            <p class="modal-text" id="creditsModalText">Для покупки этого урока нужно больше кредитов</p>
+            <div class="modal-buttons">
+                <a href="/buy_credits" class="modal-btn primary">
+                    <span>💎</span>
+                    Купить кредиты
+                </a>
+                <button class="modal-btn secondary" onclick="closeCreditsModal()">
+                    <span>✕</span>
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div class="notification" id="notification">
+        <div class="notification-icon" id="notificationIcon">✅</div>
+        <div class="notification-content">
+            <div class="notification-title" id="notificationTitle">Успешно</div>
+            <div class="notification-message" id="notificationMessage"></div>
+        </div>
+        <button class="notification-close" onclick="closeNotification()">×</button>
+    </div>
+
+    <script>
+    // Флаг для предотвращения множественных загрузок
+    let isLoading = false;
+    let userData = null;
+    let userCredits = 0;
+    let userProgress = null;
+    
+    // Список всех уроков (18 тем)
+    const lessons = [
+        { id: 1, title: 'IP-адреса и маски подсети', price: 0, free: true },
+        { id: 2, title: 'Двоичная система счисления', price: 0, free: true },
+        { id: 3, title: 'Логические операции', price: 0, free: true },
+        { id: 4, title: 'Таблицы истинности', price: 0, free: true },
+        { id: 5, title: 'Алгоритмы и исполнители', price: 0, free: true },
+        { id: 6, title: 'Программирование (КуМир)', price: 0, free: true },
+        { id: 7, title: 'Файловая система', price: 0, free: true },
+        { id: 8, title: 'Кодирование информации', price: 0, free: true },
+        { id: 9, title: 'Электронные таблицы', price: 0, free: true },
+        { id: 10, title: 'Базы данных', price: 0, free: true },
+        { id: 11, title: 'Поиск информации', price: 0, free: true },
+        { id: 12, title: 'Компьютерные сети', price: 0, free: true },
+        { id: 13, title: 'Сортировка данных', price: 100, free: false },
+        { id: 14, title: 'Рекурсивные алгоритмы', price: 100, free: false },
+        { id: 15, title: 'Графы и деревья', price: 100, free: false },
+        { id: 16, title: 'Системы счисления', price: 100, free: false },
+        { id: 17, title: 'Олимпиадные задачи', price: 100, free: false },
+        { id: 18, title: 'Подготовка к экзамену', price: 100, free: false }
+    ];
+
+    // Инициализация - только один раз!
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM загружен, начинаем загрузку данных...');
+        loadUserData();
+        loadTasksProgress();
+    });
+
+    // Загрузка данных пользователя и прогресса - с защитой
+    async function loadUserData() {
+        // Предотвращаем множественные загрузки
+        if (isLoading) {
+            console.log('Загрузка уже выполняется, пропускаем...');
+            return;
+        }
+        
+        isLoading = true;
+        console.log('📥 Загрузка данных пользователя...');
+        
+        try {
+            // Получаем данные пользователя
+            const userResponse = await fetch('/api/user/me');
+            if (!userResponse.ok) {
+                console.log('Не авторизован, редирект на /login');
+                window.location.href = '/login';
+                return;
+            }
+            
+            userData = await userResponse.json();
+            console.log('✅ Данные пользователя загружены:', userData);
+            
+            userCredits = userData.credits || 0;
+            
+            // Обновляем UI
+            document.getElementById('userCredits').textContent = userCredits;
+            
+            const userNameEl = document.getElementById('userName');
+            if (userData.username) {
+                userNameEl.textContent = userData.username;
+                document.getElementById('userAvatar').textContent = userData.username.charAt(0).toUpperCase();
+            }
+            
+            // Получаем прогресс пользователя
+            try {
+                console.log('📥 Загрузка прогресса...');
+                const progressResponse = await fetch('/api/user/progress');
+                if (progressResponse.ok) {
+                    userProgress = await progressResponse.json();
+                    console.log('✅ Прогресс загружен');
+                } else {
+                    console.log('⚠️ Прогресс не загружен, статус:', progressResponse.status);
+                }
+            } catch (e) {
+                console.warn('⚠️ Не удалось загрузить прогресс', e);
+            }
+            
+            // Рендерим уроки
+            renderLessons();
+            
+            // Проверяем URL и загружаем нужный урок
+            const path = window.location.pathname;
+            
+            if (path.includes('/informatics/lesson')) {
+                const lessonId = parseInt(path.split('/').pop().replace('lesson', ''));
+                console.log('📖 Загружаем урок:', lessonId);
+                loadLesson(lessonId);
+            } else {
+                // Если на главной странице информатики, показываем приветствие
+                const contentArea = document.getElementById('contentArea');
+                if (contentArea) {
+                    contentArea.innerHTML = `
+                        <div style="text-align: center; color: #aaa; padding: 4rem;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">📚</div>
+                            <div style="font-size: 1.5rem; margin-bottom: 1rem;">Информатика Информатика</div>
+                            <div style="font-size: 1rem;">Выберите урок из списка слева</div>
+                        </div>
+                    `;
+                }
+            }
+            
+        } catch (error) {
+            console.error('❌ Ошибка загрузки данных:', error);
+            showNotification('Ошибка', 'Не удалось загрузить данные', '❌');
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    // Проверка доступности урока
+    function isLessonAvailable(lessonId) {
+        const lesson = lessons.find(l => l.id === lessonId);
+        if (!lesson) return false;
+        
+        // Бесплатные уроки всегда доступны
+        if (lesson.free) return true;
+        
+        // Проверяем по прогрессу
+        if (userProgress && userProgress.subjects && userProgress.subjects.informatics) {
+            const lessons = userProgress.subjects.informatics.lessons;
+            const found = lessons.find(l => l.lesson_id === lessonId);
+            return found && (found.status === 'available' || found.status === 'completed');
+        }
+        
+        return false;
+    }
+
+    // Проверка, пройден ли урок
+    function isLessonCompleted(lessonId) {
+        if (userProgress && userProgress.subjects && userProgress.subjects.informatics) {
+            const lessons = userProgress.subjects.informatics.lessons;
+            const found = lessons.find(l => l.lesson_id === lessonId);
+            return found && found.status === 'completed';
+        }
+        return false;
+    }
+
+    // Рендер списка уроков
+// Рендер списка уроков
+function renderLessons() {
+    console.log('🎨 Рендеринг уроков...');
+    const container = document.getElementById('lessonsList');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    lessons.forEach(lesson => {
+        const isFree = lesson.free;
+        const isAvailable = isLessonAvailable(lesson.id);
+        const isCompleted = isLessonCompleted(lesson.id);
+        
+        let statusClass = '';
+        if (!isAvailable) statusClass = 'locked';
+        else if (isCompleted) statusClass = 'completed';
+        
+        const card = document.createElement('div');
+        card.className = `lesson-card ${statusClass}`;
+        
+        if (isFree || isAvailable) {
+            card.onclick = () => {
+                window.location.href = `/informatics/lesson${lesson.id}`;
+            };
+        } else {
+            card.onclick = () => {
+                buyLesson(lesson);
+            };
+        }
+        
+        // Считаем решённые задачи (из localStorage)
+        let solvedTasks = 0;
+        const totalTasks = 5; // В каждом уроке по 5 задач
+        for (let i = 1; i <= totalTasks; i++) {
+            if (localStorage.getItem(`lesson_${lesson.id}_task_${i}`)) {
+                solvedTasks++;
+            }
+        }
+        
+        let rightHtml = '';
+        
+        if (isCompleted) {
+            // Если урок пройден - зелёная галочка
+            rightHtml = `<div class="lesson-status completed">✅</div>`;
+        } else if (!isAvailable) {
+            // Если заблокирован - цена
+            rightHtml = `<div class="lesson-price">💰 ${lesson.price}</div>`;
+        } else {
+            // Если доступен - прогресс задач
+            const percent = (solvedTasks / totalTasks) * 100;
+            rightHtml = `
+                <div class="lesson-progress" onclick="event.stopPropagation()">
+                    <div class="progress-circle">
+                        <svg width="50" height="50" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="#333" stroke-width="4"/>
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="#ffb347" stroke-width="4" 
+                                stroke-dasharray="${2 * Math.PI * 20}" 
+                                stroke-dashoffset="${2 * Math.PI * 20 * (1 - solvedTasks/totalTasks)}"
+                                transform="rotate(-90 25 25)"/>
+                        </svg>
+                        <span class="progress-text">${solvedTasks}/${totalTasks}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        card.innerHTML = `
+            <div class="lesson-info">
+                <span class="lesson-number">Урок ${lesson.id}</span>
+                <span class="lesson-title">${lesson.title}</span>
+            </div>
+            ${rightHtml}
+        `;
+        
+        container.appendChild(card);
+    });
+    
+    console.log('✅ Уроки отрендерены');
+}    // Покупка урока
+// Покупка урока - ИСПРАВЛЕННАЯ ВЕРСИЯ
+function buyLesson(lesson) {
+    console.log('💰 Покупка урока:', lesson);
+    
+    if (userCredits >= lesson.price) {
+        if (confirm(`Купить урок "${lesson.title}" за ${lesson.price} кредитов?`)) {
+            fetch('/api/buy-lesson', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    lessonId: lesson.id, 
+                    price: lesson.price,
+                    subject: 'informatics' 
+                })
+            })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(err => { throw new Error(err.error || 'Ошибка сервера'); });
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // 👇 ВАЖНО: ОБНОВЛЯЕМ И userCredits, И userData.credits!
+                    userCredits = data.newBalance;
+                    if (userData) {
+                        userData.credits = data.newBalance;
+                    }
+                    
+                    // Обновляем отображение
+                    document.getElementById('userCredits').textContent = userCredits;
+                    
+                    // Обновляем прогресс в памяти
+                    if (!userProgress) {
+                        userProgress = { subjects: { informatics: { lessons: [] } } };
+                    }
+                    if (!userProgress.subjects) userProgress.subjects = {};
+                    if (!userProgress.subjects.informatics) userProgress.subjects.informatics = { lessons: [] };
+                    
+                    // Находим или создаем запись об уроке
+                    let lessonProgress = userProgress.subjects.informatics.lessons.find(l => l.lesson_id === lesson.id);
+                    if (lessonProgress) {
+                        lessonProgress.status = 'available';
+                    } else {
+                        userProgress.subjects.informatics.lessons.push({
+                            lesson_id: lesson.id,
+                            status: 'available'
+                        });
+                    }
+                    
+                    // Перерисовываем список уроков
+                    renderLessons();
+                    
+                    showNotification('✅ Успешно', `Урок "${lesson.title}" куплен!`);
+                    
+                    // Перенаправляем на урок
+                    setTimeout(() => {
+                        window.location.href = `/informatics/lesson${lesson.id}`;
+                    }, 1500);
+                } else {
+                    showNotification('❌ Ошибка', data.error || 'Не удалось купить урок');
+                }
+            })
+            .catch(error => {
+                console.error('❌ Ошибка покупки:', error);
+                showNotification('❌ Ошибка', error.message || 'Проблема с соединением');
+            });
+        }
+    } else {
+        document.getElementById('creditsModalText').innerHTML = 
+            `Для покупки урока <strong>"${lesson.title}"</strong> нужно <strong>${lesson.price} кредитов</strong>.<br><br>У вас: <strong>${userCredits} кредитов</strong>.`;
+        openCreditsModal();
+    }
+}    // Загрузка урока
+    function loadLesson(lessonId) {
+        console.log('📖 Загрузка урока:', lessonId);
+        
+        const lesson = lessons.find(l => l.id === lessonId);
+        if (!lesson) {
+            console.error('❌ Урок не найден:', lessonId);
+            return;
+        }
+        
+        const contentArea = document.getElementById('contentArea');
+        if (!contentArea) return;
+        
+        if (lessonId === 1) {
+            contentArea.innerHTML = `
+                <div class="lesson-header">
+                    <h1>Урок 1: ${lesson.title}</h1>
+                    <button class="generate-btn" onclick="window.location.href='/generate?topic=ip'">
+                        <span>⚡</span>
+                        Сгенерировать задачу
+                    </button>
+                </div>
+                
+                <div class="theory-section">
+                    <div class="theory-menu">
+                        <div class="theory-tab active" onclick="switchTheoryTab(1)">Введение</div>
+                        <div class="theory-tab" onclick="switchTheoryTab(2)">Структура IP</div>
+                        <div class="theory-tab" onclick="switchTheoryTab(3)">Маски подсети</div>
+                        <div class="theory-tab" onclick="switchTheoryTab(4)">Примеры</div>
+                    </div>
+                    
+                    <div class="theory-content" id="theoryContent1" style="display: block;">
+                        <h2>Что такое IP-адрес?</h2>
+                        <p>IP-адрес (Internet Protocol address) — это уникальный числовой идентификатор устройства в компьютерной сети, работающей по протоколу IP.</p>
+                        <p>В версии IPv4 адрес представляет собой 32-битное число, которое обычно записывается в виде четырёх десятичных чисел (от 0 до 255), разделённых точками. Например: <code>192.168.1.1</code></p>
+                        <h2>Для чего нужен IP-адрес?</h2>
+                        <ul>
+                            <li>Идентификация устройства в сети</li>
+                            <li>Маршрутизация пакетов данных</li>
+                            <li>Обеспечение связи между устройствами</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="theory-content" id="theoryContent2" style="display: none;">
+                        <h2>Структура IP-адреса</h2>
+                        <p>IP-адрес состоит из двух частей:</p>
+                        <ul>
+                            <li><strong>Номер сети</strong> — определяет сеть, в которой находится устройство</li>
+                            <li><strong>Номер узла</strong> — определяет конкретное устройство в этой сети</li>
+                        </ul>
+                        <p>Граница между этими частями определяется маской подсети.</p>
+                        <h3>Классы IP-адресов:</h3>
+                        <ul>
+                            <li><strong>Класс A:</strong> 1.0.0.0 — 126.255.255.255 (для крупных сетей)</li>
+                            <li><strong>Класс B:</strong> 128.0.0.0 — 191.255.255.255 (для средних сетей)</li>
+                            <li><strong>Класс C:</strong> 192.0.0.0 — 223.255.255.255 (для маленьких сетей)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="theory-content" id="theoryContent3" style="display: none;">
+                        <h2>Маски подсети</h2>
+                        <p>Маска подсети — это 32-битное число, которое показывает, какая часть IP-адреса относится к сети, а какая — к узлу.</p>
+                        <p>В маске подсети биты, соответствующие номеру сети, равны 1, а биты, соответствующие номеру узла, равны 0.</p>
+                        <h3>Примеры масок:</h3>
+                        <ul>
+                            <li><code>255.0.0.0</code> (/8) — для сетей класса A</li>
+                            <li><code>255.255.0.0</code> (/16) — для сетей класса B</li>
+                            <li><code>255.255.255.0</code> (/24) — для сетей класса C</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="theory-content" id="theoryContent4" style="display: none;">
+                        <h2>Примеры задач</h2>
+                        <p><strong>Пример 1:</strong> Определите номер сети для IP-адреса 192.168.1.100 с маской 255.255.255.0</p>
+                        <p><strong>Решение:</strong> Номер сети = 192.168.1.0</p>
+                        <p><strong>Пример 2:</strong> Сколько устройств может быть в сети с маской 255.255.255.0?</p>
+                        <p><strong>Решение:</strong> 2^8 - 2 = 254 устройства (один адрес сети и один широковещательный)</p>
+                    </div>
+                </div>
+                
+                <div class="tasks-section">
+                    <h2>Практические задачи</h2>
+                    
+                    <div class="task-card">
+                        <div class="task-question">1. Какой IP-адрес является адресом сети для узла 192.168.1.45 с маской 255.255.255.0?</div>
+                        <div class="task-options">
+                            <label class="task-option">
+                                <input type="radio" name="task1" value="a"> 192.168.0.0
+                            </label>
+                            <label class="task-option">
+                                <input type="radio" name="task1" value="b"> 192.168.1.0
+                            </label>
+                            <label class="task-option">
+                                <input type="radio" name="task1" value="c"> 192.168.1.45
+                            </label>
+                            <label class="task-option">
+                                <input type="radio" name="task1" value="d"> 255.255.255.0
+                            </label>
+                        </div>
+                        <button class="task-submit" onclick="checkTask(1, 'b', 1)">Проверить</button>
+                        <div class="task-result" id="taskResult1"></div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <div class="task-question">2. Сколько бит отводится под номер узла в маске 255.255.255.0?</div>
+                        <div class="task-options">
+                            <label class="task-option">
+                                <input type="radio" name="task2" value="a"> 8 бит
+                            </label>
+                            <label class="task-option">
+                                <input type="radio" name="task2" value="b"> 16 бит
+                            </label>
+                            <label class="task-option">
+                                <input type="radio" name="task2" value="c"> 24 бита
+                            </label>
+                            <label class="task-option">
+                                <input type="radio" name="task2" value="d"> 32 бита
+                            </label>
+                        </div>
+                        <button class="task-submit" onclick="checkTask(2, 'a', 1)">Проверить</button>
+                        <div class="task-result" id="taskResult2"></div>
+                    </div>
+                </div>
+            `;
+        } else {
+            contentArea.innerHTML = `
+                <div class="lesson-header">
+                    <h1>Урок ${lessonId}: ${lesson.title}</h1>
+                    <button class="generate-btn" onclick="window.location.href='/generate?topic=${lessonId}'">
+                        <span>⚡</span>
+                        Сгенерировать задачу
+                    </button>
+                </div>
+                
+                <div class="theory-section">
+                    <div style="text-align: center; padding: 4rem; color: #aaa;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🚧</div>
+                        <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">Урок в разработке</h3>
+                        <p style="font-size: 1.1rem;">Содержание урока ${lessonId} появится скоро</p>
+                    </div>
+                </div>
+                
+                <div class="tasks-section">
+                    <div style="text-align: center; padding: 3rem; color: #aaa;">
+                        <p style="font-size: 1.1rem;">Задачи появятся позже</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    
+
+    // Проверка задачи - без перезагрузки страницы
+    function checkTask(taskNum, correctAnswer, lessonId) {
+        const selected = document.querySelector(`input[name="task${taskNum}"]:checked`);
+        const resultDiv = document.getElementById(`taskResult${taskNum}`);
+        
+        if (!selected) {
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'task-result incorrect';
+            resultDiv.textContent = '❌ Выберите ответ';
+            return;
+        }
+        
+        if (selected.value === correctAnswer) {
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'task-result correct';
+            resultDiv.textContent = '✅ Правильно! +10 кредитов';
+            
+            // Отмечаем урок как пройденный
+            fetch('/api/complete-lesson', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    lessonId: lessonId,
+                    subject: 'informatics',
+                    score: 100,
+                    timeSpent: 5
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('✅ Отлично!', 'Задача решена правильно');
+                    
+                    // Обновляем статус урока в памяти
+                    if (userProgress && userProgress.subjects && userProgress.subjects.informatics) {
+                        const lessonProgress = userProgress.subjects.informatics.lessons.find(l => l.lesson_id === lessonId);
+                        if (lessonProgress) {
+                            lessonProgress.status = 'completed';
+                        }
+                    }
+                    
+                    // Перерисовываем только список уроков
+                    renderLessons();
+                }
+            })
+            .catch(err => {
+                console.error('❌ Ошибка:', err);
+            });
+            
+            
+        } else {
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'task-result incorrect';
+            resultDiv.textContent = '❌ Неправильно. Попробуйте еще раз.';
+        }
+    }
+
+    // Переключение вкладок теории
+    function switchTheoryTab(tabNum) {
+        for (let i = 1; i <= 4; i++) {
+            const content = document.getElementById(`theoryContent${i}`);
+            if (content) content.style.display = 'none';
+        }
+        
+        const selected = document.getElementById(`theoryContent${tabNum}`);
+        if (selected) selected.style.display = 'block';
+        
+        const tabs = document.querySelectorAll('.theory-tab');
+        tabs.forEach((tab, index) => {
+            if (index + 1 === tabNum) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+    }
+
+    // Модальное окно
+    function openCreditsModal() {
+        document.getElementById('creditsModal').classList.add('active');
+    }
+
+    function closeCreditsModal() {
+        document.getElementById('creditsModal').classList.remove('active');
+    }
+
+    // Уведомления
+    function showNotification(title, message, icon = '✅') {
+        const notification = document.getElementById('notification');
+        if (!notification) return;
+        
+        document.getElementById('notificationIcon').textContent = icon;
+        document.getElementById('notificationTitle').textContent = title;
+        document.getElementById('notificationMessage').textContent = message;
+        
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    function closeNotification() {
+        document.getElementById('notification').classList.remove('show');
+    }
+
+    // Закрытие модального окна по клику на фон
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('creditsModal');
+        if (e.target === modal) {
+            closeCreditsModal();
+        }
+    });
+
+    function loadTasksProgress() {
+    lessons.forEach(lesson => {
+        let solved = 0;
+        for (let i = 1; i <= 5; i++) {
+            if (localStorage.getItem(`lesson_${lesson.id}_task_${i}`)) {
+                solved++;
+            }
+        }
+        console.log(`Урок ${lesson.id}: ${solved}/5 задач`);
+    });
+}
+
+    // Следим за изменением URL
+    window.addEventListener('popstate', function() {
+        const path = window.location.pathname;
+        if (path.includes('/informatics/lesson')) {
+            const lessonId = parseInt(path.split('/').pop().replace('lesson', ''));
+            loadLesson(lessonId);
+        }
+    });
+</script>
+</body>
+</html>

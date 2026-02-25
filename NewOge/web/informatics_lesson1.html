@@ -1,0 +1,2963 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Большой курс: IP-адресация. От основ информатика до бесклассовых сетей (CIDR)</title>
+    <style>
+
+        @keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 20px rgba(72, 187, 120, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(72, 187, 120, 0);
+    }
+}
+        /* ========== БАЗОВЫЕ СТИЛИ ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #0f1219;
+            color: white;
+        }
+
+        /* Верхнее меню */
+        .top-menu {
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 180, 70, 0.2);
+            padding: 0.8rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .macos-dot.red { background: #ff5f56; border: 1px solid #e0443e; }
+        .macos-dot.yellow { background: #ffbd2e; border: 1px solid #df9f23; }
+        .macos-dot.green { background: #27c93f; border: 1px solid #1aab2f; }
+
+        .macos-dot:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        .menu-content {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .menu-content a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .menu-content a:hover { color: #ffb347; }
+        .menu-content a.active { color: #ffb347; }
+        .menu-content a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffb347, #ff8c00);
+            border-radius: 2px;
+        }
+
+        .menu-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 180, 70, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .user-name { font-size: 0.95rem; color: #fff; }
+
+        /* ========== ОСНОВНОЙ МАКЕТ С ЛЕВОЙ НАВИГАЦИЕЙ ========== */
+        .main-layout {
+            display: flex;
+            margin-top: 64px;
+            height: calc(100vh - 64px);
+            overflow: hidden;
+        }
+
+        /* Левая навигация по модулям */
+        .topic-sidebar {
+            width: 300px;
+            background: rgba(20, 25, 35, 0.9);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 180, 70, 0.2);
+            overflow-y: auto;
+            padding: 2rem 1rem;
+            flex-shrink: 0;
+        }
+
+        .topic-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .topic-sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .topic-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 180, 70, 0.3);
+            border-radius: 10px;
+        }
+
+        .sidebar-title {
+            font-size: 1.3rem;
+            color: #ffb347;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+            font-weight: 600;
+            border-left: 4px solid #ffb347;
+        }
+
+        .topic-list {
+            list-style: none;
+        }
+
+        .topic-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .topic-link {
+            display: block;
+            padding: 0.8rem 1rem;
+            color: #aaa;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+        }
+
+        .topic-link:hover {
+            background: rgba(255, 180, 70, 0.1);
+            color: #fff;
+            border-left-color: #ffb347;
+        }
+
+        .topic-link.active {
+            background: rgba(255, 180, 70, 0.15);
+            color: #ffb347;
+            border-left-color: #ffb347;
+            font-weight: 500;
+        }
+
+        .topic-icon {
+            margin-right: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .module-badge {
+            display: inline-block;
+            background: rgba(255, 180, 70, 0.2);
+            color: #ffb347;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+        }
+
+        /* Основной контент */
+        .main-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .main-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 180, 70, 0.3);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb:hover {
+            background: #ffb347;
+        }
+
+        .lesson-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Навигация по курсу */
+        .course-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(30, 35, 45, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 0.8rem 1.5rem;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            color: #fff;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover:not(.disabled) {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .course-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #aaa;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .progress-dot.active {
+            background: #ffb347;
+            box-shadow: 0 0 10px #ffb347;
+        }
+
+        .progress-dot.completed {
+            background: #48bb78;
+        }
+
+        /* Заголовок курса */
+        .course-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .course-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ffb347, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-header p {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        /* Модули */
+        .module-card {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+            scroll-margin-top: 80px;
+        }
+
+        .module-card:hover {
+            border-color: rgba(255, 180, 70, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 180, 70, 0.1);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 180, 70, 0.3);
+            padding-bottom: 1rem;
+        }
+
+        .module-number {
+            background: rgba(255, 180, 70, 0.2);
+            color: #ffb347;
+            font-weight: 700;
+            font-size: 1.2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            border: 1px solid #ffb347;
+        }
+
+        .module-title {
+            font-size: 1.8rem;
+            color: #ffb347;
+        }
+
+        .module-subtitle {
+            color: #8b5cf6;
+            font-size: 1.2rem;
+            margin-top: -0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .module-content h3 {
+            color: #8b5cf6;
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .module-content h4 {
+            color: #ec4899;
+            font-size: 1.1rem;
+            margin: 1.2rem 0 0.8rem;
+        }
+
+        .module-content p {
+            color: #ccc;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .module-content ul, .module-content ol {
+            color: #ccc;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        .module-content li {
+            margin: 0.5rem 0;
+        }
+
+        .module-content code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            color: #ffb347;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 1rem;
+        }
+
+        .module-content pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 20px;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            margin: 1rem 0;
+        }
+
+        .module-content pre code {
+            background: none;
+            padding: 0;
+            color: #8b5cf6;
+        }
+
+        .theory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .theory-table th {
+            background: rgba(255, 180, 70, 0.2);
+            color: #ffb347;
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .theory-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ccc;
+        }
+
+        .theory-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .theory-table tr:hover td {
+            background: rgba(255, 180, 70, 0.05);
+        }
+
+        .example-box {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid #8b5cf6;
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .example-box h4 {
+            color: #8b5cf6;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tasks-section {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tasks-section h2 {
+            color: #ffb347;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .task-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 180, 70, 0.15);
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .task-card:hover {
+            border-color: rgba(255, 180, 70, 0.4);
+            box-shadow: 0 5px 20px rgba(255, 180, 70, 0.1);
+        }
+
+        .task-question {
+            color: white;
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .task-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .task-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #aaa;
+            cursor: pointer;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .task-option:hover {
+            background: rgba(255, 180, 70, 0.1);
+            color: #fff;
+        }
+
+        .task-option input[type="radio"] {
+            accent-color: #ffb347;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .task-submit {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 180, 70, 0.2);
+            font-size: 1rem;
+        }
+
+        .task-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 180, 70, 0.4);
+        }
+
+        .task-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 20px;
+            display: none;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .task-result.correct {
+            background: rgba(72, 187, 120, 0.15);
+            border: 1px solid #48bb78;
+            color: #48bb78;
+        }
+
+        .task-result.incorrect {
+            background: rgba(255, 71, 87, 0.15);
+            border: 1px solid #ff4757;
+            color: #ff4757;
+        }
+
+        .hint-box {
+            background: rgba(255, 180, 70, 0.1);
+            border: 1px dashed #ffb347;
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .hint-box:hover {
+            background: rgba(255, 180, 70, 0.15);
+        }
+
+        .hint-box .hint-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffb347;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .hint-box .hint-content {
+            display: none;
+            color: #ccc;
+            line-height: 1.6;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 180, 70, 0.2);
+        }
+
+        .hint-box.active .hint-content {
+            display: block;
+        }
+
+        .lesson-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 180, 70, 0.3);
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+
+        .lesson-image:hover {
+            transform: scale(1.02);
+            border-color: #ffb347;
+        }
+
+        .image-caption {
+            text-align: center;
+            color: #aaa;
+            font-style: italic;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .info-block {
+            background: rgba(255, 180, 70, 0.05);
+            border-left: 4px solid #ffb347;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 20px;
+        }
+
+        .info-block p:last-child {
+            margin-bottom: 0;
+        }
+
+        .command-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #8b5cf6;
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: #8b5cf6;
+            margin: 1rem 0;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            border-radius: 30px;
+            padding: 1rem 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon { font-size: 1.5rem; }
+        .notification-content { flex: 1; }
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            font-size: 1rem;
+        }
+        .notification-message {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        .notification-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        .notification-close:hover { color: #ffb347; }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 180, 70, 0.5);
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            margin-left: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .menu-content { display: none; }
+            .course-header h1 { font-size: 1.8rem; }
+            .module-card, .tasks-section { padding: 1.5rem; }
+            .topic-sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхнее меню -->
+<div class="top-menu">
+    <div class="menu-left">
+        <div class="macos-dots">
+            <div class="macos-dot red" onclick="window.location.href='/dashboard'" title="На дашборд"></div>
+            <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+            <div class="macos-dot green" onclick="window.history.back()" title="Назад"></div>
+        </div>
+        <div class="menu-content">
+            <a href="/">🏠 Главная</a>
+            <a href="/informatics" class="active">📚 Курсы</a>
+            <a href="/oge">📖 информатика</a>
+            <a href="/ege">📋 ЕГЭ</a>
+            <a href="/practice">⚡ Практика</a>
+        </div>
+    </div>
+    <div class="menu-right">
+        <div class="user-profile" onclick="window.location.href='/dashboard'">
+            <div class="user-avatar" id="userAvatar"></div>
+            <span class="user-name" id="userName">ДОМОЙ</span>
+        </div>
+    </div>
+</div>
+
+<!-- Основной макет с левой навигацией -->
+<div class="main-layout">
+    <!-- Левая панель с модулями -->
+    <div class="topic-sidebar">
+        <div class="sidebar-title">📋 Содержание курса</div>
+        <ul class="topic-list">
+            <li class="topic-item"><a href="#module1" class="topic-link active"><span class="topic-icon">📦</span> Модуль 1: Фундамент <span class="module-badge">Основы</span></a></li>
+            <li class="topic-item"><a href="#module2" class="topic-link"><span class="topic-icon">🎭</span> Модуль 2: Маски и классы <span class="module-badge">Classful</span></a></li>
+            <li class="topic-item"><a href="#module3" class="topic-link"><span class="topic-icon">🏠</span> Модуль 3: Серые и белые IP <span class="module-badge">NAT</span></a></li>
+            <li class="topic-item"><a href="#module4" class="topic-link"><span class="topic-icon">🔪</span> Модуль 4: CIDR и subnetting <span class="module-badge">ЕГЭ 13</span></a></li>
+            <li class="topic-item"><a href="#module5" class="topic-link"><span class="topic-icon">🔧</span> Модуль 5: Диагностика <span class="module-badge">Команды</span></a></li>
+            <li class="topic-item"><a href="#module6" class="topic-link"><span class="topic-icon">🏡</span> Модуль 6: Практика дома</a></li>
+            <li class="topic-item"><a href="#module7" class="topic-link"><span class="topic-icon">🚀</span> Модуль 7: IPv6 <span class="module-badge">Будущее</span></a></li>
+            <li class="topic-item"><a href="#module8" class="topic-link"><span class="topic-icon">🧮</span> Модуль 8: Дополнительные темы</a></li>
+            <li class="topic-item"><a href="#module9" class="topic-link"><span class="topic-icon">📊</span> Модуль 9: Таблицы и шпаргалки</a></li>
+            <li class="topic-item"><a href="#tasks" class="topic-link"><span class="topic-icon">✏️</span> 50 задач информатика/ЕГЭ</a></li>
+            <li class="topic-item"><a href="#answers" class="topic-link"><span class="topic-icon">✅</span> Ответы и решения</a></li>
+        </ul>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-container">
+        <div class="lesson-container">
+            <!-- Навигация по курсу -->
+            <div class="course-nav">
+                <a href="/informatics" class="nav-btn"><span>←</span> К списку курсов</a>
+                <div class="course-progress">
+                    <span>Прогресс: 0/9 модулей</span>
+                    <div class="progress-dots">
+                        <div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div>
+                        <div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div>
+                    </div>
+                </div>
+                <a href="#module1" class="nav-btn">Начать <span>→</span></a>
+            </div>
+                    <!-- Добавьте после course-nav -->
+        <div class="lesson-progress-header" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; background: rgba(30,35,45,0.5); padding: 1rem 2rem; border-radius: 40px;">
+                <span style="color: #ffb347; font-weight: 600;">📊 Прогресс задач:</span>
+                <div style="flex: 1; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;">
+                    <div id="tasksProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #48bb78, #38a169); transition: width 0.3s;"></div>
+                </div>
+                <span id="tasksProgressText" style="color: #48bb78; font-weight: 600;">0/50</span>
+            </div>
+        </div>
+
+            <!-- Заголовок курса -->
+            <div class="course-header">
+                <h1>🌐 IP-адресация. От основ информатика до бесклассовых сетей (CIDR)</h1>
+                <p>Полный курс: 9 модулей, 150+ тем, 200+ практических заданий и реальные сценарии</p>
+            </div>
+
+            <!-- Изображение курса -->
+            <img src="/images/ip_course_header.png" alt="IP-адресация" class="lesson-image">
+            <p class="image-caption">*Путь пакета: от вашего компьютера до сервера в другой стране*</p>
+
+            <!-- Кнопка генератора -->
+            <div style="text-align: center;">
+                <button class="generate-btn" onclick="window.location.href='/generate?topic=ip-all'">
+                    <span>⚡</span> Сгенерировать 100 задач по всем модулям
+                </button>
+            </div>
+
+            <!-- ========== МОДУЛЬ 1: ФУНДАМЕНТ ========== -->
+            <div id="module1" class="module-card">
+                <div class="module-header">
+                    <div class="module-number">1</div>
+                    <div class="module-title">Фундамент. Что такое IP-адрес и как он устроен?</div>
+                </div>
+                <div class="module-subtitle">Цель: Понять природу IP-адреса, научиться переводить числа в двоичную систему и обратно, разобрать структуру адреса.</div>
+                
+                <div class="module-content">
+                    <h3>📦 Введение в мир сетей</h3>
+                    <p><strong>Зачем нужны адреса?</strong> Представьте себе огромный город без названий улиц и номеров домов. Как почтальон доставит письмо? Точно так же в интернете — каждое устройство должно иметь уникальный идентификатор, чтобы данные попадали именно к нему. Эту роль выполняет IP-адрес.</p>
+                    
+                    <div class="info-block">
+                        <p><strong>Аналогия:</strong> IP-адрес — это как <strong>индекс + улица + дом + квартира</strong>. Индекс помогает направить письмо в нужный город (сеть), а номер дома и квартиры — найти конкретную квартиру (устройство).</p>
+                        <p><strong>Вторая аналогия:</strong> Представьте, что интернет — это гигантский многоквартирный дом. Ваш IP-адрес — это точный адрес вашей квартиры, без которого почтальон (пакеты данных) не сможет вас найти.</p>
+                    </div>
+
+                    <p><strong>Что такое протокол IP?</strong> IP (Internet Protocol) — это набор правил, определяющих, как данные должны передаваться по сети. Версия 4 (IPv4) была создана в 1981 году и до сих пор является основной, хотя адресов в ней всего <strong>4.3 миллиарда</strong>, что уже недостаточно для всех устройств мира.</p>
+                    
+                    <p><strong>История создания:</strong> Протокол IP был разработан Винтоном Серфом и Бобом Каном в рамках проекта ARPANET. Первая версия IPv4 была описана в RFC 791 в сентябре 1981 года. Интересно, что изначально никто не предполагал, что интернет станет настолько массовым, и 4.3 миллиарда адресов казались неисчерпаемыми.</p>
+
+                    <h3>🧩 Структура IPv4-адреса</h3>
+                    <p>IPv4-адрес — это 32-битное число. 32 бита — это 32 ячейки памяти, каждая из которых может хранить 0 или 1.</p>
+                    
+                    <ul>
+                        <li><strong>Бит (bit)</strong> — наименьшая единица информации, 0 или 1. Термин происходит от "binary digit".</li>
+                        <li><strong>Байт (byte)</strong> = 8 бит. Байт может хранить числа от 0 до 255.</li>
+                        <li><strong>Октет (octet)</strong> — то же самое, что байт, но термин чаще используется в сетевых технологиях.</li>
+                    </ul>
+
+                    <p>Для удобства восприятия 32 бита разбивают на <strong>4 октета (4 байта)</strong> по 8 бит каждый. Затем каждый октет переводят из двоичного числа в десятичное и записывают через точки. Это называется <strong>dotted decimal notation</strong> (десятичная запись с точками).</p>
+
+                    <div class="example-box">
+                        <h4><span>📌</span> Пример: 192.168.1.1</h4>
+                        <p>В двоичном виде это:</p>
+                        <pre><code>11000000.10101000.00000001.00000001</code></pre>
+                        <p>Где:</p>
+                        <ul>
+                            <li>11000000₂ = 192₁₀ (потому что 128 + 64 = 192)</li>
+                            <li>10101000₂ = 168₁₀ (128 + 32 + 8 = 168)</li>
+                            <li>00000001₂ = 1₁₀</li>
+                            <li>00000001₂ = 1₁₀</li>
+                        </ul>
+                    </div>
+
+                    <h3>💻 Двоичный код — язык машин</h3>
+                    <p>Компьютеры не понимают десятичные числа, они оперируют только электрическими сигналами: есть напряжение (1) / нет напряжения (0). Поэтому вся сетевая адресация в конечном счёте двоичная.</p>
+                    
+                    <p><strong>Почему именно двоичная?</strong> Потому что электронные схемы легко различают два состояния: высокое напряжение (логическая 1) и низкое напряжение (логический 0). Использовать десять уровней напряжения было бы крайне сложно и ненадёжно.</p>
+
+                    <h4>Практикум: Перевод чисел из десятичной в двоичную и обратно</h4>
+                    
+                    <p><strong>Метод 1: Деление на 2 (для целых чисел)</strong></p>
+                    <ol>
+                        <li>Делите число на 2, записывая остаток (0 или 1).</li>
+                        <li>Повторяйте с частным, пока не получите 0.</li>
+                        <li>Остатки, записанные в обратном порядке, дадут двоичное число.</li>
+                    </ol>
+
+                    <div class="example-box">
+                        <h4><span>📌</span> Перевод 192 в двоичную</h4>
+                        <pre><code>192 ÷ 2 = 96 (ост. 0)
+96 ÷ 2 = 48 (ост. 0)
+48 ÷ 2 = 24 (ост. 0)
+24 ÷ 2 = 12 (ост. 0)
+12 ÷ 2 = 6 (ост. 0)
+6 ÷ 2 = 3 (ост. 0)
+3 ÷ 2 = 1 (ост. 1)
+1 ÷ 2 = 0 (ост. 1)</code></pre>
+                        <p>Остатки снизу вверх: 11000000₂</p>
+                    </div>
+
+                    <div class="example-box">
+                        <h4><span>📌</span> Перевод 168 в двоичную</h4>
+                        <pre><code>168 ÷ 2 = 84 (ост. 0)
+84 ÷ 2 = 42 (ост. 0)
+42 ÷ 2 = 21 (ост. 0)
+21 ÷ 2 = 10 (ост. 1)
+10 ÷ 2 = 5 (ост. 0)
+5 ÷ 2 = 2 (ост. 1)
+2 ÷ 2 = 1 (ост. 0)
+1 ÷ 2 = 0 (ост. 1)</code></pre>
+                        <p>Остатки снизу вверх: 10101000₂</p>
+                    </div>
+
+                    <p><strong>Метод 2: Вычитание степеней двойки (альтернативный способ)</strong></p>
+                    <p>Вычитайте из числа наибольшую возможную степень двойки, отмечая соответствующий бит как 1.</p>
+                    
+                    <div class="example-box">
+                        <h4><span>📌</span> Перевод 192 методом вычитания</h4>
+                        <pre><code>192 - 128 = 64  (1 в позиции 2⁷)
+64 - 64 = 0     (1 в позиции 2⁶)
+Остальные биты: 0
+Получаем: 11000000₂</code></pre>
+                    </div>
+
+                    <p><strong>Обратный перевод (двоичная → десятичная):</strong> умножьте каждую цифру на 2 в степени позиции (справа налево, начиная с 0) и сложите результаты.</p>
+                    
+                    <div class="example-box">
+                        <h4><span>📌</span> Перевод 10101000₂ в десятичную</h4>
+                        <pre><code>Позиции: 7 6 5 4 3 2 1 0
+Биты:    1 0 1 0 1 0 0 0
+Расчёт: 1·2⁷ + 0·2⁶ + 1·2⁵ + 0·2⁴ + 1·2³ + 0·2² + 0·2¹ + 0·2⁰ = 
+128 + 0 + 32 + 0 + 8 + 0 + 0 + 0 = 168₁₀</code></pre>
+                    </div>
+
+                    <h4>Таблица степеней двойки (нужно знать наизусть!)</h4>
+                    <table class="theory-table">
+                        <thead><tr><th>Степень</th><th>Значение</th><th>Степень</th><th>Значение</th></tr></thead>
+                        <tbody>
+                            <tr><td>2⁰</td><td>1</td><td>2⁸</td><td>256</td></tr>
+                            <tr><td>2¹</td><td>2</td><td>2⁹</td><td>512</td></tr>
+                            <tr><td>2²</td><td>4</td><td>2¹⁰</td><td>1024</td></tr>
+                            <tr><td>2³</td><td>8</td><td>2¹¹</td><td>2048</td></tr>
+                            <tr><td>2⁴</td><td>16</td><td>2¹²</td><td>4096</td></tr>
+                            <tr><td>2⁵</td><td>32</td><td>2¹³</td><td>8192</td></tr>
+                            <tr><td>2⁶</td><td>64</td><td>2¹⁴</td><td>16384</td></tr>
+                            <tr><td>2⁷</td><td>128</td><td>2¹⁵</td><td>32768</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>🎯 Двуединая структура адреса</h3>
+                    <p>Любой IP-адрес логически состоит из двух частей:</p>
+                    <ul>
+                        <li><strong>Номер сети (Network ID)</strong> — идентификатор сети, к которой принадлежит устройство. Все устройства в одной сети имеют одинаковый номер сети.</li>
+                        <li><strong>Номер узла (Host ID)</strong> — идентификатор конкретного устройства внутри этой сети. В одной сети не может быть двух устройств с одинаковым номером узла.</li>
+                    </ul>
+                    
+                    <p><strong>Проблема:</strong> глядя только на IP-адрес, невозможно определить, где проходит граница между сетью и узлом. Например, в адресе 192.168.1.1 первые три числа могут быть сетью, а последнее — узлом, а могут и первые два — сетью, а остальные — узлом. Для этого и нужна <strong>маска подсети</strong>, которую мы изучим в модуле 2.</p>
+
+                    <div class="info-block">
+                        <p><strong>Важно:</strong> Без маски IP-адрес бесполезен — он не говорит, где находится сеть, а где конкретное устройство. Это как иметь номер дома, но не знать, на какой он улице.</p>
+                    </div>
+
+                    <h3>📝 Упражнения для самопроверки</h3>
+                    <ol>
+                        <li>Переведите в двоичную систему числа: 10, 100, 200, 255.</li>
+                        <li>Переведите в десятичную систему: 1010₂, 11110000₂, 11001100₂.</li>
+                        <li>Сколько бит в 4 байтах? Сколько байт в 32 битах?</li>
+                        <li>Представьте адрес 10.10.10.10 в двоичном виде.</li>
+                        <li>Какой максимальный десятичный номер может быть в одном октете? Почему?</li>
+                    </ol>
+                    <p><em>Ответы: 1) 1010₂, 1100100₂, 11001000₂, 11111111₂; 2) 10, 240, 204; 3) 32 бита, 4 байта; 4) 00001010.00001010.00001010.00001010; 5) 255, потому что 8 бит = 2⁸-1.</em></p>
+                </div>
+            </div>
+
+            <!-- ========== МОДУЛЬ 2: МАСКА ПОДСЕТИ И КЛАССОВАЯ АДРЕСАЦИЯ ========== -->
+            <div id="module2" class="module-card">
+                <div class="module-header">
+                    <div class="module-number">2</div>
+                    <div class="module-title">Маска подсети и классовая адресация (Classful)</div>
+                </div>
+                <div class="module-subtitle">Цель: Освоить главный инструмент сетевого инженера — маску, и изучить устаревшую, но важную для понимания истории классовую адресацию.</div>
+
+                <div class="module-content">
+                    <h3>🎭 Понятие маски подсети (Subnet Mask)</h3>
+                    <p><strong>Маска подсети</strong> — это 32-битное число, которое показывает, какая часть IP-адреса относится к сети, а какая — к узлу. Маска всегда состоит из последовательности единиц, за которыми следуют нули.</p>
+                    
+                    <p><strong>Главное правило маски:</strong> сначала всегда идут единицы (биты сети), потом — нули (биты хоста). Никаких чередований быть не может! Маска вида 255.255.0.255 невозможна.</p>
+                    
+                    <div class="example-box">
+                        <p><code>255.255.255.0</code> в двоичном виде: <code>11111111.11111111.11111111.00000000</code></p>
+                        <p>Первые 24 бита — единицы (сеть), последние 8 бит — нули (хосты).</p>
+                        <p><code>255.255.255.128</code> в двоичном виде: <code>11111111.11111111.11111111.10000000</code></p>
+                        <p>Первые 25 бит — единицы (сеть), последние 7 бит — нули (хосты).</p>
+                    </div>
+
+                    <h4>Как маска работает?</h4>
+                    <p>Адрес сети получается путём <strong>поразрядного логического умножения (И, AND)</strong> IP-адреса на маску подсети. Правило AND: 1 И 1 = 1, 1 И 0 = 0, 0 И 1 = 0, 0 И 0 = 0.</p>
+                    
+                    <div class="example-box">
+                        <h4><span>📌</span> Вычисление адреса сети (пример 1)</h4>
+                        <p>IP: 192.168.1.45, Маска: 255.255.255.0</p>
+                        <pre><code>IP:     192.168.1.45   = 11000000.10101000.00000001.00101101
+Маска:  255.255.255.0  = 11111111.11111111.11111111.00000000
+----------------------------------------------------------------
+AND:                    11000000.10101000.00000001.00000000 = 192.168.1.0</code></pre>
+                        <p>Адрес сети = 192.168.1.0</p>
+                    </div>
+
+                    <div class="example-box">
+                        <h4><span>📌</span> Вычисление адреса сети (пример 2)</h4>
+                        <p>IP: 192.168.1.130, Маска: 255.255.255.128</p>
+                        <pre><code>IP:     192.168.1.130 = 11000000.10101000.00000001.10000010
+Маска:  255.255.255.128 = 11111111.11111111.11111111.10000000
+----------------------------------------------------------------
+AND:                    11000000.10101000.00000001.10000000 = 192.168.1.128</code></pre>
+                        <p>Адрес сети = 192.168.1.128</p>
+                    </div>
+
+                    <div class="example-box">
+                        <h4><span>📌</span> Вычисление адреса сети (пример 3 с нестандартной маской)</h4>
+                        <p>IP: 10.20.30.40, Маска: 255.255.254.0</p>
+                        <pre><code>IP:     10.20.30.40 = 00001010.00010100.00011110.00101000
+Маска:  255.255.254.0 = 11111111.11111111.11111110.00000000
+----------------------------------------------------------------
+AND:                   00001010.00010100.00011110.00000000 = 10.20.30.0? Нет, 30 в двоичной 00011110, после AND с 11111110 получаем 00011110 = 30, так что 10.20.30.0</code></pre>
+                        <p>Адрес сети = 10.20.30.0</p>
+                    </div>
+
+                    <h3>📝 Формы записи маски</h3>
+                    <p>Существуют три способа записи одной и той же маски:</p>
+                    
+                    <table class="theory-table">
+                        <thead><tr><th>Десятичная (dotted decimal)</th><th>Двоичная (binary)</th><th>Префиксная (CIDR)</th></tr></thead>
+                        <tbody>
+                            <tr><td>255.0.0.0</td><td>11111111.00000000.00000000.00000000</td><td>/8</td></tr>
+                            <tr><td>255.255.0.0</td><td>11111111.11111111.00000000.00000000</td><td>/16</td></tr>
+                            <tr><td>255.255.255.0</td><td>11111111.11111111.11111111.00000000</td><td>/24</td></tr>
+                            <tr><td>255.255.255.128</td><td>11111111.11111111.11111111.10000000</td><td>/25</td></tr>
+                            <tr><td>255.255.255.192</td><td>11111111.11111111.11111111.11000000</td><td>/26</td></tr>
+                            <tr><td>255.255.255.224</td><td>11111111.11111111.11111111.11100000</td><td>/27</td></tr>
+                            <tr><td>255.255.255.240</td><td>11111111.11111111.11111111.11110000</td><td>/28</td></tr>
+                            <tr><td>255.255.255.248</td><td>11111111.11111111.11111111.11111000</td><td>/29</td></tr>
+                            <tr><td>255.255.255.252</td><td>11111111.11111111.11111111.11111100</td><td>/30</td></tr>
+                            <tr><td>255.255.255.254</td><td>11111111.11111111.11111111.11111110</td><td>/31 (редко)</td></tr>
+                            <tr><td>255.255.255.255</td><td>11111111.11111111.11111111.11111111</td><td>/32 (один хост)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Практикум: Перевод масок</h4>
+                    <div class="example-box">
+                        <p><strong>Задание:</strong> Перевести 255.255.254.0 в префиксную запись.</p>
+                        <p><strong>Решение:</strong> 254 = 11111110₂, значит в третьем октете 7 единиц + два октета по 8 = 8+8+7 = 23. Ответ: /23.</p>
+                    </div>
+                    <div class="example-box">
+                        <p><strong>Задание:</strong> Какая десятичная маска соответствует /28?</p>
+                        <p><strong>Решение:</strong> /28 означает 28 единиц, значит 32-28 = 4 нуля. Последний октет: 11110000₂ = 240. Ответ: 255.255.255.240.</p>
+                    </div>
+
+                    <h3>📚 Классовая адресация (RFC 791)</h3>
+                    <p>В начале развития интернета адреса делились на классы по первым битам первого октета. Это устаревший метод, но его нужно знать для понимания истории и для решения некоторых задач ЕГЭ.</p>
+
+                    <p><strong>Почему классы устарели?</strong> Из-за неэффективности: организациям выдавались целые классы, и многие адреса пропадали. Например, компании нужен 300 адресов — ей выдавали класс B (65 тысяч адресов), и 64 700 адресов не использовались.</p>
+
+                    <table class="theory-table">
+                        <thead><tr><th>Класс</th><th>Первые биты</th><th>Диапазон 1-го октета</th><th>Маска по умолч.</th><th>Кол-во сетей</th><th>Хостов в сети</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>A</strong></td><td>0</td><td>1 – 126</td><td>/8 (255.0.0.0)</td><td>126</td><td>16 777 214</td></tr>
+                            <tr><td><strong>B</strong></td><td>10</td><td>128 – 191</td><td>/16 (255.255.0.0)</td><td>16 384</td><td>65 534</td></tr>
+                            <tr><td><strong>C</strong></td><td>110</td><td>192 – 223</td><td>/24 (255.255.255.0)</td><td>2 097 152</td><td>254</td></tr>
+                            <tr><td><strong>D</strong></td><td>1110</td><td>224 – 239</td><td colspan="3">Мультикаст (групповые адреса, для видео- и аудиотрансляций)</td></tr>
+                            <tr><td><strong>E</strong></td><td>1111</td><td>240 – 255</td><td colspan="3">Экспериментальные, зарезервированы для будущих применений</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Как определить класс по первому октету?</h4>
+                    <ul>
+                        <li>Если первый октет от 1 до 126 → класс A</li>
+                        <li>Если первый октет от 128 до 191 → класс B</li>
+                        <li>Если первый октет от 192 до 223 → класс C</li>
+                        <li>Если первый октет от 224 до 239 → класс D</li>
+                        <li>Если первый октет от 240 до 255 → класс E</li>
+                    </ul>
+                    <p><strong>Обратите внимание:</strong> числа 0 и 127 не входят в класс A, они зарезервированы для особых целей.</p>
+
+                    <h4>Особые и служебные адреса</h4>
+                    <ul>
+                        <li><strong>0.0.0.0/8</strong> — используется для обозначения "любой адрес" или "эту сеть". В маршрутизации означает "маршрут по умолчанию".</li>
+                        <li><strong>127.0.0.0/8</strong> — loopback (localhost). Самый известный — 127.0.0.1 (ваш собственный компьютер). Пакеты на этот адрес никуда не уходят, а возвращаются обратно. Используется для тестирования сетевого стека.</li>
+                        <li><strong>255.255.255.255</strong> — ограниченный широковещательный адрес (broadcast). Пакет, отправленный на этот адрес, получают все устройства в локальной сети.</li>
+                        <li><strong>Адрес сети</strong> — все биты хоста равны 0 (например, 192.168.1.0). Нельзя назначать устройствам.</li>
+                        <li><strong>Широковещательный адрес подсети</strong> — все биты хоста равны 1 (например, 192.168.1.255). Пакеты на этот адрес получают все устройства в данной подсети.</li>
+                    </ul>
+
+                    <div class="info-block">
+                        <p><strong>Для информатика и ЕГЭ:</strong> Зная первый октет, вы должны уметь определять класс адреса и маску по умолчанию. Например, адрес 10.0.0.1 — класс A, маска /8. Адрес 172.16.5.1 — класс B, маска /16. Адрес 192.168.1.1 — класс C, маска /24.</p>
+                    </div>
+
+                    <h3>📝 Упражнения для самопроверки</h3>
+                    <ol>
+                        <li>Определите класс адресов: 10.10.10.10, 172.32.1.1, 192.168.0.1, 224.0.0.1, 127.0.0.1.</li>
+                        <li>Какая маска по умолчанию у адреса класса B?</li>
+                        <li>Переведите маску /20 в десятичный вид.</li>
+                        <li>Найдите адрес сети для IP 10.10.10.10 с маской 255.255.255.0.</li>
+                        <li>Найдите широковещательный адрес для подсети 192.168.1.0/24.</li>
+                    </ol>
+                    <p><em>Ответы: 1) A, B, C, D, loopback; 2) 255.255.0.0; 3) 255.255.240.0; 4) 10.10.10.0; 5) 192.168.1.255.</em></p>
+                </div>
+            </div>
+
+            <!-- ========== МОДУЛЬ 3: СПЕЦИАЛЬНЫЕ И СЛУЖЕБНЫЕ АДРЕСА ========== -->
+            <div id="module3" class="module-card">
+                <div class="module-header">
+                    <div class="module-number">3</div>
+                    <div class="module-title">Специальные и служебные адреса. Реальные и "домашние" IP</div>
+                </div>
+                <div class="module-subtitle">Цель: Научиться отличать "белые" IP от "серых", понимать, как мы выходим в Интернет с роутером.</div>
+
+                <div class="module-content">
+                    <h3>⚪ Публичные (белые) и частные (серые) адреса</h3>
+                    <p>Адресов IPv4 всего около 4.3 миллиардов. На самом деле их даже меньше, потому что многие диапазоны зарезервированы для специальных целей. Если бы каждое устройство в мире требовало уникальный публичный IP, их бы не хватило уже в 90-х годах.</p>
+                    
+                    <p><strong>Решение:</strong> <strong>частные (серые) адреса</strong>, которые можно использовать внутри локальных сетей, но они не маршрутизируются в глобальном интернете. Диапазоны частных адресов определены в <strong>RFC 1918</strong>:</p>
+
+                    <table class="theory-table">
+                        <thead><tr><th>Диапазон</th><th>Маска</th><th>Количество адресов</th><th>Примечание</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>10.0.0.0 – 10.255.255.255</code></td><td>/8 (255.0.0.0)</td><td>16 777 216</td><td>Огромный диапазон для крупных сетей</td></tr>
+                            <tr><td><code>172.16.0.0 – 172.31.255.255</code></td><td>/12 (255.240.0.0)</td><td>1 048 576</td><td>16 смежных сетей класса B</td></tr>
+                            <tr><td><code>192.168.0.0 – 192.168.255.255</code></td><td>/16 (255.255.0.0)</td><td>65 536</td><td>Самый популярный для дома</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p><strong>Почему именно эти диапазоны?</strong> Они были специально выделены IANA для частного использования и никогда не будут назначены никакой организации в интернете. Любой может использовать их внутри своей сети.</p>
+
+                    <h4>Практикум: Определите, "белый" или "серый" адрес</h4>
+                    <div class="example-box">
+                        <ul>
+                            <li><code>10.0.0.5</code> — <span style="color: #48bb78;">серый</span> (диапазон 10.0.0.0/8)</li>
+                            <li><code>85.12.3.1</code> — <span style="color: #ffb347;">белый</span> (не входит в частные диапазоны)</li>
+                            <li><code>192.168.0.15</code> — <span style="color: #48bb78;">серый</span> (диапазон 192.168.0.0/16)</li>
+                            <li><code>172.20.10.1</code> — <span style="color: #48bb78;">серый</span> (диапазон 172.16.0.0/12)</li>
+                            <li><code>172.32.0.1</code> — <span style="color: #ffb347;">белый</span> (выходит за 172.31.255.255)</li>
+                            <li><code>169.254.0.5</code> — <span style="color: #8b5cf6;">link-local</span> (специальный диапазон APIPA, когда DHCP не отвечает)</li>
+                        </ul>
+                    </div>
+
+                    <h3>🔄 Технология NAT (Network Address Translation)</h3>
+                    <p>Как же устройства с серыми адресами выходят в интернет? На помощь приходит <strong>NAT</strong>.</p>
+                    
+                    <p><strong>Простая аналогия:</strong> Представьте квартиру (вашу локальную сеть) и её почтовый ящик (роутер). Внутри квартиры у каждого жителя есть своё внутреннее имя (серый IP), но для внешнего мира все письма приходят на один почтовый ящик (белый IP роутера). Роутер запоминает, кто какое письмо отправил, и когда приходит ответ, передаёт его нужному жителю.</p>
+
+                    <div class="info-block">
+                        <p><strong>Как работает домашний роутер (более технически):</strong></p>
+                        <ol>
+                            <li>Получает от провайдера один публичный (белый) IP-адрес на WAN-порт.</li>
+                            <li>Раздаёт частные (серые) IP-адреса всем домашним устройствам через DHCP-сервер.</li>
+                            <li>Создаёт таблицу трансляции NAT. Когда компьютер (192.168.1.5) отправляет запрос на сайт, роутер:
+                                <ul>
+                                    <li>Заменяет исходный IP (192.168.1.5) на свой публичный IP.</li>
+                                    <li>Заменяет исходный порт на новый уникальный порт.</li>
+                                    <li>Запоминает соответствие (внутренний IP:порт) ↔ (внешний порт) в таблице.</li>
+                                </ul>
+                            </li>
+                            <li>Ответ от сервера приходит на публичный IP роутера и на определённый порт. Роутер смотрит в таблицу, находит соответствующий внутренний IP и порт и переправляет пакет компьютеру 192.168.1.5.</li>
+                        </ol>
+                    </div>
+
+                    <p><strong>Проблемы NAT:</strong></p>
+                    <ul>
+                        <li>Нарушает принцип сквозного соединения (end-to-end). Из интернета нельзя инициировать соединение с устройством за NAT (если не настроить проброс портов).</li>
+                        <li>Увеличивает задержки и нагрузку на роутер.</li>
+                        <li>Некоторые протоколы (например, FTP, SIP) работают через NAT с трудом и требуют специальных модулей.</li>
+                    </ul>
+
+                    <p><strong>Шлюз по умолчанию (default gateway)</strong> — это IP-адрес устройства (обычно роутера), через которое компьютеры в локальной сети отправляют пакеты в другие сети (в интернет). Обычно это первый или последний адрес в подсети, например 192.168.1.1 или 192.168.0.1.</p>
+
+                    <h3>🔄 Динамические и статические адреса</h3>
+                    
+                    <p><strong>Статический IP</strong> — назначается вручную администратором и никогда не меняется. Используется для серверов, принтеров, сетевого оборудования, чтобы их адрес всегда был известен.</p>
+                    
+                    <p><strong>Динамический IP</strong> — назначается автоматически протоколом <strong>DHCP (Dynamic Host Configuration Protocol)</strong>. Когда устройство подключается к сети, оно отправляет широковещательный запрос, и DHCP-сервер (обычно встроен в роутер) выдаёт свободный IP из пула на определённое время (аренду).</p>
+
+                    <h4>Процесс DHCP (4 шага):</h4>
+                    <ol>
+                        <li><strong>DHCP Discover</strong> — клиент ищет сервер (широковещательный запрос).</li>
+                        <li><strong>DHCP Offer</strong> — сервер предлагает IP-адрес.</li>
+                        <li><strong>DHCP Request</strong> — клиент запрашивает предложенный IP.</li>
+                        <li><strong>DHCP Acknowledge</strong> — сервер подтверждает и выдаёт аренду.</li>
+                    </ol>
+
+                    <div class="example-box">
+                        <h4><span>📌</span> Пример настройки DHCP в домашнем роутере</h4>
+                        <pre><code>Пул адресов: 192.168.1.100 – 192.168.1.200
+Маска подсети: 255.255.255.0
+Основной шлюз: 192.168.1.1
+DNS-серверы: 8.8.8.8, 1.1.1.1
+Время аренды: 24 часа</code></pre>
+                        <p>В этом случае адреса 192.168.1.2 – 192.168.1.99 можно использовать для статических назначений (серверы, принтеры).</p>
+                    </div>
+
+                    <h3>📡 APIPA (Automatic Private IP Addressing)</h3>
+                    <p>Когда устройство настроено на получение IP по DHCP, но DHCP-сервер не отвечает, Windows автоматически назначает себе адрес из диапазона <strong>169.254.0.0/16</strong>. Это называется APIPA или link-local адрес. Такие адреса позволяют устройствам в одной сети общаться друг с другом, но не имеют выхода в интернет.</p>
+
+                    <h3>📝 Упражнения для самопроверки</h3>
+                    <ol>
+                        <li>Какие из адресов частные: 10.255.255.255, 172.15.0.1, 192.168.256.1, 172.31.0.1?</li>
+                        <li>Что такое NAT и зачем он нужен?</li>
+                        <li>Какой протокол автоматически назначает IP-адреса?</li>
+                        <li>Что означает адрес 169.254.1.1?</li>
+                        <li>В чём разница между статическим и динамическим IP?</li>
+                    </ol>
+                    <p><em>Ответы: 1) 10.255.255.255 (да), 172.15.0.1 (нет, вне диапазона), 192.168.256.1 (невалидный, октет >255), 172.31.0.1 (да); 2) трансляция адресов для выхода в интернет с серыми IP; 3) DHCP; 4) APIPA, когда DHCP недоступен; 5) статический назначается вручную и не меняется, динамический выдается DHCP на время.</em></p>
+                </div>
+            </div>
+
+            <!-- ========== МОДУЛЬ 4: CIDR И SUBNETTING ========== -->
+            <div id="module4" class="module-card">
+                <div class="module-header">
+                    <div class="module-number">4</div>
+                    <div class="module-title">Бесклассовая адресация (CIDR) и деление на подсети (Subnetting) — Хардкор!</div>
+                </div>
+                <div class="module-subtitle">Цель: Самое сложное, но необходимое для ЕГЭ (задание 13) и реальной работы. Научиться "резать" сети на части.</div>
+
+                <div class="module-content">
+                    <h3>⚠️ Кризис классовой адресации</h3>
+                    <p>Классовая система была крайне негибкой. Представьте, что организации нужно 300 адресов. Класс C даёт 254 (маловато), класс B даёт 65 тысяч (огромный избыток). В результате большинство адресов класса B пропадали зря, и адресное пространство истощалось быстрее.</p>
+                    
+                    <p>К середине 90-х стало ясно, что без изменений IPv4-адреса закончатся через несколько лет.</p>
+                    
+                    <p><strong>Решение: CIDR (Classless Inter-Domain Routing)</strong> — бесклассовая междоменная маршрутизация, которая позволяет использовать маски любой длины, не привязываясь к /8, /16, /24. Описано в RFC 1518 и RFC 1519 (1993 год).</p>
+
+                    <h3>📏 Маски переменной длины (VLSM)</h3>
+                    <p>VLSM (Variable Length Subnet Mask) позволяет применять разные маски к разным подсетям внутри одной основной сети. Это основа современного IP-планирования, позволяющая эффективно использовать адресное пространство.</p>
+                    
+                    <p><strong>Пример:</strong> У вас сеть 192.168.1.0/24. Вам нужно создать подсеть для отдела разработки (100 хостов), подсеть для бухгалтерии (30 хостов) и подсеть для серверов (10 хостов). С VLSM вы можете выделить каждой подсети ровно столько адресов, сколько нужно, а не нарезать всё одинаковыми кусками.</p>
+
+                    <h3>🔪 Алгоритм деления сети на подсети</h3>
+                    
+                    <h4>Шаг 0: Основные формулы</h4>
+                    <ul>
+                        <li><strong>Количество хостов в подсети</strong> = 2ⁿ - 2, где n — число нулей в маске (битов хоста).</li>
+                        <li><strong>Количество подсетей</strong> = 2ᵐ, где m — число бит, добавленных к маске (заимствованных из хостовой части).</li>
+                        <li><strong>Шаг подсетей</strong> = 2ⁿ в том октете, где заканчивается маска.</li>
+                    </ul>
+
+                    <h4>Пошаговый алгоритм:</h4>
+                    <ol>
+                        <li>Определите, сколько хостов нужно в каждой подсети.</li>
+                        <li>Найдите минимальное n, такое что 2ⁿ - 2 ≥ нужное количество хостов.</li>
+                        <li>Новая маска = исходная маска + (исходное число бит хоста - n).</li>
+                        <li>Шаг подсетей = 2ⁿ.</li>
+                        <li>Перечислите все подсети, начиная с исходного адреса сети, прибавляя шаг.</li>
+                        <li>Для каждой подсети определите адрес сети, первый хост, последний хост, широковещательный адрес.</li>
+                    </ol>
+
+                    <h4>Пример 1: Базовая задача</h4>
+                    <div class="example-box">
+                        <p><strong>Исходные данные:</strong> Есть сеть <code>192.168.1.0/24</code>. Нужно сделать 4 подсети, в каждой из которых должно помещаться не менее 50 хостов.</p>
+                        
+                        <p><strong>Шаг 1: Расчёт необходимого количества бит для хостов</strong></p>
+                        <p>2ⁿ - 2 ≥ 50 → 2ⁿ ≥ 52 → n = 6 (так как 2⁶ = 64, 64 - 2 = 62 ≥ 50). Значит, под хосты нужно 6 бит.</p>
+                        
+                        <p><strong>Шаг 2: "Заимствование" битов</strong></p>
+                        <p>Исходная маска /24 означает 24 бита сети, 8 бит хостов.</p>
+                        <p>Нам нужно оставить 6 бит для хостов, значит, мы забираем 8 - 6 = 2 бита из хостовой части в сетевую. Новая маска станет /24 + 2 = /26.</p>
+                        
+                        <p><strong>Шаг 3: Расчёт шага подсетей</strong></p>
+                        <p>Шаг = 2⁶ = 64 (в четвёртом октете). То есть адреса подсетей будут идти с шагом 64.</p>
+                        
+                        <p><strong>Шаг 4: Полученные подсети</strong></p>
+                        <table class="theory-table">
+                            <thead><tr><th>№</th><th>Адрес сети</th><th>Первый хост</th><th>Последний хост</th><th>Широковещательный</th></tr></thead>
+                            <tbody>
+                                <tr><td>1</td><td>192.168.1.0/26</td><td>192.168.1.1</td><td>192.168.1.62</td><td>192.168.1.63</td></tr>
+                                <tr><td>2</td><td>192.168.1.64/26</td><td>192.168.1.65</td><td>192.168.1.126</td><td>192.168.1.127</td></tr>
+                                <tr><td>3</td><td>192.168.1.128/26</td><td>192.168.1.129</td><td>192.168.1.190</td><td>192.168.1.191</td></tr>
+                                <tr><td>4</td><td>192.168.1.192/26</td><td>192.168.1.193</td><td>192.168.1.254</td><td>192.168.1.255</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Пример 2: VLSM (разные размеры подсетей)</h4>
+                    <div class="example-box">
+                        <p><strong>Исходные данные:</strong> Сеть 10.0.0.0/8. Нужно создать подсети для трёх отделов:</p>
+                        <ul>
+                            <li>Отдел A: 4000 хостов</li>
+                            <li>Отдел B: 2000 хостов</li>
+                            <li>Отдел C: 1000 хостов</li>
+                        </ul>
+                        
+                        <p><strong>Шаг 1: Расчёт для отдела A (4000 хостов)</strong></p>
+                        <p>2ⁿ - 2 ≥ 4000 → 2ⁿ ≥ 4002 → n = 12 (2¹² = 4096, 4096-2=4094 ≥ 4000).</p>
+                        <p>Маска: /32 - 12 = /20. Шаг = 2¹² = 4096.</p>
+                        <p>Первая подсеть: 10.0.0.0/20 (10.0.0.0 – 10.0.15.255)</p>
+                        
+                        <p><strong>Шаг 2: Расчёт для отдела B (2000 хостов)</strong></p>
+                        <p>Начинаем со следующего адреса: 10.0.16.0</p>
+                        <p>2ⁿ - 2 ≥ 2000 → n = 11 (2¹¹=2048, 2048-2=2046 ≥ 2000).</p>
+                        <p>Маска: /21. Шаг = 2¹¹ = 2048.</p>
+                        <p>Вторая подсеть: 10.0.16.0/21 (10.0.16.0 – 10.0.23.255)</p>
+                        
+                        <p><strong>Шаг 3: Расчёт для отдела C (1000 хостов)</strong></p>
+                        <p>Начинаем со следующего адреса: 10.0.24.0</p>
+                        <p>2ⁿ - 2 ≥ 1000 → n = 10 (2¹⁰=1024, 1024-2=1022 ≥ 1000).</p>
+                        <p>Маска: /22. Шаг = 2¹⁰ = 1024.</p>
+                        <p>Третья подсеть: 10.0.24.0/22 (10.0.24.0 – 10.0.27.255)</p>
+                        
+                        <p>Адресное пространство использовано эффективно, без огромных промежутков.</p>
+                    </div>
+
+                    <h4>Пример 3: Подсети с маской /30 (для линков)</h4>
+                    <div class="example-box">
+                        <p>Для соединения двух роутеров "точка-точка" обычно используют маску /30, которая даёт ровно 2 хоста.</p>
+                        <p>Сеть 192.168.100.0/30:</p>
+                        <ul>
+                            <li>Адрес сети: 192.168.100.0</li>
+                            <li>Доступные хосты: 192.168.100.1 и 192.168.100.2</li>
+                            <li>Broadcast: 192.168.100.3</li>
+                        </ul>
+                    </div>
+
+                    <h3>🧮 Решение задания №13 из ЕГЭ</h3>
+                    
+                    <h4>Тип 1: Нахождение адреса сети</h4>
+                    <div class="example-box">
+                        <p><strong>Задача:</strong> Для узла с IP-адресом 136.206.24.5 адрес сети равен 136.206.20.0. Чему равен третий слева байт маски?</p>
+                        <p><strong>Решение:</strong> Запишем третий октет в двоичном виде:</p>
+                        <pre><code>IP: 24 = 00011000₂
+Адрес сети: 20 = 00010100₂</code></pre>
+                        <p>Применяем маску: если биты совпадают, в маске 1, если нет — 0. Сравниваем:</p>
+                        <pre><code>24: 00011000
+20: 00010100
+Побитовое сравнение:
+1й бит: 0 и 0 → совпадают → 1
+2й бит: 0 и 0 → совпадают → 1
+3й бит: 0 и 0 → совпадают → 1
+4й бит: 1 и 1 → совпадают → 1
+5й бит: 1 и 0 → разные → 0
+6й бит: 0 и 1 → разные → 0
+7й бит: 0 и 0 → совпадают → 1
+8й бит: 0 и 0 → совпадают → 1</code></pre>
+                        <p>Маска для третьего октета: 11110011₂ = 243? Но маска должна быть непрерывной последовательностью единиц! Значит, я ошибся в сравнении. На самом деле нужно смотреть, где начинаются расхождения.</p>
+                        <p>Правильно: 24 = 00011000, 20 = 00010100. Первые 4 бита совпадают (0001), а 5й бит различается. Значит, маска должна иметь единицы в первых 4 битах и нули в остальных. Получаем 11110000₂ = 240.</p>
+                        <p><strong>Ответ: 240.</strong></p>
+                    </div>
+
+                    <h4>Тип 2: Количество хостов</h4>
+                    <div class="example-box">
+                        <p><strong>Задача:</strong> Сколько различных адресов компьютеров допускает маска 255.255.255.224?</p>
+                        <p><strong>Решение:</strong> 224 = 11100000₂ → в последнем октете 3 единицы и 5 нулей. Значит, под хосты отведено 5 бит. 2⁵ = 32 адреса всего, из них 2 служебных (сеть и broadcast). Доступно 30 адресов.</p>
+                        <p><strong>Ответ: 30.</strong></p>
+                    </div>
+
+                    <h4>Тип 3: Номер компьютера в сети</h4>
+                    <div class="example-box">
+                        <p><strong>Задача:</strong> IP-адрес компьютера 192.168.1.100, маска 255.255.255.192. Каков номер компьютера в сети?</p>
+                        <p><strong>Решение:</strong> Маска /26 (255.255.255.192 = 11111111.11111111.11111111.11000000). Сначала найдём адрес сети: 192.168.1.100 & 255.255.255.192 = 192.168.1.64. Номер компьютера = IP - адрес сети = 192.168.1.100 - 192.168.1.64 = 0.0.0.36. То есть номер 36 (в десятичной системе).</p>
+                        <p><strong>Ответ: 36.</strong></p>
+                    </div>
+
+                    <h4>Тип 4: Определение маски по количеству хостов</h4>
+                    <div class="example-box">
+                        <p><strong>Задача:</strong> Какая минимальная маска позволяет адресовать 1000 хостов в одной подсети?</p>
+                        <p><strong>Решение:</strong> Нужно найти n, такое что 2ⁿ - 2 ≥ 1000. 2⁹=512 (мало), 2¹⁰=1024 (1024-2=1022 ≥ 1000). Значит, нужно 10 бит под хосты. Маска = 32 - 10 = /22. В десятичном виде: 255.255.252.0.</p>
+                        <p><strong>Ответ: /22 или 255.255.252.0.</strong></p>
+                    </div>
+
+                    <h3>📝 Упражнения для самопроверки</h3>
+                    <ol>
+                        <li>Сеть 10.0.0.0/16 нужно разделить на 8 равных подсетей. Какая маска будет у каждой подсети? Сколько хостов в каждой?</li>
+                        <li>Для IP 172.16.5.100 с маской 255.255.254.0 найдите адрес сети и широковещательный адрес.</li>
+                        <li>Сколько хостов можно адресовать в сети с маской /28?</li>
+                        <li>Напишите все подсети для 192.168.0.0/24 при маске /27.</li>
+                        <li>Какую маску нужно использовать, чтобы в подсети было ровно 14 хостов?</li>
+                    </ol>
+                    <p><em>Ответы: 1) /19, 8190 хостов; 2) 172.16.4.0, 172.16.5.255; 3) 14; 4) 192.168.0.0/27, 192.168.0.32/27, 192.168.0.64/27, 192.168.0.96/27, 192.168.0.128/27, 192.168.0.160/27, 192.168.0.192/27, 192.168.0.224/27; 5) /28 (14 хостов).</em></p>
+                </div>
+            </div>
+
+            <!-- ========== МОДУЛЬ 5: ДИАГНОСТИКА СЕТЕЙ ========== -->
+            <div id="module5" class="module-card">
+                <div class="module-header">
+                    <div class="module-number">5</div>
+                    <div class="module-title">Диагностика сетей. Инструменты связи</div>
+                </div>
+                <div class="module-subtitle">Цель: Изучить команды, которые позволяют "пощупать" сеть руками. Это пригодится и на экзамене (информатика), и в жизни при настройке.</div>
+
+                <div class="module-content">
+                    <h3>📡 Утилита ping</h3>
+                    <p>Использует протокол <strong>ICMP (Internet Control Message Protocol)</strong>. Отправляет запрос "Эхо" (echo request) и ждёт ответ "Эхо-ответ" (echo reply). Позволяет проверить доступность хоста и измерить время отклика (RTT — Round Trip Time).</p>
+                    
+                    <div class="command-box">
+                        ping yandex.ru<br>
+                        ping 8.8.8.8<br>
+                        ping -n 10 192.168.1.1  (10 пакетов в Windows)<br>
+                        ping -c 5 google.com  (5 пакетов в Linux)
+                    </div>
+
+                    <p><strong>Как интерпретировать результаты:</strong></p>
+                    <ul>
+                        <li>Время < 1 мс — отлично (локальная сеть).</li>
+                        <li>Время 10-50 мс — хорошо (быстрое соединение).</li>
+                        <li>Время 50-150 мс — приемлемо (обычный интернет).</li>
+                        <li>Время > 150 мс — медленно (спутник, большая задержка).</li>
+                        <li>Потери пакетов (packet loss) — плохой признак, проблемы с соединением.</li>
+                    </ul>
+
+                    <p><strong>Лайфхак:</strong> Сообщение "Request timed out" может означать:</p>
+                    <ul>
+                        <li>Хост выключен или недоступен.</li>
+                        <li>Файервол блокирует ICMP-пакеты (многие серверы так делают для безопасности).</li>
+                        <li>Проблемы с маршрутизацией (пакеты не доходят).</li>
+                        <li>Перегрузка сети.</li>
+                    </ul>
+
+                    <h3>🗺️ Утилита tracert (traceroute)</h3>
+                    <p>Показывает маршрут следования пакета до указанного хоста, перечисляя все промежуточные маршрутизаторы (роутеры). Очень полезна для выявления, на каком участке происходят потери или задержки.</p>
+
+                    <div class="command-box">
+                        tracert yandex.ru  (Windows)<br>
+                        traceroute yandex.ru (Linux/Mac)
+                    </div>
+
+                    <p><strong>Принцип работы:</strong> Использует поле TTL (Time To Live) в IP-пакете. Сначала отправляет пакет с TTL=1, первый роутер уменьшает TTL до 0 и возвращает сообщение "Time Exceeded". Затем отправляет с TTL=2 и т.д. Так постепенно узнаёт всех промежуточных.</p>
+
+                    <p><strong>Анализ вывода:</strong></p>
+                    <ul>
+                        <li>* * * означает, что роутер не ответил (может блокировать ICMP).</li>
+                        <li>Резкий рост задержки на каком-то шаге может указывать на проблемный участок.</li>
+                    </ul>
+
+                    <h3>🖥️ Утилита ipconfig / ifconfig</h3>
+                    <p>Позволяет посмотреть сетевые настройки вашего компьютера: IP-адрес, маску подсети, шлюз по умолчанию, MAC-адрес, DNS-серверы.</p>
+
+                    <div class="command-box">
+                        ipconfig  (Windows — кратко)<br>
+                        ipconfig /all  (Windows — подробно)<br>
+                        ip a  или  ifconfig  (Linux)<br>
+                        ip route show  (Linux — таблица маршрутизации)
+                    </div>
+
+                    <p><strong>Что искать в выводе:</strong></p>
+                    <ul>
+                        <li>IPv4-адрес — ваш текущий IP.</li>
+                        <li>Маска подсети — определяет размер вашей сети.</li>
+                        <li>Основной шлюз — адрес роутера.</li>
+                        <li>Физический адрес (MAC) — уникальный идентификатор сетевой карты.</li>
+                        <li>DNS-серверы — куда отправляются запросы на преобразование имён.</li>
+                    </ul>
+
+                    <h3>🔍 Утилита nslookup / dig</h3>
+                    <p>Позволяет узнать IP-адрес по доменному имени (DNS-запрос). Также может делать обратный запрос — по IP узнать имя.</p>
+
+                    <div class="command-box">
+                        nslookup yandex.ru<br>
+                        nslookup 8.8.8.8<br>
+                        dig yandex.ru<br>
+                        dig -x 8.8.8.8  (обратный запрос)
+                    </div>
+
+                    <p><strong>Пример вывода nslookup:</strong></p>
+                    <pre><code>> nslookup google.com
+Addresses:  2a00:1450:4010:c0b::65
+            216.58.210.46</code></pre>
+
+                    <h3>🕵️ Утилита nmap</h3>
+                    <p>Мощный сканер сети. Позволяет обнаруживать открытые порты, определять операционную систему удалённого хоста, сканировать сеть на наличие активных устройств.</p>
+
+                    <div class="command-box">
+                        nmap -sP 192.168.1.0/24  # Поиск всех устройств в подсети (ping sweep)<br>
+                        nmap -p 1-1000 192.168.1.1  # Сканирование портов 1-1000<br>
+                        nmap -O 192.168.1.1  # Определение ОС (требуются права root)<br>
+                        nmap -sS 192.168.1.1  # SYN-сканирование (полуоткрытое)
+                    </div>
+
+                    <div class="info-block">
+                        <p><strong>Важно:</strong> Использование nmap против чужих сетей без разрешения может быть незаконным и расцениваться как подготовка к взлому. Всегда сканируйте только свои сети или те, на которые есть письменное разрешение.</p>
+                    </div>
+
+                    <h3>📊 Другие полезные утилиты</h3>
+                    
+                    <h4>arp -a</h4>
+                    <p>Показывает таблицу ARP (Address Resolution Protocol) — соответствие между IP-адресами и MAC-адресами в локальной сети.</p>
+                    
+                    <h4>netstat -rn</h4>
+                    <p>Показывает таблицу маршрутизации. Можно увидеть, через какой интерфейс и шлюз идут пакеты к разным сетям.</p>
+                    
+                    <h4>route print (Windows) / route -n (Linux)</h4>
+                    <p>Просмотр и изменение таблицы маршрутизации.</p>
+                    
+                    <h4>telnet</h4>
+                    <p>Может использоваться для проверки доступности порта: <code>telnet 192.168.1.1 80</code> — проверить, открыт ли 80 порт.</p>
+                    
+                    <h4>curl</h4>
+                    <p>Позволяет отправлять HTTP-запросы и проверять работу веб-серверов.</p>
+
+                    <h3>📝 Упражнения для самопроверки</h3>
+                    <ol>
+                        <li>Какая команда покажет ваш IP-адрес в Windows?</li>
+                        <li>Как проверить доступность сайта google.com?</li>
+                        <li>Как узнать, через какие роутеры идут пакеты до yandex.ru?</li>
+                        <li>Что означает звёздочка (* * *) в выводе tracert?</li>
+                        <li>Какой протокол использует ping?</li>
+                    </ol>
+                    <p><em>Ответы: 1) ipconfig; 2) ping google.com; 3) tracert yandex.ru; 4) промежуточный узел не ответил; 5) ICMP.</em></p>
+                </div>
+            </div>
+
+            <!-- ========== МОДУЛЬ 6: ПРАКТИЧЕСКАЯ РАБОТА "ЖИЗНЕННАЯ" ========== -->
+            <div id="module6" class="module-card">
+                <div class="module-header">
+                    <div class="module-number">6</div>
+                    <div class="module-title">Практическая работа "Жизненная"</div>
+                </div>
+                <div class="module-subtitle">Цель: Собрать знания в кейс, который пользователь может воспроизвести дома.</div>
+
+                <div class="module-content">
+                    <h3>🏡 Схема типичной квартиры/дома</h3>
+                    <p>Представьте: у вас есть провайдер (интернет-кабель в квартиру), Wi-Fi роутер, ноутбук, телефон, Smart TV. Как это всё работает с точки зрения IP-адресации?</p>
+                    
+                    <img src="/images/home_network.png" alt="Домашняя сеть" class="lesson-image">
+                    <p class="image-caption">*Типичная схема домашней сети*</p>
+
+                    <h4>Задание 1: Заходим в настройки роутера</h4>
+                    <ol>
+                        <li>Узнайте IP-адрес своего роутера (шлюз по умолчанию). В Windows: откройте командную строку (cmd) и введите <code>ipconfig</code>. Найдите строку "Основной шлюз" (Default Gateway). Обычно это 192.168.0.1 или 192.168.1.1.</li>
+                        <li>Откройте браузер и введите этот адрес в адресной строке.</li>
+                        <li>Введите логин и пароль. Чаще всего это admin/admin, admin/password, или данные указаны на наклейке снизу роутера.</li>
+                    </ol>
+
+                    <div class="info-block">
+                        <p><strong>Предупреждение:</strong> Если вы не знаете пароль, не пытайтесь подбирать — многие роутеры блокируются после нескольких неудачных попыток. Посмотрите на наклейку или сбросьте роутер кнопкой Reset (но тогда придётся настраивать заново).</p>
+                    </div>
+
+                    <h4>Задание 2: Изучаем WAN IP</h4>
+                    <p>Найдите раздел "Состояние" (Status), "Интернет" (Internet) или "WAN". Там будет строка <strong>WAN IP</strong> — это публичный (белый) IP-адрес, который ваш роутер получил от провайдера. Запишите его.</p>
+                    
+                    <p><strong>Вопрос:</strong> Этот IP белый или серый? Если он начинается с 10, 172.16-31 или 192.168, значит, ваш провайдер использует NAT и у вас не настоящий белый IP (это плохо для игр и серверов).</p>
+
+                    <h4>Задание 3: Смотрим LAN и DHCP</h4>
+                    <p>Найдите раздел "Настройки LAN" (LAN Setup) или "DHCP-сервер". Посмотрите:</p>
+                    <ul>
+                        <li>Какой IP-адрес у самого роутера в локальной сети (обычно 192.168.1.1).</li>
+                        <li>Какой диапазон (пул) адресов раздаёт DHCP (например, 192.168.1.100 – 192.168.1.200).</li>
+                        <li>Какие адреса уже выданы (список клиентов DHCP или "Подключенные устройства").</li>
+                        <li>Время аренды (lease time) — обычно 24 часа.</li>
+                    </ul>
+
+                    <h4>Задание 4: Назначаем статический IP вручную</h4>
+                    <p>Попробуйте вручную назначить своему компьютеру статический IP-адрес из той же подсети, но вне DHCP-пула (например, 192.168.1.50/24).</p>
+                    
+                    <p><strong>В Windows 10/11:</strong></p>
+                    <ol>
+                        <li>Панель управления → Центр управления сетями и общим доступом → Изменение параметров адаптера.</li>
+                        <li>Правой кнопкой по вашему подключению (Wi-Fi или Ethernet) → Свойства.</li>
+                        <li>Выберите "IP версии 4 (TCP/IPv4)" и нажмите "Свойства".</li>
+                        <li>Выберите "Использовать следующий IP-адрес".</li>
+                        <li>Введите:
+                            <ul>
+                                <li>IP-адрес: 192.168.1.50</li>
+                                <li>Маска подсети: 255.255.255.0</li>
+                                <li>Основной шлюз: 192.168.1.1</li>
+                                <li>Предпочитаемый DNS-сервер: 8.8.8.8</li>
+                                <li>Альтернативный DNS-сервер: 1.1.1.1</li>
+                            </ul>
+                        </li>
+                        <li>Нажмите ОК и закройте все окна.</li>
+                    </ol>
+
+                    <p><strong>В Linux (NetworkManager):</strong> откройте настройки сети, выберите подключение, переключите IPv4 на "Manual" и введите те же параметры.</p>
+
+                    <p>После сохранения проверьте, работает ли интернет. Если нет, возможно:</p>
+                    <ul>
+                        <li>Вы указали неверный шлюз.</li>
+                        <li>Адрес 192.168.1.50 уже используется кем-то (конфликт IP).</li>
+                        <li>Маска подсети не совпадает с настройками роутера.</li>
+                    </ul>
+
+                    <h4>Задание 5 (виртуально): Простейшая сеть из двух ПК</h4>
+                    <p>Если у вас есть две виртуальные машины (VirtualBox, VMware) или два реальных компьютера, соедините их через свитч или настройте внутреннюю сеть в VirtualBox.</p>
+                    
+                    <p><strong>В VirtualBox:</strong></p>
+                    <ol>
+                        <li>Для каждой ВМ в настройках сети выберите "Внутренняя сеть" (Internal Network) и укажите одинаковое имя (например, intnet).</li>
+                        <li>Запустите обе ВМ.</li>
+                        <li>На первом ПК назначьте IP: <code>sudo ip addr add 192.168.100.10/24 dev eth0</code> (или через ifconfig).</li>
+                        <li>На втором ПК назначьте IP: <code>sudo ip addr add 192.168.100.20/24 dev eth0</code>.</li>
+                        <li>Проверьте связь: <code>ping 192.168.100.20</code> с первого ПК.</li>
+                    </ol>
+
+                    <p>Если пинг идёт — вы создали работающую локальную сеть! Теперь между виртуалками можно передавать файлы по FTP, HTTP и т.д.</p>
+
+                    <div class="info-block">
+                        <p><strong>Почему может не работать?</strong> Возможно, включен файервол (брандмауэр). Отключите его временно для теста или создайте правило, разрешающее ICMP. В Linux: <code>sudo ufw disable</code> или <code>sudo iptables -P INPUT ACCEPT</code>.</p>
+                    </div>
+
+                    <h4>Задание 6: Проброс портов (Port Forwarding)</h4>
+                    <p>Если вы хотите, чтобы ваш компьютер с серым IP был доступен из интернета (например, для веб-сервера), нужно настроить проброс портов на роутере.</p>
+                    
+                    <ol>
+                        <li>Назначьте вашему компьютеру статический IP (как в задании 4).</li>
+                        <li>В настройках роутера найдите раздел "Проброс портов" (Port Forwarding, Virtual Server).</li>
+                        <li>Добавьте правило: внешний порт (например, 8080) → внутренний IP 192.168.1.50 и порт 80.</li>
+                        <li>Теперь, если зайти по вашему белому IP:8080 из интернета, вы попадёте на веб-сервер вашего компьютера.</li>
+                    </ol>
+
+                    <h4>Задание 7: Настройка DMZ (Demilitarized Zone)</h4>
+                    <p>DMZ — это когда все входящие порты пробрасываются на один компьютер. Это небезопасно, но иногда удобно для тестов.</p>
+                    
+                    <p>В настройках роутера найдите "DMZ" и укажите IP вашего компьютера. Теперь весь трафик из интернета будет идти на него.</p>
+                    
+                    <div class="info-block">
+                        <p><strong>Важно:</strong> Включать DMZ опасно! Ваш компьютер будет полностью открыт для атак из интернета. Включайте только временно и с включённым файерволом.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== МОДУЛЬ 7: БУДУЩЕЕ. ПРОТОКОЛ IPv6 ========== -->
+            <div id="module7" class="module-card">
+                <div class="module-header">
+                    <div class="module-number">7</div>
+                    <div class="module-title">Будущее. Протокол IPv6</div>
+                </div>
+                <div class="module-subtitle">Цель: Обзорно рассказать, куда движется мир и почему без IPv6 не обойтись.</div>
+
+                <div class="module-content">
+                    <h3>⚠️ Причины появления IPv6</h3>
+                    <p>Адреса IPv4 закончились официально в 2011 году (IANA раздала последние блоки). Провайдеры и крупные компании вынуждены использовать NAT, что усложняет сеть и нарушает принцип сквозного соединения (end-to-end).</p>
+                    
+                    <p><strong>Интересный факт:</strong> Последний блок IPv4 был выделен 3 февраля 2011 года. С тех пор новые сети могут получать только IPv6 или покупать IPv4 на вторичном рынке.</p>
+                    
+                    <p><strong>Решение:</strong> IPv6 — протокол с адресом длиной 128 бит. Это даёт примерно 3.4×10³⁸ адресов — более чем достаточно, чтобы присвоить уникальный IP каждому атому на поверхности Земли (и останется ещё на несколько планет).</p>
+
+                    <h3>🔢 Отличия IPv6 от IPv4</h3>
+                    <table class="theory-table">
+                        <thead><tr><th>Характеристика</th><th>IPv4</th><th>IPv6</th></tr></thead>
+                        <tbody>
+                            <tr><td>Длина адреса</td><td>32 бита</td><td>128 бит</td></tr>
+                            <tr><td>Количество адресов</td><td>~4.3 млрд</td><td>~3.4×10³⁸</td></tr>
+                            <tr><td>Запись</td><td>Десятичная с точками</td><td>Шестнадцатеричная с двоеточиями</td></tr>
+                            <tr><td>Пример</td><td>192.168.1.1</td><td>2001:0db8:85a3:0000:0000:8a2e:0370:7334</td></tr>
+                            <tr><td>NAT</td><td>Практически обязателен</td><td>Не требуется (сквозная адресация)</td></tr>
+                            <tr><td>Конфигурация</td><td>DHCP или вручную</td><td>SLAAC (автоконфигурация) или DHCPv6</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Форматы записи IPv6</h4>
+                    <p>IPv6 адрес записывается 8 группами по 4 шестнадцатеричные цифры, разделёнными двоеточиями:</p>
+                    
+                    <div class="example-box">
+                        <p><code>2001:0db8:85a3:0000:0000:8a2e:0370:7334</code></p>
+                    </div>
+
+                    <p><strong>Правила сокращения:</strong></p>
+                    <ul>
+                        <li>Ведущие нули в группе можно опускать: <code>0370</code> → <code>370</code>, <code>0000</code> → <code>0</code>.</li>
+                        <li>Одну (и только одну) непрерывную последовательность нулевых групп можно заменить на <code>::</code>.</li>
+                    </ul>
+
+                    <div class="example-box">
+                        <p>Тот же адрес в сокращённом виде: <code>2001:db8:85a3::8a2e:370:7334</code></p>
+                        <p><code>fe80:0000:0000:0000:0202:b3ff:fe1e:8329</code> → <code>fe80::202:b3ff:fe1e:8329</code></p>
+                    </div>
+
+                    <h4>Типы IPv6 адресов</h4>
+                    <ul>
+                        <li><strong>Unicast (одноадресный)</strong> — идентифицирует один интерфейс. Пакет доставляется именно ему.</li>
+                        <li><strong>Multicast (многоадресный)</strong> — доставляется группе интерфейсов (начинается с ff00::/8).</li>
+                        <li><strong>Anycast</strong> — доставляется ближайшему интерфейсу из группы.</li>
+                        <li><strong>Link-local (fe80::/10)</strong> — используются только в пределах одной сети, не маршрутизируются. Автоматически назначаются каждому интерфейсу.</li>
+                        <li><strong>Unique local (fc00::/7)</strong> — аналог частных адресов в IPv4.</li>
+                        <li><strong>Global unicast (2000::/3)</strong> — глобальные маршрутизируемые адреса.</li>
+                    </ul>
+
+                    <h3>🔌 Совместимость: как работают сайты на IPv6, если у вас только IPv4?</h3>
+                    <p>Существуют механизмы перехода, позволяющие IPv4 и IPv6 сосуществовать:</p>
+                    
+                    <ul>
+                        <li><strong>Dual Stack (двойной стек):</strong> устройство имеет и IPv4, и IPv6 адреса. Приложение выбирает тот протокол, который доступен. Самый распространённый подход.</li>
+                        <li><strong>Туннели:</strong> IPv6-пакеты упаковываются внутрь IPv4-пакетов и передаются через IPv4-сеть (например, 6to4, Teredo, GRE).</li>
+                        <li><strong>Прокси и NAT64/DNS64:</strong> специальные шлюзы переводят IPv6-запросы в IPv4 для старых серверов. Клиент отправляет запрос на IPv6-адрес, а шлюз преобразует его в IPv4 и обратно.</li>
+                    </ul>
+
+                    <div class="info-block">
+                        <p><strong>Проверьте, есть ли у вас IPv6:</strong> зайдите на сайт <a href="#" style="color: #ffb347;">test-ipv6.com</a>. Он покажет, работает ли IPv6 на вашем соединении и есть ли у вас IPv6-адрес.</p>
+                        <p>В России многие провайдеры (Ростелеком, МГТС, Эр-Телеком) уже активно внедряют IPv6. Проверьте своего!</p>
+                    </div>
+
+                    <h3>📝 Упражнения для самопроверки</h3>
+                    <ol>
+                        <li>Сколько бит в IPv6-адресе?</li>
+                        <li>Сократите адрес: 2001:0db8:0000:0000:0000:0000:0000:0001</li>
+                        <li>Какой тип адреса начинается с fe80::?</li>
+                        <li>Зачем нужен Dual Stack?</li>
+                        <li>Почему IPv4-адреса закончились?</li>
+                    </ol>
+                    <p><em>Ответы: 1) 128; 2) 2001:db8::1; 3) link-local; 4) чтобы одновременно работать и с IPv4, и с IPv6; 5) слишком мало адресов для всех устройств.</em></p>
+                </div>
+            </div>
+
+            <!-- ========== МОДУЛЬ 8: ДОПОЛНИТЕЛЬНЫЕ ТЕМЫ ========== -->
+            <div id="module8" class="module-card">
+                <div class="module-header">
+                    <div class="module-number">8</div>
+                    <div class="module-title">Дополнительные темы и углублённые концепции</div>
+                </div>
+                <div class="module-subtitle">Для тех, кто хочет стать настоящим сетевым инженером</div>
+
+                <div class="module-content">
+                    <h3>📦 Протокол ARP (Address Resolution Protocol)</h3>
+                    <p>ARP нужен для того, чтобы узнать MAC-адрес устройства по его IP-адресу в локальной сети. Коммутаторы и сетевые карты работают с MAC-адресами, а нам удобнее использовать IP.</p>
+                    
+                    <p><strong>Как работает ARP:</strong></p>
+                    <ol>
+                        <li>Компьютер А хочет отправить пакет компьютеру Б с IP 192.168.1.5.</li>
+                        <li>Он смотрит в свою ARP-таблицу. Если там есть запись для 192.168.1.5, использует её.</li>
+                        <li>Если нет, отправляет широковещательный ARP-запрос: "Кто имеет IP 192.168.1.5? Сообщите свой MAC".</li>
+                        <li>Компьютер Б отвечает: "Это я, мой MAC aa:bb:cc:dd:ee:ff".</li>
+                        <li>Компьютер А сохраняет запись в ARP-таблицу и отправляет данные.</li>
+                    </ol>
+
+                    <div class="command-box">
+                        arp -a  # Посмотреть ARP-таблицу в Windows/Linux
+                    </div>
+
+                    <h3>📡 Протокол ICMP (Internet Control Message Protocol)</h3>
+                    <p>ICMP используется для передачи сообщений об ошибках и диагностической информации. Кроме ping, есть много других типов сообщений:</p>
+                    
+                    <table class="theory-table">
+                        <thead><tr><th>Тип</th><th>Код</th><th>Описание</th></tr></thead>
+                        <tbody>
+                            <tr><td>0</td><td>0</td><td>Echo Reply (ответ на ping)</td></tr>
+                            <tr><td>3</td><td>0</td><td>Destination Network Unreachable (сеть недоступна)</td></tr>
+                            <tr><td>3</td><td>1</td><td>Destination Host Unreachable (хост недоступен)</td></tr>
+                            <tr><td>3</td><td>3</td><td>Destination Port Unreachable (порт недоступен)</td></tr>
+                            <tr><td>5</td><td>0</td><td>Redirect (перенаправление на другой маршрут)</td></tr>
+                            <tr><td>8</td><td>0</td><td>Echo Request (ping)</td></tr>
+                            <tr><td>11</td><td>0</td><td>Time Exceeded (TTL истёк, используется в traceroute)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>🏢 VLAN (Virtual LAN)</h3>
+                    <p>VLAN позволяет разделить один физический коммутатор на несколько изолированных сетей. Устройства в разных VLAN не видят друг друга, если не настроить маршрутизацию между ними.</p>
+                    
+                    <p><strong>Зачем это нужно?</strong> В офисе можно сделать отдельный VLAN для бухгалтерии, отдельный для разработчиков, отдельный для гостевого Wi-Fi. Это повышает безопасность и уменьшает широковещательный трафик.</p>
+
+                    <h3>🔀 Маршрутизация (Routing)</h3>
+                    <p>Маршрутизация — это процесс выбора пути для передачи пакета между разными сетями. Маршрутизаторы хранят таблицы маршрутизации.</p>
+                    
+                    <p><strong>Статическая маршрутизация:</strong> администратор вручную прописывает маршруты. Подходит для небольших сетей.</p>
+                    
+                    <p><strong>Динамическая маршрутизация:</strong> маршрутизаторы обмениваются информацией и автоматически обновляют таблицы. Протоколы:</p>
+                    <ul>
+                        <li><strong>RIP</strong> — старый, простой, использует количество хопов.</li>
+                        <li><strong>OSPF</strong> — учитывает пропускную способность, масштабируется.</li>
+                        <li><strong>BGP</strong> — основной протокол между автономными системами в интернете.</li>
+                    </ul>
+
+                    <h3>📦 MTU и фрагментация</h3>
+                    <p>MTU (Maximum Transmission Unit) — максимальный размер пакета, который можно передать по сети. Обычно 1500 байт для Ethernet. Если пакет больше, его нужно фрагментировать (разбивать на части).</p>
+                    
+                    <p>Проблемы с MTU могут вызывать "чёрные дыры", когда пакеты с флагом DF (Don't Fragment) не могут пройти и просто отбрасываются.</p>
+
+                    <div class="command-box">
+                        ping -f -l 1472 8.8.8.8  # Проверка MTU в Windows
+                    </div>
+
+                    <h3>📝 Упражнения для самопроверки</h3>
+                    <ol>
+                        <li>Какой протокол используется для определения MAC-адреса по IP?</li>
+                        <li>Что такое VLAN и зачем он нужен?</li>
+                        <li>Чем отличается статическая маршрутизация от динамической?</li>
+                        <li>Какой тип ICMP-сообщения используется в traceroute?</li>
+                        <li>Что произойдёт, если отправить пакет размером 2000 байт в сеть с MTU 1500 и флагом DF?</li>
+                    </ol>
+                    <p><em>Ответы: 1) ARP; 2) виртуальные локальные сети для изоляции; 3) статическая — вручную, динамическая — автоматически по протоколам; 4) Time Exceeded; 5) пакет будет отброшен.</em></p>
+                </div>
+            </div>
+
+            <!-- ========== МОДУЛЬ 9: ТАБЛИЦЫ И ШПАРГАЛКИ ========== -->
+            <div id="module9" class="module-card">
+                <div class="module-header">
+                    <div class="module-number">9</div>
+                    <div class="module-title">Таблицы и шпаргалки для быстрого доступа</div>
+                </div>
+                <div class="module-subtitle">Всё самое важное в одном месте</div>
+
+                <div class="module-content">
+                    <h3>📊 Таблица масок и количества хостов</h3>
+                    <table class="theory-table">
+                        <thead><tr><th>Маска (десятичная)</th><th>CIDR</th><th>Кол-во адресов</th><th>Кол-во хостов</th></tr></thead>
+                        <tbody>
+                            <tr><td>255.255.255.252</td><td>/30</td><td>4</td><td>2</td></tr>
+                            <tr><td>255.255.255.248</td><td>/29</td><td>8</td><td>6</td></tr>
+                            <tr><td>255.255.255.240</td><td>/28</td><td>16</td><td>14</td></tr>
+                            <tr><td>255.255.255.224</td><td>/27</td><td>32</td><td>30</td></tr>
+                            <tr><td>255.255.255.192</td><td>/26</td><td>64</td><td>62</td></tr>
+                            <tr><td>255.255.255.128</td><td>/25</td><td>128</td><td>126</td></tr>
+                            <tr><td>255.255.255.0</td><td>/24</td><td>256</td><td>254</td></tr>
+                            <tr><td>255.255.254.0</td><td>/23</td><td>512</td><td>510</td></tr>
+                            <tr><td>255.255.252.0</td><td>/22</td><td>1024</td><td>1022</td></tr>
+                            <tr><td>255.255.248.0</td><td>/21</td><td>2048</td><td>2046</td></tr>
+                            <tr><td>255.255.240.0</td><td>/20</td><td>4096</td><td>4094</td></tr>
+                            <tr><td>255.255.224.0</td><td>/19</td><td>8192</td><td>8190</td></tr>
+                            <tr><td>255.255.192.0</td><td>/18</td><td>16384</td><td>16382</td></tr>
+                            <tr><td>255.255.128.0</td><td>/17</td><td>32768</td><td>32766</td></tr>
+                            <tr><td>255.255.0.0</td><td>/16</td><td>65536</td><td>65534</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>🏠 Частные диапазоны (RFC 1918)</h3>
+                    <table class="theory-table">
+                        <thead><tr><th>Диапазон</th><th>Маска</th><th>Примечание</th></tr></thead>
+                        <tbody>
+                            <tr><td>10.0.0.0 – 10.255.255.255</td><td>/8</td><td>Огромный диапазон для крупных сетей</td></tr>
+                            <tr><td>172.16.0.0 – 172.31.255.255</td><td>/12</td><td>16 смежных сетей класса B</td></tr>
+                            <tr><td>192.168.0.0 – 192.168.255.255</td><td>/16</td><td>Самый популярный для дома</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>🎯 Специальные адреса</h3>
+                    <table class="theory-table">
+                        <thead><tr><th>Адрес</th><th>Назначение</th></tr></thead>
+                        <tbody>
+                            <tr><td>0.0.0.0</td><td>Любой адрес, маршрут по умолчанию</td></tr>
+                            <tr><td>127.0.0.1</td><td>Loopback (localhost)</td></tr>
+                            <tr><td>255.255.255.255</td><td>Ограниченный broadcast</td></tr>
+                            <tr><td>169.254.0.0/16</td><td>APIPA (когда DHCP недоступен)</td></tr>
+                            <tr><td>224.0.0.0/4</td><td>Мультикаст</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>🔧 Команды для диагностики</h3>
+                    <table class="theory-table">
+                        <thead><tr><th>Команда</th><th>Назначение</th></tr></thead>
+                        <tbody>
+                            <tr><td>ipconfig /all</td><td>Просмотр сетевых настроек (Windows)</td></tr>
+                            <tr><td>ip a</td><td>Просмотр сетевых настроек (Linux)</td></tr>
+                            <tr><td>ping</td><td>Проверка доступности</td></tr>
+                            <tr><td>tracert / traceroute</td><td>Отслеживание маршрута</td></tr>
+                            <tr><td>nslookup / dig</td><td>DNS-запросы</td></tr>
+                            <tr><td>arp -a</td><td>Просмотр ARP-таблицы</td></tr>
+                            <tr><td>netstat -rn</td><td>Таблица маршрутизации</td></tr>
+                            <tr><td>nmap -sP 192.168.1.0/24</td><td>Поиск устройств в сети</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>📝 Шпаргалка по subnetting</h3>
+                    <div class="info-block">
+                        <p><strong>Формулы:</strong></p>
+                        <ul>
+                            <li>Количество хостов = 2ⁿ - 2 (n — число нулей в маске)</li>
+                            <li>Количество подсетей = 2ᵐ (m — число заимствованных бит)</li>
+                            <li>Шаг подсетей = 2ⁿ в соответствующем октете</li>
+                            <li>Адрес сети = IP & Маска</li>
+                            <li>Broadcast = IP | ~Маска</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-block">
+                        <p><strong>Быстрый способ для /24:</strong></p>
+                        <ul>
+                            <li>/25 — шаг 128, две подсети по 126 хостов</li>
+                            <li>/26 — шаг 64, четыре подсети по 62 хоста</li>
+                            <li>/27 — шаг 32, восемь подсетей по 30 хостов</li>
+                            <li>/28 — шаг 16, 16 подсетей по 14 хостов</li>
+                            <li>/29 — шаг 8, 32 подсети по 6 хостов</li>
+                            <li>/30 — шаг 4, 64 подсети по 2 хоста</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== 50 ЗАДАЧ ДЛЯ информатика/ЕГЭ ========== -->
+            <div id="tasks" class="tasks-section">
+                <h2><span>✏️</span> 50 задач для подготовки к информатика и ЕГЭ</h2>
+                
+                <!-- Задачи 1-10 (базовые) -->
+                <div class="task-card">
+                    <div class="task-question">1. (информатика) Какой адрес используется для проверки работы сетевого стека (loopback)?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task1" value="a"> 0.0.0.0</label>
+                        <label class="task-option"><input type="radio" name="task1" value="b"> 127.0.0.1</label>
+                        <label class="task-option"><input type="radio" name="task1" value="c"> 192.168.1.1</label>
+                        <label class="task-option"><input type="radio" name="task1" value="d"> 255.255.255.255</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(1, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult1"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">2. (информатика) Какой класс имеет IP-адрес 172.16.5.10?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task2" value="a"> Класс A</label>
+                        <label class="task-option"><input type="radio" name="task2" value="b"> Класс B</label>
+                        <label class="task-option"><input type="radio" name="task2" value="c"> Класс C</label>
+                        <label class="task-option"><input type="radio" name="task2" value="d"> Класс D</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(2, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult2"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">3. (информатика) Сколько бит отводится под номер узла в маске 255.255.255.128?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task3" value="a"> 7</label>
+                        <label class="task-option"><input type="radio" name="task3" value="b"> 8</label>
+                        <label class="task-option"><input type="radio" name="task3" value="c"> 24</label>
+                        <label class="task-option"><input type="radio" name="task3" value="d"> 1</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(3, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult3"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">4. (информатика) Какой адрес сети у узла 192.168.1.130 с маской 255.255.255.128?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task4" value="a"> 192.168.1.0</label>
+                        <label class="task-option"><input type="radio" name="task4" value="b"> 192.168.1.128</label>
+                        <label class="task-option"><input type="radio" name="task4" value="c"> 192.168.1.130</label>
+                        <label class="task-option"><input type="radio" name="task4" value="d"> 192.168.1.255</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(4, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult4"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">5. (информатика) Сколько устройств можно подключить в сеть с маской 255.255.255.192?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task5" value="a"> 62</label>
+                        <label class="task-option"><input type="radio" name="task5" value="b"> 64</label>
+                        <label class="task-option"><input type="radio" name="task5" value="c"> 126</label>
+                        <label class="task-option"><input type="radio" name="task5" value="d"> 128</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(5, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult5"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">6. (ЕГЭ) Для узла с IP-адресом 136.206.24.5 адрес сети равен 136.206.20.0. Чему равен третий слева байт маски?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task6" value="a"> 240</label>
+                        <label class="task-option"><input type="radio" name="task6" value="b"> 248</label>
+                        <label class="task-option"><input type="radio" name="task6" value="c"> 252</label>
+                        <label class="task-option"><input type="radio" name="task6" value="d"> 255</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(6, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult6"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">7. (ЕГЭ) Сколько различных адресов компьютеров теоретически допускает маска 255.255.254.0?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task7" value="a"> 254</label>
+                        <label class="task-option"><input type="radio" name="task7" value="b"> 256</label>
+                        <label class="task-option"><input type="radio" name="task7" value="c"> 510</label>
+                        <label class="task-option"><input type="radio" name="task7" value="d"> 512</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(7, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult7"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">8. Какой из адресов является частным (RFC 1918)?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task8" value="a"> 8.8.8.8</label>
+                        <label class="task-option"><input type="radio" name="task8" value="b"> 172.31.255.255</label>
+                        <label class="task-option"><input type="radio" name="task8" value="c"> 172.32.0.1</label>
+                        <label class="task-option"><input type="radio" name="task8" value="d"> 1.1.1.1</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(8, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult8"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">9. Какая маска соответствует записи /27?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task9" value="a"> 255.255.255.0</label>
+                        <label class="task-option"><input type="radio" name="task9" value="b"> 255.255.255.128</label>
+                        <label class="task-option"><input type="radio" name="task9" value="c"> 255.255.255.224</label>
+                        <label class="task-option"><input type="radio" name="task9" value="d"> 255.255.255.240</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(9, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult9"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">10. Чему равен широковещательный адрес для подсети 10.0.0.0/24?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task10" value="a"> 10.0.0.0</label>
+                        <label class="task-option"><input type="radio" name="task10" value="b"> 10.0.0.1</label>
+                        <label class="task-option"><input type="radio" name="task10" value="c"> 10.0.0.255</label>
+                        <label class="task-option"><input type="radio" name="task10" value="d"> 10.255.255.255</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(10, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult10"></div>
+                </div>
+
+                <!-- Задачи 11-20 -->
+                <div class="task-card">
+                    <div class="task-question">11. Сколько подсетей можно получить, если взять сеть 192.168.0.0/24 и использовать маску /26?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task11" value="a"> 2</label>
+                        <label class="task-option"><input type="radio" name="task11" value="b"> 4</label>
+                        <label class="task-option"><input type="radio" name="task11" value="c"> 8</label>
+                        <label class="task-option"><input type="radio" name="task11" value="d"> 16</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(11, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult11"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">12. Какова длина IPv6-адреса в битах?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task12" value="a"> 32</label>
+                        <label class="task-option"><input type="radio" name="task12" value="b"> 64</label>
+                        <label class="task-option"><input type="radio" name="task12" value="c"> 128</label>
+                        <label class="task-option"><input type="radio" name="task12" value="d"> 256</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(12, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult12"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">13. Какой протокол используется для автоматической выдачи IP-адресов?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task13" value="a"> DNS</label>
+                        <label class="task-option"><input type="radio" name="task13" value="b"> DHCP</label>
+                        <label class="task-option"><input type="radio" name="task13" value="c"> ARP</label>
+                        <label class="task-option"><input type="radio" name="task13" value="d"> ICMP</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(13, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult13"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">14. Что означает адрес 169.254.0.1?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task14" value="a"> Это публичный адрес Google</label>
+                        <label class="task-option"><input type="radio" name="task14" value="b"> Это частный адрес</label>
+                        <label class="task-option"><input type="radio" name="task14" value="c"> Это APIPA, когда DHCP недоступен</label>
+                        <label class="task-option"><input type="radio" name="task14" value="d"> Это broadcast</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(14, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult14"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">15. Какой командой можно проверить доступность узла в сети?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task15" value="a"> ipconfig</label>
+                        <label class="task-option"><input type="radio" name="task15" value="b"> ping</label>
+                        <label class="task-option"><input type="radio" name="task15" value="c"> nslookup</label>
+                        <label class="task-option"><input type="radio" name="task15" value="d"> tracert</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(15, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult15"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">16. Какой адрес является широковещательным для сети 192.168.1.0/26?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task16" value="a"> 192.168.1.63</label>
+                        <label class="task-option"><input type="radio" name="task16" value="b"> 192.168.1.64</label>
+                        <label class="task-option"><input type="radio" name="task16" value="c"> 192.168.1.127</label>
+                        <label class="task-option"><input type="radio" name="task16" value="d"> 192.168.1.255</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(16, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult16"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">17. Какая минимальная маска нужна для подсети с 500 хостами?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task17" value="a"> /22</label>
+                        <label class="task-option"><input type="radio" name="task17" value="b"> /23</label>
+                        <label class="task-option"><input type="radio" name="task17" value="c"> /24</label>
+                        <label class="task-option"><input type="radio" name="task17" value="d"> /21</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(17, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult17"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">18. Какой протокол используется для отслеживания маршрута пакета?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task18" value="a"> ICMP</label>
+                        <label class="task-option"><input type="radio" name="task18" value="b"> TCP</label>
+                        <label class="task-option"><input type="radio" name="task18" value="c"> UDP</label>
+                        <label class="task-option"><input type="radio" name="task18" value="d"> ARP</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(18, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult18"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">19. Какой адрес используется для обозначения "любой адрес" в маршрутизации?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task19" value="a"> 127.0.0.1</label>
+                        <label class="task-option"><input type="radio" name="task19" value="b"> 0.0.0.0</label>
+                        <label class="task-option"><input type="radio" name="task19" value="c"> 255.255.255.255</label>
+                        <label class="task-option"><input type="radio" name="task19" value="d"> 1.1.1.1</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(19, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult19"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">20. Какой класс имеет адрес 224.0.0.1?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task20" value="a"> Класс A</label>
+                        <label class="task-option"><input type="radio" name="task20" value="b"> Класс B</label>
+                        <label class="task-option"><input type="radio" name="task20" value="c"> Класс C</label>
+                        <label class="task-option"><input type="radio" name="task20" value="d"> Класс D</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(20, 'd')">Проверить</button>
+                    <div class="task-result" id="taskResult20"></div>
+                </div>
+
+                <!-- Задачи 21-30 -->
+                <div class="task-card">
+                    <div class="task-question">21. Сколько бит заимствуется из хостовой части при переходе от маски /24 к /28?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task21" value="a"> 2</label>
+                        <label class="task-option"><input type="radio" name="task21" value="b"> 4</label>
+                        <label class="task-option"><input type="radio" name="task21" value="c"> 6</label>
+                        <label class="task-option"><input type="radio" name="task21" value="d"> 8</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(21, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult21"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">22. Какой IP-адрес является адресом сети для узла 10.10.10.10 с маской 255.255.255.0?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task22" value="a"> 10.0.0.0</label>
+                        <label class="task-option"><input type="radio" name="task22" value="b"> 10.10.0.0</label>
+                        <label class="task-option"><input type="radio" name="task22" value="c"> 10.10.10.0</label>
+                        <label class="task-option"><input type="radio" name="task22" value="d"> 10.10.10.255</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(22, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult22"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">23. Какой протокол используется для преобразования доменных имён в IP-адреса?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task23" value="a"> DHCP</label>
+                        <label class="task-option"><input type="radio" name="task23" value="b"> DNS</label>
+                        <label class="task-option"><input type="radio" name="task23" value="c"> ARP</label>
+                        <label class="task-option"><input type="radio" name="task23" value="d"> HTTP</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(23, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult23"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">24. Какая команда показывает ARP-таблицу?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task24" value="a"> ipconfig</label>
+                        <label class="task-option"><input type="radio" name="task24" value="b"> ping -a</label>
+                        <label class="task-option"><input type="radio" name="task24" value="c"> arp -a</label>
+                        <label class="task-option"><input type="radio" name="task24" value="d"> netstat</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(24, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult24"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">25. Что означает запись "::1" в IPv6?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task25" value="a"> Любой адрес</label>
+                        <label class="task-option"><input type="radio" name="task25" value="b"> Широковещательный адрес</label>
+                        <label class="task-option"><input type="radio" name="task25" value="c"> Loopback (аналог 127.0.0.1)</label>
+                        <label class="task-option"><input type="radio" name="task25" value="d"> Невалидный адрес</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(25, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult25"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">26. Какой адрес сети у узла 172.16.5.100 с маской 255.255.254.0?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task26" value="a"> 172.16.4.0</label>
+                        <label class="task-option"><input type="radio" name="task26" value="b"> 172.16.5.0</label>
+                        <label class="task-option"><input type="radio" name="task26" value="c"> 172.16.4.255</label>
+                        <label class="task-option"><input type="radio" name="task26" value="d"> 172.16.5.255</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(26, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult26"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">27. Сколько хостов можно адресовать в сети с маской /29?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task27" value="a"> 6</label>
+                        <label class="task-option"><input type="radio" name="task27" value="b"> 8</label>
+                        <label class="task-option"><input type="radio" name="task27" value="c"> 14</label>
+                        <label class="task-option"><input type="radio" name="task27" value="d"> 30</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(27, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult27"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">28. Какой тип адреса IPv6 начинается с fe80::?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task28" value="a"> Global unicast</label>
+                        <label class="task-option"><input type="radio" name="task28" value="b"> Unique local</label>
+                        <label class="task-option"><input type="radio" name="task28" value="c"> Link-local</label>
+                        <label class="task-option"><input type="radio" name="task28" value="d"> Multicast</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(28, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult28"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">29. Какой порт используется для HTTP по умолчанию?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task29" value="a"> 21</label>
+                        <label class="task-option"><input type="radio" name="task29" value="b"> 80</label>
+                        <label class="task-option"><input type="radio" name="task29" value="c"> 443</label>
+                        <label class="task-option"><input type="radio" name="task29" value="d"> 25</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(29, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult29"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">30. Какой порт используется для HTTPS по умолчанию?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task30" value="a"> 80</label>
+                        <label class="task-option"><input type="radio" name="task30" value="b"> 443</label>
+                        <label class="task-option"><input type="radio" name="task30" value="c"> 22</label>
+                        <label class="task-option"><input type="radio" name="task30" value="d"> 8080</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(30, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult30"></div>
+                </div>
+
+                <!-- Задачи 31-40 -->
+                <div class="task-card">
+                    <div class="task-question">31. Какая максимальная маска может быть у подсети, в которой нужно разместить ровно 2 хоста?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task31" value="a"> /29</label>
+                        <label class="task-option"><input type="radio" name="task31" value="b"> /30</label>
+                        <label class="task-option"><input type="radio" name="task31" value="c"> /31</label>
+                        <label class="task-option"><input type="radio" name="task31" value="d"> /32</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(31, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult31"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">32. Какой протокол используется для безопасной удалённой консоли?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task32" value="a"> Telnet</label>
+                        <label class="task-option"><input type="radio" name="task32" value="b"> SSH</label>
+                        <label class="task-option"><input type="radio" name="task32" value="c"> FTP</label>
+                        <label class="task-option"><input type="radio" name="task32" value="d"> SNMP</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(32, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult32"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">33. Какой IP-адрес у localhost в IPv4?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task33" value="a"> 0.0.0.0</label>
+                        <label class="task-option"><input type="radio" name="task33" value="b"> 127.0.0.1</label>
+                        <label class="task-option"><input type="radio" name="task33" value="c"> 192.168.1.1</label>
+                        <label class="task-option"><input type="radio" name="task33" value="d"> 255.255.255.255</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(33, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult33"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">34. Что такое MTU?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task34" value="a"> Максимальное время жизни пакета</label>
+                        <label class="task-option"><input type="radio" name="task34" value="b"> Максимальный размер пакета</label>
+                        <label class="task-option"><input type="radio" name="task34" value="c"> Максимальное число хопов</label>
+                        <label class="task-option"><input type="radio" name="task34" value="d"> Протокол маршрутизации</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(34, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult34"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">35. Какой IP-адрес является широковещательным в IPv4?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task35" value="a"> 0.0.0.0</label>
+                        <label class="task-option"><input type="radio" name="task35" value="b"> 127.0.0.1</label>
+                        <label class="task-option"><input type="radio" name="task35" value="c"> 255.255.255.255</label>
+                        <label class="task-option"><input type="radio" name="task35" value="d"> 224.0.0.1</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(35, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult35"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">36. Какая команда показывает таблицу маршрутизации в Windows?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task36" value="a"> route print</label>
+                        <label class="task-option"><input type="radio" name="task36" value="b"> ipconfig /all</label>
+                        <label class="task-option"><input type="radio" name="task36" value="c"> netstat -a</label>
+                        <label class="task-option"><input type="radio" name="task36" value="d"> arp -a</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(36, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult36"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">37. Какой протокол используется для передачи файлов?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task37" value="a"> HTTP</label>
+                        <label class="task-option"><input type="radio" name="task37" value="b"> FTP</label>
+                        <label class="task-option"><input type="radio" name="task37" value="c"> SMTP</label>
+                        <label class="task-option"><input type="radio" name="task37" value="d"> POP3</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(37, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult37"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">38. Какой порт использует FTP по умолчанию?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task38" value="a"> 20,21</label>
+                        <label class="task-option"><input type="radio" name="task38" value="b"> 22</label>
+                        <label class="task-option"><input type="radio" name="task38" value="c"> 23</label>
+                        <label class="task-option"><input type="radio" name="task38" value="d"> 25</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(38, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult38"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">39. Какой адрес сети у узла 192.168.5.100 с маской 255.255.255.0?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task39" value="a"> 192.168.0.0</label>
+                        <label class="task-option"><input type="radio" name="task39" value="b"> 192.168.5.0</label>
+                        <label class="task-option"><input type="radio" name="task39" value="c"> 192.168.5.255</label>
+                        <label class="task-option"><input type="radio" name="task39" value="d"> 192.168.100.0</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(39, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult39"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">40. Какой тип адреса IPv6 используется для глобальной маршрутизации?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task40" value="a"> fe80::/10</label>
+                        <label class="task-option"><input type="radio" name="task40" value="b"> fc00::/7</label>
+                        <label class="task-option"><input type="radio" name="task40" value="c"> 2000::/3</label>
+                        <label class="task-option"><input type="radio" name="task40" value="d"> ff00::/8</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(40, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult40"></div>
+                </div>
+
+                <!-- Задачи 41-50 -->
+                <div class="task-card">
+                    <div class="task-question">41. Что такое NAT?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task41" value="a"> Протокол динамической маршрутизации</label>
+                        <label class="task-option"><input type="radio" name="task41" value="b"> Трансляция сетевых адресов</label>
+                        <label class="task-option"><input type="radio" name="task41" value="c"> Система доменных имён</label>
+                        <label class="task-option"><input type="radio" name="task41" value="d"> Протокол автоматической настройки</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(41, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult41"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">42. Какой адрес является частным (серым)?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task42" value="a"> 172.15.0.1</label>
+                        <label class="task-option"><input type="radio" name="task42" value="b"> 172.16.0.1</label>
+                        <label class="task-option"><input type="radio" name="task42" value="c"> 172.32.0.1</label>
+                        <label class="task-option"><input type="radio" name="task42" value="d"> 192.167.1.1</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(42, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult42"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">43. Какая маска у сети /23 в десятичном виде?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task43" value="a"> 255.255.254.0</label>
+                        <label class="task-option"><input type="radio" name="task43" value="b"> 255.255.255.0</label>
+                        <label class="task-option"><input type="radio" name="task43" value="c"> 255.255.252.0</label>
+                        <label class="task-option"><input type="radio" name="task43" value="d"> 255.255.248.0</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(43, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult43"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">44. Какой протокол используется для отправки электронной почты?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task44" value="a"> POP3</label>
+                        <label class="task-option"><input type="radio" name="task44" value="b"> IMAP</label>
+                        <label class="task-option"><input type="radio" name="task44" value="c"> SMTP</label>
+                        <label class="task-option"><input type="radio" name="task44" value="d"> HTTP</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(44, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult44"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">45. Какой командой можно узнать IP-адрес по доменному имени?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task45" value="a"> ping</label>
+                        <label class="task-option"><input type="radio" name="task45" value="b"> nslookup</label>
+                        <label class="task-option"><input type="radio" name="task45" value="c"> tracert</label>
+                        <label class="task-option"><input type="radio" name="task45" value="d"> ipconfig</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(45, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult45"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">46. Какой адрес сети у узла 10.0.0.10 с маской 255.255.255.0?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task46" value="a"> 10.0.0.0</label>
+                        <label class="task-option"><input type="radio" name="task46" value="b"> 10.0.0.10</label>
+                        <label class="task-option"><input type="radio" name="task46" value="c"> 10.0.0.255</label>
+                        <label class="task-option"><input type="radio" name="task46" value="d"> 10.0.0.1</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(46, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult46"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">47. Что означает запись "2001:db8::/32"?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task47" value="a"> Конкретный IPv6-адрес</label>
+                        <label class="task-option"><input type="radio" name="task47" value="b"> Сеть IPv6 с префиксом 32</label>
+                        <label class="task-option"><input type="radio" name="task47" value="c"> Широковещательный адрес</label>
+                        <label class="task-option"><input type="radio" name="task47" value="d"> Link-local адрес</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(47, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult47"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">48. Какой протокол используется для синхронизации времени?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task48" value="a"> NTP</label>
+                        <label class="task-option"><input type="radio" name="task48" value="b"> SNMP</label>
+                        <label class="task-option"><input type="radio" name="task48" value="c"> DHCP</label>
+                        <label class="task-option"><input type="radio" name="task48" value="d"> DNS</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(48, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult48"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">49. Какой диапазон адресов используется для мультикаста в IPv4?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task49" value="a"> 224.0.0.0 – 239.255.255.255</label>
+                        <label class="task-option"><input type="radio" name="task49" value="b"> 240.0.0.0 – 255.255.255.255</label>
+                        <label class="task-option"><input type="radio" name="task49" value="c"> 192.168.0.0 – 192.168.255.255</label>
+                        <label class="task-option"><input type="radio" name="task49" value="d"> 10.0.0.0 – 10.255.255.255</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(49, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult49"></div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-question">50. Какой порт использует SSH по умолчанию?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task50" value="a"> 21</label>
+                        <label class="task-option"><input type="radio" name="task50" value="b"> 22</label>
+                        <label class="task-option"><input type="radio" name="task50" value="c"> 23</label>
+                        <label class="task-option"><input type="radio" name="task50" value="d"> 25</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(50, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult50"></div>
+                </div>
+            </div>
+
+            <!-- ========== ОТВЕТЫ И РЕШЕНИЯ ========== -->
+            <div id="answers" class="module-card">
+                <div class="module-header">
+                    <div class="module-number">✅</div>
+                    <div class="module-title">Ответы и решения всех задач</div>
+                </div>
+                <div class="module-content">
+                    <table class="theory-table">
+                        <thead><tr><th>№</th><th>Ответ</th><th>Пояснение</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>127.0.0.1</td><td>Loopback — всегда 127.0.0.1</td></tr>
+                            <tr><td>2</td><td>Класс B</td><td>172 в диапазоне 128-191 → класс B</td></tr>
+                            <tr><td>3</td><td>7</td><td>128 = 10000000₂ → 1 бит сети, 7 бит хостов</td></tr>
+                            <tr><td>4</td><td>192.168.1.128</td><td>130 & 128 = 128</td></tr>
+                            <tr><td>5</td><td>62</td><td>/26 → 2⁶-2 = 62</td></tr>
+                            <tr><td>6</td><td>240</td><td>24=00011000, 20=00010100 → маска 11110000=240</td></tr>
+                            <tr><td>7</td><td>510</td><td>/23 → 2⁹-2 = 510</td></tr>
+                            <tr><td>8</td><td>172.31.255.255</td><td>Входит в диапазон 172.16.0.0/12</td></tr>
+                            <tr><td>9</td><td>255.255.255.224</td><td>/27 = 11111111.11111111.11111111.11100000 = 224</td></tr>
+                            <tr><td>10</td><td>10.0.0.255</td><td>/24 → последний адрес 10.0.0.255</td></tr>
+                            <tr><td>11</td><td>4</td><td>2² = 4 подсети</td></tr>
+                            <tr><td>12</td><td>128</td><td>IPv6 — 128 бит</td></tr>
+                            <tr><td>13</td><td>DHCP</td><td>Dynamic Host Configuration Protocol</td></tr>
+                            <tr><td>14</td><td>APIPA</td><td>Когда DHCP-сервер не отвечает</td></tr>
+                            <tr><td>15</td><td>ping</td><td>Проверка доступности</td></tr>
+                            <tr><td>16</td><td>192.168.1.63</td><td>/26, шаг 64, первая подсеть .0-.63</td></tr>
+                            <tr><td>17</td><td>/23</td><td>2⁹-2=510 ≥ 500</td></tr>
+                            <tr><td>18</td><td>ICMP</td><td>Time Exceeded сообщения</td></tr>
+                            <tr><td>19</td><td>0.0.0.0</td><td>Маршрут по умолчанию</td></tr>
+                            <tr><td>20</td><td>Класс D</td><td>224-239 — мультикаст</td></tr>
+                            <tr><td>21</td><td>4</td><td>28-24=4 бита</td></tr>
+                            <tr><td>22</td><td>10.10.10.0</td><td>255.255.255.0 → последний октет обнуляется</td></tr>
+                            <tr><td>23</td><td>DNS</td><td>Domain Name System</td></tr>
+                            <tr><td>24</td><td>arp -a</td><td>Показывает ARP-таблицу</td></tr>
+                            <tr><td>25</td><td>Loopback</td><td>::1 — аналог 127.0.0.1</td></tr>
+                            <tr><td>26</td><td>172.16.4.0</td><td>/23, 172.16.5.100 в сети 172.16.4.0/23</td></tr>
+                            <tr><td>27</td><td>6</td><td>/29 → 2³-2=6</td></tr>
+                            <tr><td>28</td><td>Link-local</td><td>fe80::/10 — локальные адреса</td></tr>
+                            <tr><td>29</td><td>80</td><td>HTTP</td></tr>
+                            <tr><td>30</td><td>443</td><td>HTTPS</td></tr>
+                            <tr><td>31</td><td>/30</td><td>2²-2=2 хоста</td></tr>
+                            <tr><td>32</td><td>SSH</td><td>Secure Shell</td></tr>
+                            <tr><td>33</td><td>127.0.0.1</td><td>localhost</td></tr>
+                            <tr><td>34</td><td>Максимальный размер пакета</td><td>Maximum Transmission Unit</td></tr>
+                            <tr><td>35</td><td>255.255.255.255</td><td>Ограниченный broadcast</td></tr>
+                            <tr><td>36</td><td>route print</td><td>Таблица маршрутизации Windows</td></tr>
+                            <tr><td>37</td><td>FTP</td><td>File Transfer Protocol</td></tr>
+                            <tr><td>38</td><td>20,21</td><td>20 — данные, 21 — управление</td></tr>
+                            <tr><td>39</td><td>192.168.5.0</td><td>255.255.255.0 → 192.168.5.0</td></tr>
+                            <tr><td>40</td><td>2000::/3</td><td>Global unicast</td></tr>
+                            <tr><td>41</td><td>Трансляция адресов</td><td>Network Address Translation</td></tr>
+                            <tr><td>42</td><td>172.16.0.1</td><td>В диапазоне 172.16.0.0/12</td></tr>
+                            <tr><td>43</td><td>255.255.254.0</td><td>/23 = 255.255.254.0</td></tr>
+                            <tr><td>44</td><td>SMTP</td><td>Simple Mail Transfer Protocol</td></tr>
+                            <tr><td>45</td><td>nslookup</td><td>DNS-запрос</td></tr>
+                            <tr><td>46</td><td>10.0.0.0</td><td>255.255.255.0 → 10.0.0.0</td></tr>
+                            <tr><td>47</td><td>Сеть с префиксом 32</td><td>IPv6-сеть</td></tr>
+                            <tr><td>48</td><td>NTP</td><td>Network Time Protocol</td></tr>
+                            <tr><td>49</td><td>224.0.0.0 – 239.255.255.255</td><td>Класс D</td></tr>
+                            <tr><td>50</td><td>22</td><td>SSH</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Подсказки -->
+            <div class="hint-box" onclick="toggleHint(this)">
+                <div class="hint-title"><span>💭</span> Нужна помощь? Нажмите для подсказки</div>
+                <div class="hint-content">
+                    <p><strong>Формулы для запоминания:</strong></p>
+                    <ul>
+                        <li>Количество хостов = 2ⁿ - 2, где n — число нулей в маске.</li>
+                        <li>Шаг подсети = 2ⁿ в соответствующем октете.</li>
+                        <li>Для перевода IP в двоичную систему используйте деление на 2.</li>
+                        <li>Для нахождения адреса сети примените поразрядное И.</li>
+                        <li>Частные диапазоны: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16.</li>
+                        <li>Loopback: 127.0.0.1, Broadcast: 255.255.255.255.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="hint-box" onclick="toggleHint(this)">
+                <div class="hint-title"><span>💡</span> Шпаргалка по маскам</div>
+                <div class="hint-content">
+                    <p>/24 = 255.255.255.0 (254 хоста)<br>
+                    /25 = 255.255.255.128 (126 хостов)<br>
+                    /26 = 255.255.255.192 (62 хоста)<br>
+                    /27 = 255.255.255.224 (30 хостов)<br>
+                    /28 = 255.255.255.240 (14 хостов)<br>
+                    /29 = 255.255.255.248 (6 хостов)<br>
+                    /30 = 255.255.255.252 (2 хоста)<br>
+                    /31 = 255.255.255.254 (0 хостов, для point-to-point)</p>
+                </div>
+            </div>
+        </div>
+        <!-- Внизу страницы урока, после задач -->
+<div style="text-align: center; margin: 2rem 0;">
+    <button class="complete-lesson-btn" id="completeLessonBtn" onclick="markLessonCompleted()">
+        <span>✅</span>
+        Отметить урок как выполненный
+    </button>
+</div>
+
+            <style>
+            .complete-lesson-btn {
+                background: linear-gradient(135deg, #48bb78, #38a169);
+                color: white;
+                border: none;
+                padding: 1rem 3rem;
+                border-radius: 40px;
+                font-size: 1.2rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+            }
+
+            .complete-lesson-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(72, 187, 120, 0.5);
+            }
+
+            .complete-lesson-btn.completed {
+                background: linear-gradient(135deg, #48bb78, #38a169);
+                opacity: 0.8;
+                cursor: default;
+            }
+
+            .complete-lesson-btn.completed:hover {
+                transform: none;
+            }
+            </style>
+    </div>
+</div>
+
+<!-- Уведомление -->
+<div class="notification" id="notification">
+    <div class="notification-icon" id="notificationIcon">✅</div>
+    <div class="notification-content">
+        <div class="notification-title" id="notificationTitle">Успешно</div>
+        <div class="notification-message" id="notificationMessage"></div>
+    </div>
+    <button class="notification-close" onclick="closeNotification()">×</button>
+</div>
+
+<script>
+const currentLessonId = 1; // Для урока 1
+    // Проверяем при загрузке, выполнен ли урок
+async function checkLessonCompleted() {
+    try {
+        const response = await fetch('/api/user/progress');
+        const progress = await response.json();
+        
+        if (progress && progress.subjects && progress.subjects.informatics) {
+            const lessons = progress.subjects.informatics.lessons;
+            const currentLesson = lessons.find(l => l.lesson_id === currentLessonId);
+            
+            if (currentLesson && currentLesson.status === 'completed') {
+                document.getElementById('completeLessonBtn').classList.add('completed');
+                document.getElementById('completeLessonBtn').innerHTML = 
+                    '<span>✅</span> Урок выполнен';
+                document.getElementById('completeLessonBtn').disabled = true;
+            }
+        }
+    } catch (error) {
+        console.error('Ошибка проверки статуса урока:', error);
+    }
+}
+
+// Отметить урок как выполненный
+// Отметить урок как выполненный (вызывается только из checkAllTasksCompleted)
+function markLessonCompleted() {
+    const btn = document.getElementById('completeLessonBtn');
+    
+    // Проверяем, все ли задачи выполнены
+    const completedTasks = getCompletedTasksCount();
+    if (completedTasks < 50) {
+        showNotification('❌ Ошибка', 'Сначала решите все 50 задач!', '⚠️');
+        return;
+    }
+    
+    if (btn.classList.contains('completed')) {
+        return; // Уже выполнен
+    }
+    
+    fetch('/api/complete-lesson', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            lessonId: currentLessonId,
+            subject: 'informatics',
+            score: 100,
+            timeSpent: 0
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            btn.classList.add('completed');
+            btn.innerHTML = '<span>✅</span> Урок выполнен';
+            btn.disabled = true;
+            
+            showNotification('Отлично!', 'Урок отмечен как выполненный', '✅');
+            
+            if (window.opener && !window.opener.closed) {
+                window.opener.loadUserData();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        showNotification('Ошибка', 'Не удалось отметить урок', '❌');
+    });
+}
+
+// Проверить, все ли задачи выполнены
+function checkAllTasksCompleted() {
+    const completed = getCompletedTasksCount();
+    updateTaskCounter(); // обновляем счётчик
+    
+    // Если все 50 задач решены, предлагаем отметить урок
+    if (completed === 50) {
+        // Показываем специальное уведомление
+        showNotification('🎉 Поздравляем!', 'Вы решили все 50 задач! Нажмите кнопку "Отметить урок"', '🏆');
+        
+        // Делаем кнопку более заметной
+        const btn = document.getElementById('completeLessonBtn');
+        btn.style.animation = 'pulse 1s infinite';
+        btn.style.boxShadow = '0 0 30px rgba(72, 187, 120, 0.8)';
+    }
+}
+
+// Обновить счётчик задач (добавим обновление UI)
+function updateTaskCounter() {
+    const completed = getCompletedTasksCount();
+    const total = 50;
+    
+    // Обновляем прогресс-бар если он есть
+    const progressBar = document.getElementById('tasksProgressBar');
+    const progressText = document.getElementById('tasksProgressText');
+    
+    if (progressBar && progressText) {
+        const percent = (completed / total) * 100;
+        progressBar.style.width = percent + '%';
+        progressText.textContent = `${completed}/${total}`;
+    }
+    
+    console.log(`Прогресс задач: ${completed}/${total}`);
+}
+
+// Изменим функцию markTaskCompleted
+function markTaskCompleted(taskNum) {
+    const taskKey = `lesson_${currentLessonId}_task_${taskNum}`;
+    if (!localStorage.getItem(taskKey)) {
+        localStorage.setItem(taskKey, 'completed');
+        updateTaskCounter();
+        checkAllTasksCompleted(); // Проверяем после каждой решённой задачи
+    }
+}
+
+// Добавим обработчик для кнопки "Отметить урок"
+document.addEventListener('DOMContentLoaded', () => {
+    const completeBtn = document.getElementById('completeLessonBtn');
+    if (completeBtn) {
+        // Заменяем стандартный onclick на наш с проверкой
+        completeBtn.onclick = function() {
+            const completedTasks = getCompletedTasksCount();
+            if (completedTasks < 50) {
+                showNotification('❌ Ошибка', `Решено только ${completedTasks}/50 задач`, '⚠️');
+                return;
+            }
+            markLessonCompleted();
+        };
+    }
+    
+    checkLessonCompleted();
+    loadTaskProgress(); // Загружаем прогресс при старте
+});
+
+
+// Вызвать при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    checkLessonCompleted();
+});
+// Проверка задачи
+function checkTask(taskNum, correctAnswer) {
+    const selected = document.querySelector(`input[name="task${taskNum}"]:checked`);
+    const resultDiv = document.getElementById(`taskResult${taskNum}`);
+    
+    if (!selected) {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'task-result incorrect';
+        resultDiv.textContent = '❌ Выберите ответ';
+        return;
+    }
+    
+    if (selected.value === correctAnswer) {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'task-result correct';
+        resultDiv.textContent = '✅ Правильно! +10 кредитов';
+        
+        // Отмечаем задачу как решённую в localStorage
+        markTaskCompleted(taskNum);
+        
+        // Показать уведомление
+        showNotification('+10 кредитов', 'Ответ верный!', '💰');
+        
+        // Проверяем, все ли задачи выполнены
+        checkAllTasksCompleted();
+        
+    } else {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'task-result incorrect';
+        resultDiv.textContent = '❌ Неправильно. Попробуйте еще раз.';
+    }
+}    // Переключение подсказок
+    function toggleHint(element) {
+        element.classList.toggle('active');
+    }
+
+    // Уведомления
+    function showNotification(title, message, icon = '✅') {
+        const notification = document.getElementById('notification');
+        document.getElementById('notificationIcon').textContent = icon;
+        document.getElementById('notificationTitle').textContent = title;
+        document.getElementById('notificationMessage').textContent = message;
+        
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+// Отметить задачу как выполненную
+function markTaskCompleted(taskNum) {
+    const taskKey = `lesson_${currentLessonId}_task_${taskNum}`;
+    if (!localStorage.getItem(taskKey)) {
+        localStorage.setItem(taskKey, 'completed');
+        updateTaskCounter();
+    }
+}
+
+// Подсчитать количество выполненных задач
+function getCompletedTasksCount() {
+    let count = 0;
+    for (let i = 1; i <= 50; i++) {
+        if (localStorage.getItem(`lesson_${currentLessonId}_task_${i}`)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+// Обновить счётчик задач
+function updateTaskCounter() {
+    const completed = getCompletedTasksCount();
+    const total = 50;
+    
+    // Можно добавить индикатор прогресса на страницу
+    console.log(`Прогресс задач: ${completed}/${total}`);
+}
+
+// Проверить, все ли задачи выполнены
+function checkAllTasksCompleted() {
+    if (getCompletedTasksCount() === 50) {
+        // Если все 50 задач решены, автоматически отмечаем урок
+        markLessonCompleted();
+    }
+}
+
+// Загрузить прогресс задач при старте
+function loadTaskProgress() {
+    const completed = getCompletedTasksCount();
+    if (completed > 0) {
+        console.log(`Загружено ${completed} решённых задач`);
+        
+        // Если все задачи решены, отметить урок
+        if (completed === 50) {
+            markLessonCompleted();
+        }
+    }
+}
+    function closeNotification() {
+        document.getElementById('notification').classList.remove('show');
+    }
+
+    // Активная ссылка в левом меню при прокрутке
+    document.addEventListener('DOMContentLoaded', function() {
+        const sections = document.querySelectorAll('.module-card, .tasks-section');
+        const navLinks = document.querySelectorAll('.topic-link');
+        
+        window.addEventListener('scroll', function() {
+            let current = '';
+            const scrollPosition = window.scrollY || window.pageYOffset;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionBottom = sectionTop + section.offsetHeight;
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Плавный скролл к разделам при клике
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId && targetId !== '#') {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

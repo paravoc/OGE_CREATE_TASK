@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор вариантов — Студия</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #0f1219;
+            color: white;
+        }
+
+        /* macOS стильное верхнее меню с элементами Яндекс Музыки */
+        .top-menu {
+            background: rgba(22, 26, 35, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 200, 80, 0.15);
+            padding: 0.8rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .macos-dot.red {
+            background: #ff5f56;
+            border: 1px solid #e0443e;
+        }
+        .macos-dot.yellow {
+            background: #ffbd2e;
+            border: 1px solid #df9f23;
+        }
+        .macos-dot.green {
+            background: #27c93f;
+            border: 1px solid #1aab2f;
+        }
+
+        .macos-dot:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        /* Яндекс стиль меню */
+        .menu-content {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .menu-content a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .menu-content a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffb347, #ff8c00);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .menu-content a:hover {
+            color: #ffb347;
+        }
+
+        .menu-content a:hover::after {
+            width: 80%;
+        }
+
+        .menu-content a.active {
+            color: #ffb347;
+        }
+
+        .menu-content a.active::after {
+            width: 80%;
+        }
+
+        .menu-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Яндекс-style кнопка */
+        .yandex-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .yandex-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.3);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 200, 80, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 200, 80, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 200, 80, 0.2);
+            border-color: #ffb347;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .user-name {
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        /* Основной контент */
+        .main-container {
+            margin-top: 64px;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .main-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 200, 80, 0.3);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb:hover {
+            background: #ffb347;
+        }
+
+        .generator-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Яндекс-стиль заголовок */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #ffb347, #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .page-header p {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        /* Информационная панель */
+        .info-panel {
+            background: rgba(30, 35, 45, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 200, 80, 0.15);
+            border-radius: 30px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .credits-display {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .credits-badge {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .variants-count {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #aaa;
+        }
+
+        .variants-count span {
+            color: #ffb347;
+            font-weight: 600;
+        }
+
+        /* Статистика генерации */
+        .stats-grid {
+            display: flex;
+            gap: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            padding: 1rem 2rem;
+            border: 1px solid rgba(255, 200, 80, 0.1);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-label {
+            color: #888;
+        }
+
+        .stat-value {
+            color: #ffb347;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* Карточка предмета */
+        .subject-card {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 200, 80, 0.15);
+            border-radius: 40px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .subject-card:hover {
+            border-color: #ffb347;
+            box-shadow: 0 20px 40px rgba(255, 180, 70, 0.15);
+        }
+
+        .subject-header {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.3s;
+        }
+
+        .subject-header:hover {
+            background: rgba(255, 200, 80, 0.05);
+        }
+
+        .subject-icon {
+            font-size: 2.5rem;
+            background: rgba(255, 200, 80, 0.1);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ffb347;
+            color: #ffb347;
+        }
+
+        .subject-info {
+            flex: 1;
+        }
+
+        .subject-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.3rem;
+        }
+
+        .subject-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .subject-arrow {
+            font-size: 1.5rem;
+            color: #ffb347;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .subject-card.expanded .subject-arrow {
+            transform: rotate(180deg);
+        }
+
+        .subject-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            padding: 0 2rem;
+        }
+
+        .subject-card.expanded .subject-content {
+            max-height: 2000px;
+            opacity: 1;
+            padding: 0 2rem 2rem;
+        }
+
+        /* Сетка тем (Яндекс-стиль) */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1rem;
+        }
+
+        .topic-card {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 200, 80, 0.1);
+            border-radius: 30px;
+            padding: 1.2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ffb347, transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .topic-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .topic-card:hover {
+            border-color: #ffb347;
+            background: rgba(255, 200, 80, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .topic-card.selected {
+            border-color: #ffb347;
+            background: rgba(255, 200, 80, 0.08);
+            box-shadow: 0 5px 20px rgba(255, 180, 70, 0.15);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .topic-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .topic-price {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            background: rgba(255, 71, 87, 0.15);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+
+        .topic-price.free {
+            background: rgba(72, 187, 120, 0.15);
+            color: #48bb78;
+            border: 1px solid rgba(72, 187, 120, 0.3);
+        }
+
+        .topic-progress {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            transition: width 0.3s;
+        }
+
+        /* Яндекс-style контролы */
+        .generation-controls {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 200, 80, 0.1);
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .control-label {
+            color: #aaa;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .count-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            padding: 0.2rem;
+        }
+
+        .count-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 200, 80, 0.1);
+            border: 1px solid #ffb347;
+            color: #ffb347;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .count-btn:hover:not(:disabled) {
+            background: #ffb347;
+            color: #000;
+        }
+
+        .count-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #666;
+            color: #666;
+        }
+
+        .count-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffb347;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        /* Яндекс-style селект */
+        .difficulty-select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 200, 80, 0.2);
+            border-radius: 20px;
+            padding: 0.4rem 1rem;
+            color: #ffb347;
+            font-size: 0.9rem;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .difficulty-select:hover {
+            border-color: #ffb347;
+            background: rgba(255, 200, 80, 0.05);
+        }
+
+        .difficulty-select option {
+            background: #1a1e2a;
+            color: white;
+        }
+
+        /* Чекбокс в стиле Яндекс */
+        .yandex-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .yandex-checkbox input {
+            display: none;
+        }
+
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid rgba(255, 200, 80, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .yandex-checkbox input:checked + .checkmark {
+            background: #ffb347;
+            border-color: #ffb347;
+        }
+
+        .yandex-checkbox input:checked + .checkmark::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .checkmark-text {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Итоговая панель */
+        .summary-panel {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 200, 80, 0.2);
+            border-radius: 40px;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 200, 80, 0.1);
+        }
+
+        .summary-icon {
+            color: #ffb347;
+            font-size: 1.2rem;
+        }
+
+        .summary-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #ffb347;
+        }
+
+        .summary-label {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .summary-warning {
+            color: #ffb347;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Кнопки действий */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 10px 30px rgba(255, 180, 70, 0.3);
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(255, 180, 70, 0.5);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 200, 80, 0.2);
+            color: #fff;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 200, 80, 0.1);
+            border-color: #ffb347;
+            transform: translateY(-3px);
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 200, 80, 0.2);
+            border-radius: 30px;
+            padding: 1rem 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            font-size: 1rem;
+            color: #ffb347;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .notification-close:hover {
+            color: #ffb347;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .menu-content {
+                display: none;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .subject-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .summary-panel {
+                flex-direction: column;
+            }
+            
+            .summary-stats {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .info-panel {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхнее меню -->
+    <div class="top-menu">
+        <div class="menu-left">
+            <div class="macos-dots">
+                <div class="macos-dot red" onclick="window.location.href='/dashboard'" title="На дашборд"></div>
+                <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+                <div class="macos-dot green" onclick="window.history.back()" title="Назад"></div>
+            </div>
+            <div class="menu-content">
+                <a href="/">Главная</a>
+                <a href="/informatics">Информатика</a>
+                <a href="/ege">ЕГЭ</a>
+                <a href="/tasks">Задачи</a>
+                <a href="/generate" class="active">Студия</a>
+            </div>
+        </div>
+        <div class="menu-right">
+            <button class="yandex-btn" onclick="window.location.href='/my-variants'">
+                <span>📚</span>
+                Мои варианты
+            </button>
+            <div class="user-profile" onclick="window.location.href='/profile'">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Загрузка...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-container">
+        <div class="generator-container">
+            <div class="page-header">
+                <h1>Студия генерации</h1>
+                <p>Создайте уникальный вариант под свои задачи</p>
+            </div>
+
+            <!-- Информационная панель -->
+            <div class="info-panel">
+                <div class="credits-display">
+                    <div class="credits-badge">
+                        <span>💰</span>
+                        <span id="userCredits">0</span>
+                    </div>
+                    <div class="variants-count">
+                        <span>📦</span>
+                        <span id="variantsCount">0</span>/10 вариантов
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Первые 5 задач</span>
+                        <span class="stat-value">бесплатно</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Далее</span>
+                        <span class="stat-value">1 кредит/5 задач</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карточка информатики -->
+            <div class="subject-card expanded" id="informaticsCard">
+                <div class="subject-header" onclick="toggleSubject('informaticsCard')">
+                    <div class="subject-icon">💻</div>
+                    <div class="subject-info">
+                        <div class="subject-name">Информатика</div>
+                        <div class="subject-meta">
+                            <span>📊 18 тем</span>
+                            <span>✅ <span id="completedTopics">0</span>/18 изучено</span>
+                        </div>
+                    </div>
+                    <div class="subject-arrow">▼</div>
+                </div>
+                
+                <div class="subject-content">
+                    <div class="topics-grid" id="topicsContainer">
+                        <!-- Уроки будут загружены через JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Итоговая панель -->
+            <div class="summary-panel">
+                <div class="summary-stats">
+                    <div class="summary-item">
+                        <span class="summary-icon">📊</span>
+                        <span class="summary-value" id="totalQuestions">0</span>
+                        <span class="summary-label">задач</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-icon">💰</span>
+                        <span class="summary-value" id="totalCost">0</span>
+                        <span class="summary-label">кредитов</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-icon">🎯</span>
+                        <span class="summary-value" id="totalDifficulty">Смешанная</span>
+                        <span class="summary-label">сложность</span>
+                    </div>
+                </div>
+                <div class="summary-warning" id="storageWarning">
+                    <span>⚠️</span>
+                    <span>Останется <span id="remainingSlots">10</span> мест для вариантов</span>
+                </div>
+            </div>
+
+            <!-- Кнопки действий -->
+            <div class="action-buttons">
+                <button class="generate-btn" onclick="generateVariant()" id="generateBtn">
+                    <span>✨</span>
+                    Создать вариант
+                </button>
+                <button class="reset-btn" onclick="resetSettings()">
+                    <span>🔄</span>
+                    Сбросить всё
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div class="notification" id="notification">
+        <div class="notification-icon" id="notificationIcon">✅</div>
+        <div class="notification-content">
+            <div class="notification-title" id="notificationTitle">Успешно</div>
+            <div class="notification-message" id="notificationMessage"></div>
+        </div>
+        <button class="notification-close" onclick="closeNotification()">×</button>
+    </div>
+
+    <script>
+        // Данные пользователя
+        let userData = null;
+        let userProgress = null;
+        let userVariantsCount = 0;
+        
+        // Список всех уроков
+        const lessons = [
+            { id: 1, title: 'IP-адреса и маски подсети', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 2, title: 'Двоичная система счисления', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 3, title: 'Логические операции', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 4, title: 'Таблицы истинности', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 5, title: 'Алгоритмы и исполнители', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 6, title: 'Программирование (КуМир)', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 7, title: 'Файловая система', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 8, title: 'Кодирование информации', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 9, title: 'Электронные таблицы', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 10, title: 'Базы данных', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 11, title: 'Поиск информации', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 12, title: 'Компьютерные сети', price: 0, free: true, completed: false, solved: 0, total: 5 },
+            { id: 13, title: 'Сортировка данных', price: 100, free: false, completed: false, solved: 0, total: 5 },
+            { id: 14, title: 'Рекурсивные алгоритмы', price: 100, free: false, completed: false, solved: 0, total: 5 },
+            { id: 15, title: 'Графы и деревья', price: 100, free: false, completed: false, solved: 0, total: 5 },
+            { id: 16, title: 'Системы счисления', price: 100, free: false, completed: false, solved: 0, total: 5 },
+            { id: 17, title: 'Олимпиадные задачи', price: 100, free: false, completed: false, solved: 0, total: 5 },
+            { id: 18, title: 'Подготовка к экзамену', price: 100, free: false, completed: false, solved: 0, total: 5 }
+        ];
+
+        // Настройки генерации для каждого урока
+        let generationSettings = lessons.map(lesson => ({
+            lessonId: lesson.id,
+            count: 0,
+            difficulty: 'medium',
+            selected: false
+        }));
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            renderTopics();
+            updateGlobalStats();
+        });
+
+        // Загрузка данных пользователя
+        async function loadUserData() {
+            try {
+                const response = await fetch('/api/user/me');
+                if (!response.ok) {
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                userData = await response.json();
+                document.getElementById('userCredits').textContent = userData.credits || 0;
+                document.getElementById('userName').textContent = userData.username || 'Пользователь';
+                document.getElementById('userAvatar').textContent = userData.username ? userData.username.charAt(0).toUpperCase() : '?';
+
+                // Загружаем количество вариантов
+                try {
+                    const variantsResponse = await fetch('/api/my-variants?limit=1');
+                    if (variantsResponse.ok) {
+                        const variantsData = await variantsResponse.json();
+                        userVariantsCount = variantsData.total || 0;
+                        document.getElementById('variantsCount').textContent = userVariantsCount;
+                        updateRemainingSlots();
+                    }
+                } catch (e) {
+                    console.warn('Не удалось загрузить количество вариантов');
+                }
+
+                // Загружаем прогресс
+                try {
+                    const progressResponse = await fetch('/api/user/progress');
+                    if (progressResponse.ok) {
+                        userProgress = await progressResponse.json();
+                        updateLessonsProgress();
+                    }
+                } catch (e) {
+                    console.warn('Не удалось загрузить прогресс');
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+            }
+        }
+
+        // Обновление прогресса уроков
+        function updateLessonsProgress() {
+            if (userProgress?.subjects?.informatics?.lessons) {
+                const progressLessons = userProgress.subjects.informatics.lessons;
+                let completedCount = 0;
+                
+                lessons.forEach(lesson => {
+                    const found = progressLessons.find(l => l.lesson_id === lesson.id);
+                    if (found) {
+                        lesson.completed = found.status === 'completed';
+                        if (lesson.completed) completedCount++;
+                    }
+                });
+                
+                document.getElementById('completedTopics').textContent = completedCount;
+                renderTopics();
+            }
+        }
+
+        // Рендер тем
+        function renderTopics() {
+            const container = document.getElementById('topicsContainer');
+            container.innerHTML = '';
+
+            lessons.forEach((lesson, index) => {
+                const settings = generationSettings[index];
+                const percent = (lesson.solved / lesson.total) * 100;
+                const isSelected = settings.count > 0;
+
+                const card = document.createElement('div');
+                card.className = `topic-card ${isSelected ? 'selected' : ''}`;
+
+                card.innerHTML = `
+                    <div class="topic-header">
+                        <span class="topic-title">${lesson.title}</span>
+                        <span class="topic-price ${lesson.free ? 'free' : ''}">
+                            ${lesson.free ? '🆓 Бесплатно' : `💰 ${lesson.price} ₽`}
+                        </span>
+                    </div>
+                    <div class="topic-progress">
+                        <span>${lesson.solved}/${lesson.total}</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                    <div class="generation-controls">
+                        <div class="control-row">
+                            <span class="control-label">
+                                <span>📝</span>
+                                Количество
+                            </span>
+                            <div class="count-control">
+                                <button class="count-btn" onclick="adjustCount(${index}, -1)" ${settings.count === 0 ? 'disabled' : ''}>−</button>
+                                <span class="count-value" id="count-${index}">${settings.count}</span>
+                                <button class="count-btn" onclick="adjustCount(${index}, 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <span class="control-label">
+                                <span>🎯</span>
+                                Сложность
+                            </span>
+                            <select class="difficulty-select" onchange="changeDifficulty(${index}, this.value)">
+                                <option value="easy" ${settings.difficulty === 'easy' ? 'selected' : ''}>Лёгкая</option>
+                                <option value="medium" ${settings.difficulty === 'medium' ? 'selected' : ''}>Средняя</option>
+                                <option value="hard" ${settings.difficulty === 'hard' ? 'selected' : ''}>Сложная</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Регулировка количества задач
+        function adjustCount(index, delta) {
+            const settings = generationSettings[index];
+            const newCount = Math.max(0, Math.min(20, settings.count + delta));
+            
+            settings.count = newCount;
+            settings.selected = newCount > 0;
+            
+            document.getElementById(`count-${index}`).textContent = newCount;
+            updateGlobalStats();
+            renderTopics(); // Обновляем класс selected
+        }
+
+        // Изменение сложности
+        function changeDifficulty(index, value) {
+            generationSettings[index].difficulty = value;
+            updateGlobalStats();
+        }
+
+        // Обновление глобальной статистики
+        function updateGlobalStats() {
+            let totalQuestions = 0;
+            let totalCost = 0;
+            const difficulties = new Set();
+
+            generationSettings.forEach((settings, index) => {
+                if (settings.count > 0) {
+                    totalQuestions += settings.count;
+                    
+                    // Расчет стоимости: первые 5 задач бесплатно, дальше 1 кредит за 5 задач
+                    if (!lessons[index].free) {
+                        const paidCount = Math.max(0, settings.count - 5);
+                        totalCost += Math.ceil(paidCount / 5) * (lessons[index].price / 20); // 100 кредитов за 20 задач = 5 за задачу
+                    }
+                    
+                    difficulties.add(settings.difficulty);
+                }
+            });
+
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            document.getElementById('totalCost').textContent = Math.round(totalCost);
+
+            let difficultyText = 'Смешанная';
+            if (difficulties.size === 1) {
+                const diff = Array.from(difficulties)[0];
+                if (diff === 'easy') difficultyText = 'Лёгкая';
+                else if (diff === 'medium') difficultyText = 'Средняя';
+                else if (diff === 'hard') difficultyText = 'Сложная';
+            }
+            document.getElementById('totalDifficulty').textContent = difficultyText;
+
+            // Обновляем состояние кнопки генерации
+            const generateBtn = document.getElementById('generateBtn');
+            const remainingSlots = 10 - userVariantsCount;
+            
+            if (totalQuestions === 0) {
+                generateBtn.disabled = true;
+                generateBtn.title = 'Выберите хотя бы одну тему';
+            } else if (remainingSlots <= 0) {
+                generateBtn.disabled = true;
+                generateBtn.title = 'Достигнут лимит вариантов (максимум 10)';
+            } else {
+                generateBtn.disabled = false;
+                generateBtn.title = '';
+            }
+
+            updateRemainingSlots();
+        }
+
+        // Обновление информации о свободных слотах
+        function updateRemainingSlots() {
+            const remaining = 10 - userVariantsCount;
+            document.getElementById('remainingSlots').textContent = remaining;
+            
+            const warningEl = document.getElementById('storageWarning');
+            if (remaining <= 2) {
+                warningEl.style.color = '#ff4757';
+            } else {
+                warningEl.style.color = '#ffb347';
+            }
+        }
+
+        // Переключение карточки предмета
+        function toggleSubject(cardId) {
+            document.getElementById(cardId).classList.toggle('expanded');
+        }
+
+        // Генерация варианта
+        function generateVariant() {
+            const selectedTopics = [];
+            const totalQuestions = parseInt(document.getElementById('totalQuestions').textContent);
+            const totalCost = parseInt(document.getElementById('totalCost').textContent);
+
+            if (totalQuestions === 0) {
+                showNotification('❌ Ошибка', 'Выберите хотя бы одну тему', '⚠️');
+                return;
+            }
+
+            if (userVariantsCount >= 10) {
+                showNotification('❌ Ошибка', 'Достигнут лимит вариантов (максимум 10)', '📦');
+                return;
+            }
+
+            if (userData && userData.credits < totalCost) {
+                showNotification('❌ Ошибка', 'Недостаточно кредитов', '💰');
+                return;
+            }
+
+            // Собираем настройки для генерации
+            const variantConfig = {
+                title: `Вариант от ${new Date().toLocaleDateString()}`,
+                topics: [],
+                totalQuestions: totalQuestions,
+                totalCost: totalCost
+            };
+
+            generationSettings.forEach((settings, index) => {
+                if (settings.count > 0) {
+                    variantConfig.topics.push({
+                        lessonId: lessons[index].id,
+                        title: lessons[index].title,
+                        count: settings.count,
+                        difficulty: settings.difficulty,
+                        price: lessons[index].price,
+                        free: lessons[index].free
+                    });
+                }
+            });
+
+            console.log('Генерируем вариант:', variantConfig);
+
+            // Отправляем на сервер
+            fetch('/api/generate-variant', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(variantConfig)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('✨ Успешно', 'Вариант поставлен в очередь на генерацию', '🚀');
+                    
+                    // Обновляем баланс
+                    if (userData) {
+                        userData.credits -= totalCost;
+                        document.getElementById('userCredits').textContent = userData.credits;
+                    }
+                    
+                    // Увеличиваем счётчик вариантов
+                    userVariantsCount++;
+                    document.getElementById('variantsCount').textContent = userVariantsCount;
+                    updateGlobalStats();
+                    
+                    // Сбрасываем настройки после успешной генерации
+                    setTimeout(() => {
+                        if (confirm('Вариант успешно создан! Очистить настройки?')) {
+                            resetSettings();
+                        }
+                    }, 500);
+                } else {
+                    showNotification('❌ Ошибка', data.error || 'Не удалось сгенерировать вариант', '❌');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                showNotification('❌ Ошибка', 'Проблема с соединением', '❌');
+            });
+        }
+
+        // Сброс настроек
+        function resetSettings() {
+            generationSettings = lessons.map(lesson => ({
+                lessonId: lesson.id,
+                count: 0,
+                difficulty: 'medium',
+                selected: false
+            }));
+            renderTopics();
+            updateGlobalStats();
+            showNotification('🔄 Сброс', 'Все настройки сброшены', '✅');
+        }
+
+        // Уведомления
+        function showNotification(title, message, icon = '✅') {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationIcon').textContent = icon;
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function closeNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

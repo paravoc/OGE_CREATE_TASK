@@ -1,0 +1,755 @@
+
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="generator" content="OGE HTML Generator">
+        <title>Тренировочный вариант ОГЭ</title>
+    
+        <link rel="stylesheet" href="css/base.css">
+        <link rel="stylesheet" href="css/layout.css">
+        <link rel="stylesheet" href="css/problem-card.css">
+        <link rel="stylesheet" href="css/forms.css">
+        <link rel="stylesheet" href="css/progress.css">
+        <link rel="stylesheet" href="css/feedback.css">
+        <link rel="stylesheet" href="css/solution.css"> 
+    
+
+        <style>
+            /* Динамические стили, зависящие от настроек */
+            body {
+                background-color: #f5f5f5;
+                color: #333333;
+            }
+            
+            .header {
+                background: #ffffff;
+            }
+            
+            .problem-wrapper {
+                background: #ffffff;
+            }
+            
+            input[type="text"] {
+                background: #ffffff;
+                color: #333333;
+            }
+            
+            .solution-wrapper, .hint-wrapper {
+                background: #f9f9f9;
+            }
+        </style>
+    
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Тренировочный вариант ОГЭ</h1>
+                <p>Сгенерировано: 21.02.2026 14:00:12</p>
+                <p class='score'>Максимальный балл: 0</p>
+                <div class="progress-container">
+                    <div class="progress-label">Прогресс выполнения:</div>
+                    <div class="progress">
+                        <progress id="main-progress" value="0" max="100"></progress>
+                    </div>
+                    <div class="progress-stats">
+                        <span id="correct-count">0</span>/<span id="total-count">0</span> решено
+                    </div>
+                </div>
+        
+            </div>
+            <div class="problems-grid">
+    <div class='problem-wrapper' data-problem-id='ipaddress_1_20260221_30886'>
+    <div class='ip-restore'><h3>Задача #1: IP-адреса</h3><p class='problem-text'>Восстановите IP-адрес. В ответе укажите последовательность букв, обозначающих фрагменты, в порядке, соответствующем IP-адресу.</p><table border='1' cellpadding='10' style='border-collapse: collapse; margin: 15px 0; font-size: 18px;'><tr><td align='center' width='80'><strong>А</strong><br>92</td><td align='center' width='80'><strong>Б</strong><br>3.92</td><td align='center' width='80'><strong>В</strong><br>.5</td><td align='center' width='80'><strong>Г</strong><br>1.35</td></tr></table><p class='score'>Баллов: 10</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_1_20260221_30886'
+               placeholder='Ваш ответ' 
+               data-correct-answer='ВГБА'
+               data-score='10'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_1_20260221_30886")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_1_20260221_30886")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_1_20260221_30886' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Правильный IP-адрес: <strong>5.19.35.92</strong></p><table border='1' cellpadding='5' style='border-collapse: collapse; margin-top: 10px;'><tr><th>Позиция</th><th>Октет</th><th>Часть</th><th>Буква</th></tr><tr><td>1</td><td>5</td><td>.5</td><td><strong>В</strong></td></tr><tr><td>2</td><td>19</td><td>1.35</td><td><strong>Г</strong></td></tr><tr><td>3</td><td>35</td><td>3.92</td><td><strong>Б</strong></td></tr><tr><td>4</td><td>92</td><td>92</td><td><strong>А</strong></td></tr></table><p><strong>Ответ:</strong> ВГБА</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>IP-адрес состоит из 4 чисел от 0 до 255, разделенных точками</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_2_20260221_27664'>
+    <div class='ip-restore'><h3>Задача #2: IP-адреса</h3><p class='problem-text'>Восстановите IP-адрес. В ответе укажите последовательность букв, обозначающих фрагменты, в порядке, соответствующем IP-адресу.</p><table border='1' cellpadding='10' style='border-collapse: collapse; margin: 15px 0; font-size: 18px;'><tr><td align='center' width='80'><strong>А</strong><br>.14</td><td align='center' width='80'><strong>Б</strong><br>1.128</td><td align='center' width='80'><strong>В</strong><br>1.18</td><td align='center' width='80'><strong>Г</strong><br>180</td></tr></table><p class='score'>Баллов: 15</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_2_20260221_27664'
+               placeholder='Ваш ответ' 
+               data-correct-answer='АБВГ'
+               data-score='15'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_2_20260221_27664")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_2_20260221_27664")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_2_20260221_27664' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Правильный IP-адрес: <strong>14.19.128.180</strong></p><table border='1' cellpadding='5' style='border-collapse: collapse; margin-top: 10px;'><tr><th>Позиция</th><th>Октет</th><th>Часть</th><th>Буква</th></tr><tr><td>1</td><td>14</td><td>.14</td><td><strong>А</strong></td></tr><tr><td>2</td><td>19</td><td>1.128</td><td><strong>Б</strong></td></tr><tr><td>3</td><td>128</td><td>1.18</td><td><strong>В</strong></td></tr><tr><td>4</td><td>180</td><td>180</td><td><strong>Г</strong></td></tr></table><p><strong>Ответ:</strong> АБВГ</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>IP-адрес состоит из 4 чисел от 0 до 255, разделенных точками</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_3_20260221_74861'>
+    <div class='ip-restore'><h3>Задача #3: IP-адреса</h3><p class='problem-text'>Восстановите IP-адрес. В ответе укажите последовательность букв, обозначающих фрагменты, в порядке, соответствующем IP-адресу.</p><table border='1' cellpadding='10' style='border-collapse: collapse; margin: 15px 0; font-size: 18px;'><tr><td align='center' width='80'><strong>А</strong><br>44</td><td align='center' width='80'><strong>Б</strong><br>1.11</td><td align='center' width='80'><strong>В</strong><br>1.44</td><td align='center' width='80'><strong>Г</strong><br>.19</td></tr></table><p class='score'>Баллов: 20</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_3_20260221_74861'
+               placeholder='Ваш ответ' 
+               data-correct-answer='ГБВА'
+               data-score='20'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_3_20260221_74861")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_3_20260221_74861")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_3_20260221_74861' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Правильный IP-адрес: <strong>19.16.11.44</strong></p><table border='1' cellpadding='5' style='border-collapse: collapse; margin-top: 10px;'><tr><th>Позиция</th><th>Октет</th><th>Часть</th><th>Буква</th></tr><tr><td>1</td><td>19</td><td>.19</td><td><strong>Г</strong></td></tr><tr><td>2</td><td>16</td><td>1.11</td><td><strong>Б</strong></td></tr><tr><td>3</td><td>11</td><td>1.44</td><td><strong>В</strong></td></tr><tr><td>4</td><td>44</td><td>44</td><td><strong>А</strong></td></tr></table><p><strong>Ответ:</strong> ГБВА</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>IP-адрес состоит из 4 чисел от 0 до 255, разделенных точками</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_4_20260221_44083'>
+    <div class='ip-validate'><h3>Задача #4: IP-адреса</h3><p class='problem-text'>Даны 5 IP-адресов. Найдите номер строки с корректным IP-адресом:</p><div class='ip-list' style='font-family: monospace; font-size: 16px;'><p><strong>1.</strong> 193.159.30.71</p><p><strong>2.</strong> 177.29.127.289</p><p><strong>3.</strong> 137.201.-36.3</p><p><strong>4.</strong> 18.3.177.155.143</p><p><strong>5.</strong> 287.227.10.159</p></div><p class='score'>Баллов: 10</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_4_20260221_44083'
+               placeholder='Ваш ответ' 
+               data-correct-answer='1'
+               data-score='10'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_4_20260221_44083")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_4_20260221_44083")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_4_20260221_44083' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Правильный IP-адрес должен состоять из 4 чисел от 0 до 255, разделенных точками.</p><ul><li>1. 193.159.30.71 — <strong>корректный</strong></li><li>2. 177.29.127.289 — некорректный</li><li>3. 137.201.-36.3 — некорректный</li><li>4. 18.3.177.155.143 — некорректный</li><li>5. 287.227.10.159 — некорректный</li></ul><p><strong>Ответ:</strong> 1</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>IP-адрес должен содержать 4 числа от 0 до 255</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_5_20260221_44913'>
+    <div class='ip-validate'><h3>Задача #5: IP-адреса</h3><p class='problem-text'>Даны 5 IP-адресов. Найдите номер строки с корректным IP-адресом:</p><div class='ip-list' style='font-family: monospace; font-size: 16px;'><p><strong>1.</strong> 197.1.62.188</p><p><strong>2.</strong> 239.255.229.295</p><p><strong>3.</strong> 82.152.81.48.253</p><p><strong>4.</strong> 29.108.145.-14</p><p><strong>5.</strong> 254.79.26.-12</p></div><p class='score'>Баллов: 15</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_5_20260221_44913'
+               placeholder='Ваш ответ' 
+               data-correct-answer='1'
+               data-score='15'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_5_20260221_44913")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_5_20260221_44913")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_5_20260221_44913' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Правильный IP-адрес должен состоять из 4 чисел от 0 до 255, разделенных точками.</p><ul><li>1. 197.1.62.188 — <strong>корректный</strong></li><li>2. 239.255.229.295 — некорректный</li><li>3. 82.152.81.48.253 — некорректный</li><li>4. 29.108.145.-14 — некорректный</li><li>5. 254.79.26.-12 — некорректный</li></ul><p><strong>Ответ:</strong> 1</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>IP-адрес должен содержать 4 числа от 0 до 255</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_6_20260221_77599'>
+    <div class='ip-validate'><h3>Задача #6: IP-адреса</h3><p class='problem-text'>Даны 5 IP-адресов. Найдите номер строки с корректным IP-адресом:</p><div class='ip-list' style='font-family: monospace; font-size: 16px;'><p><strong>1.</strong> 0.185.162.138</p><p><strong>2.</strong> -9.159.137.42</p><p><strong>3.</strong> 20.263.245.25</p><p><strong>4.</strong> 31.25.42.-42</p><p><strong>5.</strong> 85.163.148.75.141</p></div><p class='score'>Баллов: 20</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_6_20260221_77599'
+               placeholder='Ваш ответ' 
+               data-correct-answer='1'
+               data-score='20'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_6_20260221_77599")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_6_20260221_77599")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_6_20260221_77599' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Правильный IP-адрес должен состоять из 4 чисел от 0 до 255, разделенных точками.</p><ul><li>1. 0.185.162.138 — <strong>корректный</strong></li><li>2. -9.159.137.42 — некорректный</li><li>3. 20.263.245.25 — некорректный</li><li>4. 31.25.42.-42 — некорректный</li><li>5. 85.163.148.75.141 — некорректный</li></ul><p><strong>Ответ:</strong> 1</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>IP-адрес должен содержать 4 числа от 0 до 255</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_7_20260221_49572'>
+    <div class='ip-network'><h3>Задача #7: IP-адреса</h3><p class='problem-text'>Даны IP-адреса. Определите, какие из них находятся в одной сети.</p><p><strong>Маска подсети:</strong> 255.255.255.128</p><div class='ip-list' style='font-family: monospace; font-size: 16px;'><p><strong>1.</strong> 147.176.104.130</p><p><strong>2.</strong> 147.176.104.36</p><p><strong>3.</strong> 147.176.104.83</p><p><strong>4.</strong> 147.176.104.245</p><p><strong>5.</strong> 147.160.104.0</p></div><p>В ответе укажите номера IP через запятую (например: 1,3,4).</p><p class='score'>Баллов: 10</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_7_20260221_49572'
+               placeholder='Ваш ответ' 
+               data-correct-answer='1, 2, 3, 4'
+               data-score='10'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_7_20260221_49572")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_7_20260221_49572")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_7_20260221_49572' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Маска подсети: 255.255.255.128 (битов: 25)</p><p>Адрес сети: 147.176.104.0</p><ul><li>1. 147.176.104.130 ? сеть 147.176.104.128</li><li>2. 147.176.104.36 ? сеть 147.176.104.0 <strong>(в одной сети)</strong></li><li>3. 147.176.104.83 ? сеть 147.176.104.0 <strong>(в одной сети)</strong></li><li>4. 147.176.104.245 ? сеть 147.176.104.128</li><li>5. 147.160.104.0 ? сеть 147.160.104.0</li></ul><p><strong>Ответ:</strong> 1, 2, 3, 4</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Адрес сети получается применением маски к IP (побитовое И)</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_8_20260221_94910'>
+    <div class='ip-network'><h3>Задача #8: IP-адреса</h3><p class='problem-text'>Даны IP-адреса. Определите, какие из них находятся в одной сети.</p><p><strong>Маска подсети:</strong> 255.255.254.0</p><div class='ip-list' style='font-family: monospace; font-size: 16px;'><p><strong>1.</strong> 131.55.132.27</p><p><strong>2.</strong> 131.55.132.31</p><p><strong>3.</strong> 131.55.132.77</p><p><strong>4.</strong> 131.39.132.0</p><p><strong>5.</strong> 131.55.132.1</p></div><p>В ответе укажите номера IP через запятую (например: 1,3,4).</p><p class='score'>Баллов: 15</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_8_20260221_94910'
+               placeholder='Ваш ответ' 
+               data-correct-answer='1, 2, 3'
+               data-score='15'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_8_20260221_94910")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_8_20260221_94910")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_8_20260221_94910' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Маска подсети: 255.255.254.0 (битов: 23)</p><p>Адрес сети: 131.55.132.0</p><ul><li>1. 131.55.132.27 ? сеть 131.55.132.0 <strong>(в одной сети)</strong></li><li>2. 131.55.132.31 ? сеть 131.55.132.0 <strong>(в одной сети)</strong></li><li>3. 131.55.132.77 ? сеть 131.55.132.0 <strong>(в одной сети)</strong></li><li>4. 131.39.132.0 ? сеть 131.39.132.0</li><li>5. 131.55.132.1 ? сеть 131.55.132.0 <strong>(в одной сети)</strong></li></ul><p><strong>Ответ:</strong> 1, 2, 3</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Адрес сети получается применением маски к IP (побитовое И)</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_9_20260221_10074'>
+    <div class='ip-network'><h3>Задача #9: IP-адреса</h3><p class='problem-text'>Даны IP-адреса. Определите, какие из них находятся в одной сети.</p><p><strong>Маска подсети:</strong> 255.255.255.0</p><div class='ip-list' style='font-family: monospace; font-size: 16px;'><p><strong>1.</strong> 205.245.93.192</p><p><strong>2.</strong> 205.245.93.55</p><p><strong>3.</strong> 205.245.93.103</p><p><strong>4.</strong> 205.245.93.64</p><p><strong>5.</strong> 205.247.93.0</p></div><p>В ответе укажите номера IP через запятую (например: 1,3,4).</p><p class='score'>Баллов: 20</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_9_20260221_10074'
+               placeholder='Ваш ответ' 
+               data-correct-answer='1, 2, 3'
+               data-score='20'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_9_20260221_10074")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_9_20260221_10074")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_9_20260221_10074' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Маска подсети: 255.255.255.0 (битов: 24)</p><p>Адрес сети: 205.245.93.0</p><ul><li>1. 205.245.93.192 ? сеть 205.245.93.0 <strong>(в одной сети)</strong></li><li>2. 205.245.93.55 ? сеть 205.245.93.0 <strong>(в одной сети)</strong></li><li>3. 205.245.93.103 ? сеть 205.245.93.0 <strong>(в одной сети)</strong></li><li>4. 205.245.93.64 ? сеть 205.245.93.0 <strong>(в одной сети)</strong></li><li>5. 205.247.93.0 ? сеть 205.247.93.0</li></ul><p><strong>Ответ:</strong> 1, 2, 3</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Адрес сети получается применением маски к IP (побитовое И)</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_10_20260221_74400'>
+    <div class='ipv6-validate'><h3>Задача #10: IP-адреса</h3><p class='problem-text'>Даны IPv6-адреса. Найдите номер строки с корректным адресом:</p><div class='ip-list' style='font-family: monospace; font-size: 14px;'><p><strong>1.</strong> a922:a102:df3d:c89b:b500:93b4:bc46:69f9:1234</p><p><strong>2.</strong> caeb:ab09:525c:936e:d71e:6965:3348:3c0b:1234</p><p><strong>3.</strong> 2001:db8::1</p><p><strong>4.</strong> 2001:db8::g123</p><p><strong>5.</strong> f56c:a42e:7f3e:c43a:fe04:b76e:a8bf:b663</p></div><p class='score'>Баллов: 10</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_10_20260221_74400'
+               placeholder='Ваш ответ' 
+               data-correct-answer='5'
+               data-score='10'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_10_20260221_74400")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_10_20260221_74400")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_10_20260221_74400' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IPv6-адрес состоит из 8 групп по 4 шестнадцатеричные цифры, разделенных двоеточиями.</p><ul><li>1. a922:a102:df3d:c89b:b500:93b4:bc46:69f9:1234 — некорректный (некорректный)</li><li>2. caeb:ab09:525c:936e:d71e:6965:3348:3c0b:1234 — некорректный (некорректный)</li><li>3. 2001:db8::1 — некорректный (некорректный)</li><li>4. 2001:db8::g123 — некорректный (некорректный)</li><li>5. f56c:a42e:7f3e:c43a:fe04:b76e:a8bf:b663 — <strong>корректный</strong></li></ul><p><strong>Ответ:</strong> 5</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>IPv6 состоит из 8 групп по 4 шестнадцатеричные цифры</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_11_20260221_71513'>
+    <div class='ipv6-validate'><h3>Задача #11: IP-адреса</h3><p class='problem-text'>Даны IPv6-адреса. Найдите номер строки с корректным адресом:</p><div class='ip-list' style='font-family: monospace; font-size: 14px;'><p><strong>1.</strong> 1a0f:354f:7da3:682e:10f7:fde5:8117:e504</p><p><strong>2.</strong> 2001::db8:::1</p><p><strong>3.</strong> 2001::db8:::1</p><p><strong>4.</strong> 2001:db8::g123</p><p><strong>5.</strong> 863:4885:45bb:7d92:71c7:fd99:2ac3:6997:1234</p></div><p class='score'>Баллов: 15</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_11_20260221_71513'
+               placeholder='Ваш ответ' 
+               data-correct-answer='1'
+               data-score='15'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_11_20260221_71513")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_11_20260221_71513")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_11_20260221_71513' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IPv6-адрес состоит из 8 групп по 4 шестнадцатеричные цифры, разделенных двоеточиями.</p><ul><li>1. 1a0f:354f:7da3:682e:10f7:fde5:8117:e504 — <strong>корректный</strong></li><li>2. 2001::db8:::1 — некорректный (некорректный)</li><li>3. 2001::db8:::1 — некорректный (некорректный)</li><li>4. 2001:db8::g123 — некорректный (некорректный)</li><li>5. 863:4885:45bb:7d92:71c7:fd99:2ac3:6997:1234 — некорректный (некорректный)</li></ul><p><strong>Ответ:</strong> 1</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>IPv6 состоит из 8 групп по 4 шестнадцатеричные цифры</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_12_20260221_16525'>
+    <div class='ipv6-validate'><h3>Задача #12: IP-адреса</h3><p class='problem-text'>Даны IPv6-адреса. Найдите номер строки с корректным адресом:</p><div class='ip-list' style='font-family: monospace; font-size: 14px;'><p><strong>1.</strong> 2001::db8:::1</p><p><strong>2.</strong> 698a:d83e:2b4a:2a5b:3e17:e552:a62f:877f</p><p><strong>3.</strong> 2001:db8::g123</p><p><strong>4.</strong> 2001::db8:::1</p><p><strong>5.</strong> 2001::db8:::1</p></div><p class='score'>Баллов: 20</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_12_20260221_16525'
+               placeholder='Ваш ответ' 
+               data-correct-answer='2'
+               data-score='20'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_12_20260221_16525")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_12_20260221_16525")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_12_20260221_16525' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IPv6-адрес состоит из 8 групп по 4 шестнадцатеричные цифры, разделенных двоеточиями.</p><ul><li>1. 2001::db8:::1 — некорректный (некорректный)</li><li>2. 698a:d83e:2b4a:2a5b:3e17:e552:a62f:877f — <strong>корректный</strong></li><li>3. 2001:db8::g123 — некорректный (некорректный)</li><li>4. 2001::db8:::1 — некорректный (некорректный)</li><li>5. 2001::db8:::1 — некорректный (некорректный)</li></ul><p><strong>Ответ:</strong> 2</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>IPv6 состоит из 8 групп по 4 шестнадцатеричные цифры</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_13_20260221_52127'>
+    <div class='ip-mask'><h3>Задача #13: IP-адреса</h3><p class='problem-text'>Для IP-адреса <strong>1.187.244.244</strong> с маской <strong>255.224.0.0</strong> определите адрес сети.</p><div class='options-list' style='margin: 15px 0;'><p><strong>А.</strong> 292.187.244.244</p><p><strong>Б.</strong> 1.187.244.187</p><p><strong>В.</strong> 1.160.0.0</p><p><strong>Г.</strong> 1.187.89.244</p><p><strong>Д.</strong> 1.187.226.244</p></div><p>В ответе укажите букву выбранного варианта.</p><p class='score'>Баллов: 10</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_13_20260221_52127'
+               placeholder='Ваш ответ' 
+               data-correct-answer='В'
+               data-score='10'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_13_20260221_52127")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_13_20260221_52127")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_13_20260221_52127' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IP: 1.187.244.244</p><p>Маска: 255.224.0.0</p><p>Адрес сети = IP & Маска = 1.160.0.0</p><p><strong>Ответ:</strong> В</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Адрес сети = IP & Маска, Broadcast = IP | ~Маска</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_14_20260221_65081'>
+    <div class='ip-mask'><h3>Задача #14: IP-адреса</h3><p class='problem-text'>Для IP-адреса <strong>66.252.73.225</strong> с маской <strong>255.254.0.0</strong> определите broadcast-адрес.</p><div class='options-list' style='margin: 15px 0;'><p><strong>А.</strong> 66.252.285.225</p><p><strong>Б.</strong> 66.253.255.255</p><p><strong>В.</strong> 66.252.97.225</p><p><strong>Г.</strong> 66.216.73.225</p><p><strong>Д.</strong> 66.184.73.225</p></div><p>В ответе укажите букву выбранного варианта.</p><p class='score'>Баллов: 15</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_14_20260221_65081'
+               placeholder='Ваш ответ' 
+               data-correct-answer='Б'
+               data-score='15'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_14_20260221_65081")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_14_20260221_65081")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_14_20260221_65081' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IP: 66.252.73.225</p><p>Маска: 255.254.0.0</p><p>Broadcast = IP | ~Маска = 66.253.255.255</p><p><strong>Ответ:</strong> Б</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Адрес сети = IP & Маска, Broadcast = IP | ~Маска</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_15_20260221_62862'>
+    <div class='ip-mask'><h3>Задача #15: IP-адреса</h3><p class='problem-text'>Для IP-адреса <strong>9.105.31.28</strong> с маской <strong>255.192.0.0</strong> определите адрес сети.</p><div class='options-list' style='margin: 15px 0;'><p><strong>А.</strong> 9.105.31.103</p><p><strong>Б.</strong> 9.125.31.28</p><p><strong>В.</strong> 9.111.31.28</p><p><strong>Г.</strong> 9.105.67.28</p><p><strong>Д.</strong> 9.64.0.0</p></div><p>В ответе укажите букву выбранного варианта.</p><p class='score'>Баллов: 20</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_15_20260221_62862'
+               placeholder='Ваш ответ' 
+               data-correct-answer='Д'
+               data-score='20'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_15_20260221_62862")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_15_20260221_62862")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_15_20260221_62862' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IP: 9.105.31.28</p><p>Маска: 255.192.0.0</p><p>Адрес сети = IP & Маска = 9.64.0.0</p><p><strong>Ответ:</strong> Д</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Адрес сети = IP & Маска, Broadcast = IP | ~Маска</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_16_20260221_55148'>
+    <div class='ip-class'><h3>Задача #16: IP-адреса</h3><p class='problem-text'>Определите класс IP-адреса <strong>223.195.66.140</strong>.</p><div class='options-list' style='margin: 15px 0;'><p><strong>А.</strong> Класс B (128.0.0.0 - 191.255.255.255)</p><p><strong>Б.</strong> Класс C (192.0.0.0 - 223.255.255.255)</p><p><strong>В.</strong> Класс E (240.0.0.0 - 255.255.255.255) - зарезервировано</p><p><strong>Г.</strong> Класс D (224.0.0.0 - 239.255.255.255) - мультикаст</p><p><strong>Д.</strong> Класс A (1.0.0.0 - 126.255.255.255)</p></div><p>В ответе укажите букву выбранного варианта.</p><p class='score'>Баллов: 10</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_16_20260221_55148'
+               placeholder='Ваш ответ' 
+               data-correct-answer='Б'
+               data-score='10'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_16_20260221_55148")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_16_20260221_55148")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_16_20260221_55148' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IP: 223.195.66.140</p><p>Первый октет: 223</p><p>Это соответствует: <strong>Класс C (192.0.0.0 - 223.255.255.255)</strong></p><p><strong>Ответ:</strong> Б</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Класс A: 1-126, B: 128-191, C: 192-223, D: 224-239, E: 240-255</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_17_20260221_20184'>
+    <div class='ip-class'><h3>Задача #17: IP-адреса</h3><p class='problem-text'>Определите класс IP-адреса <strong>203.5.192.120</strong>.</p><div class='options-list' style='margin: 15px 0;'><p><strong>А.</strong> Класс E (240.0.0.0 - 255.255.255.255) - зарезервировано</p><p><strong>Б.</strong> Класс A (1.0.0.0 - 126.255.255.255)</p><p><strong>В.</strong> Класс D (224.0.0.0 - 239.255.255.255) - мультикаст</p><p><strong>Г.</strong> Класс C (192.0.0.0 - 223.255.255.255)</p><p><strong>Д.</strong> Класс B (128.0.0.0 - 191.255.255.255)</p></div><p>В ответе укажите букву выбранного варианта.</p><p class='score'>Баллов: 15</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_17_20260221_20184'
+               placeholder='Ваш ответ' 
+               data-correct-answer='Г'
+               data-score='15'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_17_20260221_20184")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_17_20260221_20184")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_17_20260221_20184' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IP: 203.5.192.120</p><p>Первый октет: 203</p><p>Это соответствует: <strong>Класс C (192.0.0.0 - 223.255.255.255)</strong></p><p><strong>Ответ:</strong> Г</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Класс A: 1-126, B: 128-191, C: 192-223, D: 224-239, E: 240-255</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_18_20260221_15204'>
+    <div class='ip-class'><h3>Задача #18: IP-адреса</h3><p class='problem-text'>Определите класс IP-адреса <strong>36.35.15.246</strong>.</p><div class='options-list' style='margin: 15px 0;'><p><strong>А.</strong> Класс C (192.0.0.0 - 223.255.255.255)</p><p><strong>Б.</strong> Класс A (1.0.0.0 - 126.255.255.255)</p><p><strong>В.</strong> Класс B (128.0.0.0 - 191.255.255.255)</p><p><strong>Г.</strong> Класс D (224.0.0.0 - 239.255.255.255) - мультикаст</p><p><strong>Д.</strong> Класс E (240.0.0.0 - 255.255.255.255) - зарезервировано</p></div><p>В ответе укажите букву выбранного варианта.</p><p class='score'>Баллов: 20</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_18_20260221_15204'
+               placeholder='Ваш ответ' 
+               data-correct-answer='Б'
+               data-score='20'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_18_20260221_15204")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_18_20260221_15204")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_18_20260221_15204' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IP: 36.35.15.246</p><p>Первый октет: 36</p><p>Это соответствует: <strong>Класс A (1.0.0.0 - 126.255.255.255)</strong></p><p><strong>Ответ:</strong> Б</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Класс A: 1-126, B: 128-191, C: 192-223, D: 224-239, E: 240-255</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_19_20260221_40441'>
+    <div class='ip-broadcast'><h3>Задача #19: IP-адреса</h3><p class='problem-text'>Для IP-адреса <strong>185.123.55.188</strong> с маской <strong>255.255.255.128</strong> определите broadcast-адрес.</p><p>Введите ответ в формате IPv4.</p><p class='score'>Баллов: 10</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_19_20260221_40441'
+               placeholder='Ваш ответ' 
+               data-correct-answer='185.123.55.255'
+               data-score='10'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_19_20260221_40441")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_19_20260221_40441")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_19_20260221_40441' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IP: 185.123.55.188</p><p>Маска: 255.255.255.128</p><p>Broadcast = IP | ~Маска = 185.123.55.255</p><p><strong>Ответ:</strong> 185.123.55.255</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Broadcast-адрес получается установкой всех битов хоста в 1</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_20_20260221_61152'>
+    <div class='ip-broadcast'><h3>Задача #20: IP-адреса</h3><p class='problem-text'>Для IP-адреса <strong>255.41.27.83</strong> с маской <strong>255.255.255.224</strong> определите broadcast-адрес.</p><p>Введите ответ в формате IPv4.</p><p class='score'>Баллов: 15</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_20_20260221_61152'
+               placeholder='Ваш ответ' 
+               data-correct-answer='255.41.27.95'
+               data-score='15'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_20_20260221_61152")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_20_20260221_61152")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_20_20260221_61152' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IP: 255.41.27.83</p><p>Маска: 255.255.255.224</p><p>Broadcast = IP | ~Маска = 255.41.27.95</p><p><strong>Ответ:</strong> 255.41.27.95</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Broadcast-адрес получается установкой всех битов хоста в 1</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_21_20260221_34081'>
+    <div class='ip-broadcast'><h3>Задача #21: IP-адреса</h3><p class='problem-text'>Для IP-адреса <strong>23.37.57.186</strong> с маской <strong>255.255.240.0</strong> определите broadcast-адрес.</p><p>Введите ответ в формате IPv4.</p><p class='score'>Баллов: 20</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_21_20260221_34081'
+               placeholder='Ваш ответ' 
+               data-correct-answer='23.37.63.255'
+               data-score='20'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_21_20260221_34081")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_21_20260221_34081")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_21_20260221_34081' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>IP: 23.37.57.186</p><p>Маска: 255.255.240.0</p><p>Broadcast = IP | ~Маска = 23.37.63.255</p><p><strong>Ответ:</strong> 23.37.63.255</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p>Broadcast-адрес получается установкой всех битов хоста в 1</p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_22_20260221_49085'>
+    <div class='ip-invert'><h3>Задача #22: IP-адреса</h3><p class='problem-text'>IP-адрес зашифровали: в двоичной записи каждого числа заменили все 1 на 0, а все 0 на 1.</p><p>Исходный адрес: <strong>83.163.25.85</strong></p><p>Напишите получившийся IP-адрес.</p><p class='score'>Баллов: 10</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_22_20260221_49085'
+               placeholder='Ваш ответ' 
+               data-correct-answer='172.92.230.170'
+               data-score='10'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_22_20260221_49085")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_22_20260221_49085")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_22_20260221_49085' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Переведем каждый октет в двоичную систему и инвертируем биты:</p><table border='1' cellpadding='5' style='border-collapse: collapse;'><tr><th>Октет</th><th>Десятичное</th><th>Двоичное</th><th>Инвертированное</th><th>Результат</th></tr><tr><td>Первый</td><td>83</td><td>01010011</td><td>10101100</td><td>172</td></tr><tr><td>Второй</td><td>163</td><td>10100011</td><td>01011100</td><td>92</td></tr><tr><td>Третий</td><td>25</td><td>00011001</td><td>11100110</td><td>230</td></tr><tr><td>Четвертый</td><td>85</td><td>01010101</td><td>10101010</td><td>170</td></tr></table><p><strong>Ответ:</strong> 172.92.230.170</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p></p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_23_20260221_90391'>
+    <div class='ip-invert'><h3>Задача #23: IP-адреса</h3><p class='problem-text'>IP-адрес зашифровали: в двоичной записи каждого числа заменили все 1 на 0, а все 0 на 1.</p><p>Исходный адрес: <strong>42.176.40.10</strong></p><p>Напишите получившийся IP-адрес.</p><p class='score'>Баллов: 15</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_23_20260221_90391'
+               placeholder='Ваш ответ' 
+               data-correct-answer='213.79.215.245'
+               data-score='15'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_23_20260221_90391")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_23_20260221_90391")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_23_20260221_90391' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Переведем каждый октет в двоичную систему и инвертируем биты:</p><table border='1' cellpadding='5' style='border-collapse: collapse;'><tr><th>Октет</th><th>Десятичное</th><th>Двоичное</th><th>Инвертированное</th><th>Результат</th></tr><tr><td>Первый</td><td>42</td><td>00101010</td><td>11010101</td><td>213</td></tr><tr><td>Второй</td><td>176</td><td>10110000</td><td>01001111</td><td>79</td></tr><tr><td>Третий</td><td>40</td><td>00101000</td><td>11010111</td><td>215</td></tr><tr><td>Четвертый</td><td>10</td><td>00001010</td><td>11110101</td><td>245</td></tr></table><p><strong>Ответ:</strong> 213.79.215.245</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p></p></div>
+        </details>
+    </div>
+</div>
+
+<div class='problem-wrapper' data-problem-id='ipaddress_24_20260221_57247'>
+    <div class='ip-invert'><h3>Задача #24: IP-адреса</h3><p class='problem-text'>IP-адрес зашифровали: в двоичной записи каждого числа заменили все 1 на 0, а все 0 на 1.</p><p>Исходный адрес: <strong>126.55.133.30</strong></p><p>Напишите получившийся IP-адрес.</p><p class='score'>Баллов: 20</p></div>
+    <div class='answer-area'>
+        <input type='text' id='ipaddress_24_20260221_57247'
+               placeholder='Ваш ответ' 
+               data-correct-answer='129.200.122.225'
+               data-score='20'
+               data-answered='false'>
+        <button onclick='checkAnswer("ipaddress_24_20260221_57247")'>
+            Проверить
+        </button>
+    </div>
+    <div class='solution-section'>
+        <button class='solution-toggle-btn' onclick='SolutionManager.toggleSolution("ipaddress_24_20260221_57247")'>
+            ?? Показать решение
+        </button>
+        <div id='solution-ipaddress_24_20260221_57247' class='solution-content' style='display: none;'>
+            <div class='solution'><h4>Решение:</h4><p>Переведем каждый октет в двоичную систему и инвертируем биты:</p><table border='1' cellpadding='5' style='border-collapse: collapse;'><tr><th>Октет</th><th>Десятичное</th><th>Двоичное</th><th>Инвертированное</th><th>Результат</th></tr><tr><td>Первый</td><td>126</td><td>01111110</td><td>10000001</td><td>129</td></tr><tr><td>Второй</td><td>55</td><td>00110111</td><td>11001000</td><td>200</td></tr><tr><td>Третий</td><td>133</td><td>10000101</td><td>01111010</td><td>122</td></tr><tr><td>Четвертый</td><td>30</td><td>00011110</td><td>11100001</td><td>225</td></tr></table><p><strong>Ответ:</strong> 129.200.122.225</p></div>
+        </div>
+    </div>
+    <div class='hint-section'>
+        <details>
+            <summary>?? Подсказка</summary>
+            <div class='hint'><h4>Подсказка:</h4><p></p></div>
+        </details>
+    </div>
+</div>
+
+
+                </div>
+        
+            </div>
+        
+        <!-- Подключаем внешний JavaScript -->
+                <script src="js/config.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/progress.js"></script>
+        <script src="js/checkers.js"></script>
+        <script src="js/solution.js"></script>
+        <script src="js/handlers.js"></script>
+        <script src="js/init.js"></script>
+
+         <!-- Передаем параметры из C++ в JavaScript -->
+                <script>
+                    window.CAN_VIEW_SOLUTIONS = true;
+                </script>
+    
+        </body>
+        </html>
+        

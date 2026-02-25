@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ошибка входа</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .macos-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 3rem;
+            max-width: 450px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            position: relative;
+            text-align: center;
+        }
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+        }
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+        .macos-dot.red { background: #ff5f56; }
+        .macos-dot.yellow { background: #ffbd2e; }
+        .macos-dot.green { background: #27c93f; }
+        .error-icon { font-size: 5rem; margin: 1rem 0; }
+        h1 { color: #c53030; margin-bottom: 1rem; }
+        .button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="macos-card">
+        <div class="macos-dots">
+            <div class="macos-dot red"></div>
+            <div class="macos-dot yellow"></div>
+            <div class="macos-dot green"></div>
+        </div>
+        <div class="error-icon">❌</div>
+        <h1>Ссылка недействительна</h1>
+        <p>Ссылка для входа устарела или уже была использована</p>
+        <a href="/magic-login" class="button">Запросить новую ссылку</a>
+    </div>
+</body>
+</html>

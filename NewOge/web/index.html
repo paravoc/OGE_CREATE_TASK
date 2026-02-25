@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D титульная — подготовка к экзаменам</title>
+    
+    <!-- Подключаем CSS файлы -->
+    <link rel="stylesheet" href="css/privet/main.css">
+    <link rel="stylesheet" href="css/privet/3d-text.css">
+    <link rel="stylesheet" href="css/privet/menu.css">
+    <link rel="stylesheet" href="css/privet/tarif.css">
+    <link rel="stylesheet" href="css/privet/quick-start.css">
+    <link rel="stylesheet" href="css/cookie-banner.css">
+    <link rel="stylesheet" href="css/privet/categories.css"> <!-- Изменено с courses.css на categories.css -->
+    <link rel="stylesheet" href="css/privet/roadmap.css">
+</head>
+<body>
+    <!-- Верхнее меню -->
+    <div class="top-menu" id="mainMenu">
+        <div class="menu-content" id="menuContent">
+            <a href="/oge">ОГЭ</a>
+            <a href="/ege">ЕГЭ</a>
+            <a href="/tasks">Задачи</a>
+            <a href="/generate">Генератор</a>
+            <div id="authButtons">
+                <!-- Будут заменены через JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="scene">
+        <!-- Левая часть с 3D текстом -->
+        <div class="left-content">
+            <div class="three-d-title" id="animatedText"></div>
+        </div>
+        
+        <!-- Правая часть - динамическая -->
+        <div class="right-content" id="dynamicContent">
+            <!-- Контент будет подставлен через JavaScript -->
+        </div>
+
+        <!-- Cookie Consent Banner -->
+        <div id="cookieConsentBanner" class="cookie-banner" style="display: none;">
+            <div class="cookie-content">
+                <div class="cookie-icon">🍪</div>
+                <div class="cookie-text">
+                    <h3>Мы используем куки</h3>
+                    <p>Это помогает нам работать — вы остаётесь в аккаунте, а ваши варианты не теряются.</p>
+                </div>
+                <div class="cookie-buttons">
+                    <button onclick="acceptCookies()" class="cookie-btn">Понятно</button>
+                    <button onclick="showCookieInfo()" class="cookie-link">Подробнее</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cookie Info Modal -->
+        <div id="cookieInfoModal" class="cookie-modal" style="display: none;">
+            <div class="cookie-modal-content">
+                <h2>🍪 О куки-файлах</h2>
+                <p>Мы используем только необходимые куки для:</p>
+                <ul>
+                    <li>✅ Входа в аккаунт</li>
+                    <li>✅ Сохранения сессии</li>
+                    <li>✅ Безопасности</li>
+                </ul>
+                <p>Мы НЕ используем куки для отслеживания или рекламы.</p>
+                <button onclick="closeCookieModal()" class="cookie-btn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Быстрый старт кнопка (для неавторизованных) -->
+    <button class="quick-start-btn hidden" id="quickStartBtn" onclick="location.href='/register'">БЫСТРЫЙ СТАРТ</button>
+
+    <div class="hint">⚡ Ты - лучший</div>
+
+    <!-- Подключаем JS файлы -->
+    <script src="js/privet/text-animation.js"></script>
+    <script src="js/privet/ui-controller.js"></script>
+    <script src="js/privet/sparkles.js"></script>
+    <script src="js/privet/quick-start.js"></script>
+    <script src="js/privet/main.js"></script>
+    <script src="js/cookie-banner.js"></script>
+    <script src="js/privet/auth-aware.js"></script>
+    <script src="js/privet/categories.js"></script> <!-- Добавлен JS для категорий -->
+    
+</body>
+</html>

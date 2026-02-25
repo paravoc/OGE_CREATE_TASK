@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пароль изменен</title>
+    <meta http-equiv="refresh" content="3;/login">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: auto;
+            height: auto;
+            min-height: 100vh;
+            background: #0f1219;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .macos-card {
+            background: rgba(30, 35, 45, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 50px rgba(255, 180, 70, 0.2);
+            animation: fadeInUp 0.8s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .macos-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            animation: gradientMove 3s linear infinite;
+        }
+
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .macos-dot.red { background: #ff5f56; }
+        .macos-dot.yellow { background: #ffbd2e; }
+        .macos-dot.green { background: #27c93f; }
+
+        .success-icon {
+            font-size: 5rem;
+            margin: 1rem 0 1.5rem;
+            animation: bounce 1s ease;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        p {
+            color: #aaa;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #ffb347;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="macos-card">
+        <div class="macos-dots">
+            <div class="macos-dot red" onclick="window.location.href='/'"></div>
+            <div class="macos-dot yellow" onclick="window.location.reload()"></div>
+            <div class="macos-dot green" onclick="window.history.back()"></div>
+        </div>
+        
+        <div class="success-icon">✅</div>
+        <h1>Пароль изменен!</h1>
+        <p>Теперь вы можете войти с новым паролем</p>
+        <div class="loader"></div>
+        <p>Перенаправление на страницу входа...</p>
+        <a href="/login" class="button">Войти сейчас</a>
+    </div>
+</body>
+</html>

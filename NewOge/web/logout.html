@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выход</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0b0c10;
+            font-family: 'Segoe UI', 'Arial Black', 'Impact', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .card {
+            background: rgba(20, 25, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 180, 70, 0.3);
+            border-radius: 40px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 50px rgba(255,180,70,0.3);
+            animation: fadeInUp 0.8s ease;
+        }
+        .card img {
+            max-width: 150px;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 30px #ffb347);
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #ffb347;
+        }
+        p {
+            color: #aaa;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .loader {
+            border: 5px solid rgba(255,255,255,0.1);
+            border-top: 5px solid #ffb347;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <script>
+        // Удаляем куку на клиенте
+        document.cookie = "session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    </script>
+    <meta http-equiv="refresh" content="2;url={{redirect}}">
+</head>
+<body>
+    <div class="card">
+        <img src="/images/sleep2.png" alt="Sleep">
+        <h1>👋 До свидания!</h1>
+        <p>Вы успешно вышли из системы</p>
+        <div class="loader"></div>
+    </div>
+</body>
+</html>

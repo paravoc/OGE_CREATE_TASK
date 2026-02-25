@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | Управление пользователями</title>
+    <style>
+        /* ============================================
+           MACOS СТИЛИ ДЛЯ АДМИН-ПАНЕЛИ
+           ============================================ */
+
+        /* --------------------------------------------
+           ОСНОВНЫЕ СТИЛИ (адаптировано из dashboard.css)
+           -------------------------------------------- */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: auto !important;
+            height: auto !important;
+            min-height: 100vh;
+            background: #0f1219;  /* тёмный фон как в dashboard */
+        }
+
+        /* macOS-подобный эффект размытия */
+        .macos-blur {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 7vh auto 2rem;
+            padding: 0 2rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --------------------------------------------
+           ШАПКА (MACOS СТИЛЬ)
+           -------------------------------------------- */
+
+        .macos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(30, 35, 45, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .macos-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+            margin-right: 1rem;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .macos-dot.red {
+            background: #ff5f56;
+            border: 1px solid #e0443e;
+        }
+        .macos-dot.yellow {
+            background: #ffbd2e;
+            border: 1px solid #df9f23;
+        }
+        .macos-dot.green {
+            background: #27c93f;
+            border: 1px solid #1aab2f;
+        }
+
+        .macos-dot:hover {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
+
+        .macos-header-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffb347, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .macos-header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .admin-badge {
+            background: rgba(255, 180, 70, 0.2);
+            border: 1px solid rgba(255, 180, 70, 0.5);
+            color: #ffb347;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 0 15px rgba(255, 180, 70, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.4rem 1.2rem 0.4rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffb347, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .user-name {
+            color: white;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            color: #ffb347;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+            box-shadow: 0 0 15px rgba(255, 180, 70, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* --------------------------------------------
+           СТАТИСТИКА (MACOS-КАРТОЧКИ)
+           -------------------------------------------- */
+
+        .stats-section {
+            margin: 2rem 0;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffb347, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            display: inline-block;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ffb347, #8b5cf6);
+            border-radius: 2px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 25px;
+            padding: 1.8rem 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffb347, #8b5cf6);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 180, 70, 0.5);
+            box-shadow: 0 20px 40px rgba(255, 180, 70, 0.2);
+        }
+
+        .stat-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 180, 70, 0.1);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
+            border-color: #ffb347;
+            box-shadow: 0 0 20px rgba(255, 180, 70, 0.5);
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --------------------------------------------
+           ПАНЕЛЬ УПРАВЛЕНИЯ (MACOS)
+           -------------------------------------------- */
+
+        .control-panel {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 30px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .panel-title-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 10px #ffb347);
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1rem 1.5rem 1rem 3rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #ffb347;
+            box-shadow: 0 0 20px rgba(255, 180, 70, 0.3);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn:hover {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            border: none;
+            color: #000;
+            font-weight: 700;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ff8c00, #ffb347);
+            box-shadow: 0 10px 25px rgba(255, 180, 70, 0.5);
+        }
+
+        .btn-danger {
+            background: rgba(255, 71, 87, 0.1);
+            border-color: rgba(255, 71, 87, 0.3);
+            color: #ff4757;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 71, 87, 0.2);
+            border-color: #ff4757;
+        }
+
+        /* --------------------------------------------
+           ТАБЛИЦА ПОЛЬЗОВАТЕЛЕЙ
+           -------------------------------------------- */
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        .users-table th {
+            background: rgba(255, 180, 70, 0.1);
+            color: #ffb347;
+            font-weight: 600;
+            padding: 1.2rem 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid rgba(255, 180, 70, 0.3);
+        }
+
+        .users-table td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+        }
+
+        .users-table tr {
+            transition: all 0.2s ease;
+        }
+
+        .users-table tr:hover {
+            background: rgba(255, 180, 70, 0.05);
+        }
+
+        .user-id {
+            font-family: monospace;
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 2px;
+        }
+
+        .status-premium {
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            color: #000;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .status-free {
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-admin {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8b5cf6;
+            border: 1px solid #8b5cf6;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+            transform: translateY(-2px);
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(255, 71, 87, 0.2);
+            border-color: #ff4757;
+        }
+
+        .action-btn.premium:hover {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+        }
+
+        /* --------------------------------------------
+           ПАГИНАЦИЯ
+           -------------------------------------------- */
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .pagination-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+            transform: translateY(-2px);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            color: white;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+        }
+
+        /* --------------------------------------------
+           МОДАЛЬНЫЕ ОКНА (MACOS СТИЛЬ)
+           -------------------------------------------- */
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            border-radius: 30px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 2001;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #ffb347;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffb347, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ffb347;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #ffb347;
+            box-shadow: 0 0 20px rgba(255, 180, 70, 0.3);
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #ffb347;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-buttons .btn-save {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+        }
+
+        .modal-buttons .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .modal-buttons .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.4);
+        }
+
+        .modal-buttons .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* --------------------------------------------
+           ТОСТ-УВЕДОМЛЕНИЯ
+           -------------------------------------------- */
+
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 3000;
+        }
+
+        .toast {
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 4px solid #ffb347;
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            margin-top: 0.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: toastSlideIn 0.3s ease;
+            max-width: 350px;
+        }
+
+        .toast.success {
+            border-left-color: #10b981;
+        }
+
+        .toast.error {
+            border-left-color: #ff4757;
+        }
+
+        .toast.warning {
+            border-left-color: #ffb347;
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+        }
+
+        .toast-message {
+            flex: 1;
+        }
+
+        .toast-close {
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .toast-close:hover {
+            color: white;
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* --------------------------------------------
+           АНИМАЦИИ
+           -------------------------------------------- */
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --------------------------------------------
+           АДАПТИВНОСТЬ
+           -------------------------------------------- */
+
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                margin-top: 5vh;
+                padding: 0 1rem 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .macos-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .macos-header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .panel-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .macos-header-left {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .action-buttons {
+                justify-content: center;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- macOS стильная шапка -->
+        <div class="macos-header">
+            <div class="macos-header-left">
+                <div class="macos-dots">
+                    <div class="macos-dot red" onclick="window.location.href='/dashboard'" title="На дашборд"></div>
+                    <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+                    <div class="macos-dot green" onclick="showAddUserModal()" title="Добавить пользователя"></div>
+                </div>
+                <div class="macos-header-title">👑 Админ-панель</div>
+            </div>
+            <div class="macos-header-right">
+                <div class="admin-badge">
+                    <span>🛡️</span>
+                    <span id="adminName">Администратор</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <span class="user-name" id="userName">Загрузка...</span>
+                </div>
+                <a href="/logout" class="logout-btn">Выйти</a>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats-section">
+            <h2 class="section-title">📊 Статистика системы</h2>
+            <div class="stats-grid" id="statsContainer">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalUsers">...</div>
+                        <div class="stat-label">Всего пользователей</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="premiumUsers">...</div>
+                        <div class="stat-label">Премиум</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👑</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="adminUsers">...</div>
+                        <div class="stat-label">Админы</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalCredits">...</div>
+                        <div class="stat-label">Всего кредитов</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Панель управления -->
+        <div class="control-panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    <span class="panel-title-icon">👥</span>
+                    Управление пользователями
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Поиск по email или имени...">
+                </div>
+                <button class="btn btn-primary" onclick="showAddUserModal()">
+                    <span>➕</span> Добавить пользователя
+                </button>
+            </div>
+
+            <!-- Таблица пользователей -->
+            <div class="table-container">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Имя</th>
+                            <th>Кредиты</th>
+                            <th>Статус</th>
+                            <th>Генераций</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 3rem;">
+                                <div style="color: #aaa;">Загрузка пользователей...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Пагинация -->
+            <div class="pagination">
+                <button class="pagination-btn" id="prevPage" onclick="changePage(-1)" disabled>←</button>
+                <span class="pagination-info" id="pageInfo">Страница 1</span>
+                <button class="pagination-btn" id="nextPage" onclick="changePage(1)" disabled>→</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления/редактирования пользователя -->
+    <div class="modal" id="userModal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal()">✕</div>
+            <h2 class="modal-title" id="modalTitle">➕ Добавить пользователя</h2>
+            <form id="userForm" onsubmit="saveUser(event)">
+                <input type="hidden" id="userId">
+                
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" required placeholder="user@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label>Имя пользователя</label>
+                    <input type="text" id="username" required placeholder="username">
+                </div>
+                
+                <div class="form-group">
+                    <label>Полное имя</label>
+                    <input type="text" id="fullName" placeholder="Иван Иванов">
+                </div>
+                
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="password" placeholder="••••••••">
+                </div>
+                
+                <div class="form-group">
+                    <label>Кредиты</label>
+                    <input type="number" id="credits" value="0" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="isPremium"> Премиум
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="isAdmin"> Администратор
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Отмена</button>
+                    <button type="submit" class="btn-save">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-overlay" onclick="closeDeleteModal()"></div>
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeDeleteModal()">✕</div>
+            <h2 class="modal-title">⚠️ Подтверждение</h2>
+            <p style="color: white; margin-bottom: 2rem; font-size: 1.1rem;">
+                Вы действительно хотите удалить пользователя <span id="deleteUserName">...</span>?
+            </p>
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Отмена</button>
+                <button type="button" class="btn-save" style="background: #ff4757;" onclick="confirmDelete()">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления кредитов -->
+    <div class="modal" id="creditsModal">
+        <div class="modal-overlay" onclick="closeCreditsModal()"></div>
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeCreditsModal()">✕</div>
+            <h2 class="modal-title">💰 Добавить кредиты</h2>
+            <input type="hidden" id="creditsUserId">
+            <div class="form-group">
+                <label>Пользователь: <span id="creditsUserName"></span></label>
+                <input type="number" id="creditsAmount" placeholder="Сумма кредитов" min="1" value="100">
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" onclick="closeCreditsModal()">Отмена</button>
+                <button type="button" class="btn-save" onclick="addCredits()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно выдачи премиума -->
+    <div class="modal" id="premiumModal">
+        <div class="modal-overlay" onclick="closePremiumModal()"></div>
+        <div class="modal-content">
+            <div class="modal-close" onclick="closePremiumModal()">✕</div>
+            <h2 class="modal-title">⭐ Выдать премиум</h2>
+            <input type="hidden" id="premiumUserId">
+            <div class="form-group">
+                <label>Пользователь: <span id="premiumUserName"></span></label>
+                <select id="premiumMonths">
+                    <option value="1">1 месяц</option>
+                    <option value="3">3 месяца</option>
+                    <option value="6">6 месяцев</option>
+                    <option value="12">12 месяцев</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn-cancel" onclick="closePremiumModal()">Отмена</button>
+                <button type="button" class="btn-save" onclick="givePremium()">Выдать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Контейнер для тост-уведомлений -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============================================
+        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+        // ============================================
+        let currentPage = 1;
+        let totalPages = 1;
+        let totalUsers = 0;
+        let currentUsers = [];
+        let deleteUserId = null;
+        let searchTimeout = null;
+
+        // ============================================
+        // ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ
+        // ============================================
+        async function loadUserData() {
+            try {
+                const response = await fetch('/api/user/me');
+                if (!response.ok) throw new Error('Не авторизован');
+                
+                const data = await response.json();
+                
+                document.getElementById('userName').textContent = data.username || data.email;
+                document.getElementById('adminName').textContent = data.username || 'Администратор';
+                
+                const avatar = document.getElementById('userAvatar');
+                avatar.textContent = (data.username || 'A')[0].toUpperCase();
+                
+                return data;
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                window.location.href = '/login';
+            }
+        }
+
+        // ============================================
+        // ЗАГРУЗКА ПОЛЬЗОВАТЕЛЕЙ
+        // ============================================
+        async function loadUsers(page = 1) {
+            const search = document.getElementById('searchInput').value;
+            const url = `/api/admin/users?page=${page}&limit=10&search=${encodeURIComponent(search)}`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        showToast('Доступ запрещен', 'error');
+                        setTimeout(() => window.location.href = '/dashboard', 2000);
+                    }
+                    throw new Error('Ошибка загрузки');
+                }
+                
+                const data = await response.json();
+                
+                currentPage = data.page || 1;
+                totalPages = data.totalPages || 1;
+                totalUsers = data.total || 0;
+                currentUsers = data.users || [];
+                
+                updatePagination();
+                renderUsersTable(currentUsers);
+                updateStats(currentUsers, totalUsers);
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showToast('Ошибка загрузки пользователей', 'error');
+            }
+        }
+
+        // ============================================
+        // ОТОБРАЖЕНИЕ ТАБЛИЦЫ ПОЛЬЗОВАТЕЛЕЙ
+        // ============================================
+function renderUsersTable(users) {
+    console.log("📊 Рендеринг таблицы, пользователей:", users.length);
+    
+    const tbody = document.getElementById('usersTableBody');
+    
+    if (!users || users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Нет пользователей</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = users.map(user => {
+        // Отладка каждого пользователя
+        console.log(`   Пользователь: ${user.username}, ID: ${user.id}`);
+        
+        const statuses = [];
+        if (user.is_premium) statuses.push('<span class="status-badge status-premium">⭐ PREMIUM</span>');
+        if (!user.is_premium) statuses.push('<span class="status-badge status-free">🆓 FREE</span>');
+        if (user.is_admin) statuses.push('<span class="status-badge status-admin">👑 ADMIN</span>');
+        
+        return `
+            <tr>
+                <td><span class="user-id">${user.id.substring(0, 8)}...</span></td>
+                <td>${escapeHtml(user.email)}</td>
+                <td>${escapeHtml(user.username)}</td>
+                <td style="font-weight: 700; color: #ffb347;">${user.credits}</td>
+                <td>${statuses.join(' ')}</td>
+                <td>${user.total_generations || 0}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick='editUser("${user.id}")' title="Редактировать">✏️</button>
+                        <button class="action-btn delete" onclick='openDeleteModal("${user.id}", "${escapeHtml(user.username)}")' title="Удалить">🗑️</button>
+                        <button class="action-btn premium" onclick='openPremiumModal("${user.id}", "${escapeHtml(user.username)}")' title="Выдать премиум">⭐</button>
+                        <button class="action-btn" onclick='openCreditsModal("${user.id}", "${escapeHtml(user.username)}")' title="Добавить кредиты">💰</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}     // ============================================
+        // ОБНОВЛЕНИЕ СТАТИСТИКИ
+        // ============================================
+        function updateStats(users, total) {
+            const premiumCount = users.filter(u => u.is_premium).length;
+            const adminCount = users.filter(u => u.is_admin).length;
+            const totalCredits = users.reduce((sum, u) => sum + (u.credits || 0), 0);
+            
+            document.getElementById('totalUsers').textContent = total;
+            document.getElementById('premiumUsers').textContent = premiumCount;
+            document.getElementById('adminUsers').textContent = adminCount;
+            document.getElementById('totalCredits').textContent = totalCredits;
+        }
+
+        // ============================================
+        // ПАГИНАЦИЯ
+        // ============================================
+        function updatePagination() {
+            document.getElementById('pageInfo').textContent = `Страница ${currentPage} из ${totalPages}`;
+            
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+        }
+
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= totalPages) {
+                loadUsers(newPage);
+            }
+        }
+
+        // ============================================
+        // ПОИСК
+        // ============================================
+        document.getElementById('searchInput').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 1;
+                loadUsers(1);
+            }, 500);
+        });
+
+        // ============================================
+        // МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ/РЕДАКТИРОВАНИЯ
+        // ============================================
+        function showAddUserModal() {
+            document.getElementById('modalTitle').textContent = '➕ Добавить пользователя';
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('password').required = true;
+            document.getElementById('userModal').classList.add('active');
+        }
+
+        async function editUser(userId) {
+    console.log("🔍 editUser вызван с userId:", userId);
+    console.log("   Тип userId:", typeof userId);
+    
+    if (!userId || userId === "undefined" || userId === "null") {
+        console.error("❌ Ошибка: неправильный ID пользователя");
+        showToast("Ошибка: ID пользователя не найден", "error");
+        return;
+    }
+    
+    try {
+        // Убедись, что URL правильный
+        const url = `/api/admin/users/${userId}`;
+        console.log("📤 Запрос к:", url);
+        
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const user = await response.json();
+        console.log("✅ Получены данные пользователя:", user);
+        
+        // Заполняем форму
+        document.getElementById('modalTitle').textContent = '✏️ Редактировать пользователя';
+        document.getElementById('userId').value = user.id;
+        document.getElementById('email').value = user.email || '';
+        document.getElementById('username').value = user.username || '';
+        document.getElementById('fullName').value = user.full_name || '';
+        document.getElementById('credits').value = user.credits || 0;
+        document.getElementById('isPremium').checked = user.is_premium || false;
+        document.getElementById('isAdmin').checked = user.is_admin || false;
+        
+        // Пароль не заполняем и делаем необязательным
+        document.getElementById('password').value = '';
+        document.getElementById('password').required = false;
+        
+        document.getElementById('userModal').classList.add('active');
+        
+    } catch (error) {
+        console.error('❌ Ошибка загрузки пользователя:', error);
+        showToast('Ошибка загрузки данных пользователя', 'error');
+    }
+}
+
+        async function saveUser(event) {
+    event.preventDefault();
+    
+    const userId = document.getElementById('userId').value;
+    const isNew = !userId;
+    
+    console.log("💾 saveUser:", isNew ? "новый пользователь" : "редактирование");
+    console.log("   userId:", userId);
+    
+    // Собираем данные для отправки
+    const userData = {
+        email: document.getElementById('email').value,
+        username: document.getElementById('username').value,
+        fullName: document.getElementById('fullName').value,
+        credits: parseInt(document.getElementById('credits').value) || 0,
+        isPremium: document.getElementById('isPremium').checked,
+        isAdmin: document.getElementById('isAdmin').checked
+    };
+    
+    // Добавляем пароль только если это новый пользователь или поле не пустое
+    const password = document.getElementById('password').value;
+    if (password) {
+        userData.password = password;
+    }
+    
+    console.log("📦 Отправляемые данные:", userData);
+    
+    try {
+        const url = isNew ? '/api/admin/users' : `/api/admin/users/${userId}`;
+        const method = isNew ? 'POST' : 'PUT';
+        
+        console.log("📤 Запрос:", method, url);
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userData)
+        });
+        
+        const responseData = await response.json();
+        console.log("📥 Ответ:", response.status, responseData);
+        
+        if (!response.ok) {
+            throw new Error(responseData.error || 'Ошибка сохранения');
+        }
+        
+        showToast(isNew ? '✅ Пользователь создан' : '✅ Пользователь обновлен', 'success');
+        closeModal();
+        loadUsers(currentPage);
+        
+    } catch (error) {
+        console.error('❌ Ошибка:', error);
+        showToast(error.message, 'error');
+    }
+}
+
+        function closeModal() {
+            document.getElementById('userModal').classList.remove('active');
+        }
+
+        // ============================================
+        // УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ
+        // ============================================
+        function openDeleteModal(userId, username) {
+            deleteUserId = userId;
+            document.getElementById('deleteUserName').textContent = username;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        async function confirmDelete() {
+            if (!deleteUserId) return;
+            
+            try {
+                const response = await fetch(`/api/admin/users/${deleteUserId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) throw new Error('Ошибка удаления');
+                
+                showToast('Пользователь удален', 'success');
+                closeDeleteModal();
+                loadUsers(currentPage);
+                
+            } catch (error) {
+                showToast('Ошибка при удалении', 'error');
+            }
+        }
+
+        function closeDeleteModal() {
+            deleteUserId = null;
+            document.getElementById('deleteModal').classList.remove('active');
+        }
+
+        // ============================================
+        // ДОБАВЛЕНИЕ КРЕДИТОВ
+        // ============================================
+        function openCreditsModal(userId, username) {
+            document.getElementById('creditsUserId').value = userId;
+            document.getElementById('creditsUserName').textContent = username;
+            document.getElementById('creditsAmount').value = 100;
+            document.getElementById('creditsModal').classList.add('active');
+        }
+
+        async function addCredits() {
+            const userId = document.getElementById('creditsUserId').value;
+            const amount = parseInt(document.getElementById('creditsAmount').value);
+            
+            if (!amount || amount <= 0) {
+                showToast('Введите корректную сумму', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/credits`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount })
+                });
+                
+                if (!response.ok) throw new Error('Ошибка');
+                
+                showToast(`Добавлено ${amount} кредитов`, 'success');
+                closeCreditsModal();
+                loadUsers(currentPage);
+                
+            } catch (error) {
+                showToast('Ошибка при добавлении кредитов', 'error');
+            }
+        }
+
+        function closeCreditsModal() {
+            document.getElementById('creditsModal').classList.remove('active');
+        }
+
+        // ============================================
+        // ВЫДАЧА ПРЕМИУМА
+        // ============================================
+       function openPremiumModal(userId, username) {
+    console.log("🔍 openPremiumModal вызван с userId:", userId);
+    console.log("   username:", username);
+    console.log("   Тип userId:", typeof userId);
+    
+    // Проверяем, что userId не пустой и не строка "premium"
+    if (!userId || userId === "premium" || userId === "undefined") {
+        console.error("❌ Ошибка: неправильный ID пользователя:", userId);
+        showToast("Ошибка: ID пользователя не найден", "error");
+        return;
+    }
+    
+    document.getElementById('premiumUserId').value = userId;
+    document.getElementById('premiumUserName').textContent = username;
+    document.getElementById('premiumMonths').value = '1';
+    document.getElementById('premiumModal').classList.add('active');
+}
+
+        async function givePremium() {
+            const userId = document.getElementById('premiumUserId').value;  // ← это должно быть ID
+            const months = parseInt(document.getElementById('premiumMonths').value);
+            
+            console.log("🔍 Выдача премиума пользователю с ID:", userId);  // отладка
+            
+            if (!userId) {
+                showToast('Ошибка: ID пользователя не найден', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/premium`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ months })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Ошибка при выдаче премиума');
+                }
+                
+                showToast(`Премиум выдан на ${months} мес.`, 'success');
+                closePremiumModal();
+                loadUsers(currentPage);
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showToast(error.message, 'error');
+            }
+}
+
+        function closePremiumModal() {
+            document.getElementById('premiumModal').classList.remove('active');
+        }
+
+        // ============================================
+        // ТОСТ-УВЕДОМЛЕНИЯ
+        // ============================================
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+                <span class="toast-message">${message}</span>
+                <span class="toast-close" onclick="this.parentElement.remove()">✕</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'toastSlideIn 0.3s reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        // ============================================
+        // ЭСКЕЙПИНГ HTML
+        // ============================================
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // ============================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadUserData();
+            await loadUsers(1);
+        });
+
+        // ============================================
+        // ЗАЩИТА ОТ СЛУЧАЙНОГО ЗАКРЫТИЯ
+        // ============================================
+        window.addEventListener('beforeunload', (e) => {
+            // Можно добавить предупреждение, если есть несохраненные изменения
+        });
+
+        // ============================================
+        // ПЕРИОДИЧЕСКАЯ ПРОВЕРКА СЕССИИ
+        // ============================================
+        setInterval(async () => {
+            try {
+                const response = await fetch('/api/user/me');
+                if (!response.ok) {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Ошибка проверки сессии');
+            }
+        }, 300000); // 5 минут
+    </script>
+</body>
+</html>

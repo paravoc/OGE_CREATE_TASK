@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет — Подготовка к экзаменам</title>
+    
+    <!-- Подключаем CSS файлы -->
+    <link rel="stylesheet" href="css/privet/main.css">
+    <link rel="stylesheet" href="css/privet/menu.css">
+    <link rel="stylesheet" href="css/dashboard/dashboard.css">
+    <link rel="stylesheet" href="css/cookie-banner.css">
+    
+    <style>
+        .top-menu {
+            height: 10vh !important;
+        }
+        
+        .dashboard-container {
+            margin-top: 12vh !important;
+        }
+        
+        .hint {
+            display: none;
+        }
+        
+        /* Дополнительные стили для прогресса */
+        .lessons-completed {
+            font-size: 0.9rem;
+            color: #48bb78;
+            margin-top: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхнее меню -->
+    <div class="top-menu active" id="mainMenu">
+        <div class="menu-content">
+            <a href="/">🏠 Главная</a>
+            <a href="/oge">📚 ОГЭ</a>
+            <a href="/ege">📖 ЕГЭ</a>
+            <a href="/tasks">📋 Задачи</a>
+            <a href="/generate">⚡ Генератор</a>
+            
+            <!-- Премиум индикатор -->
+            <div class="premium-indicator" id="premiumIndicator" style="display: none;">
+                <span class="premium-star">⭐</span>
+                <span class="premium-text">PREMIUM</span>
+            </div>
+            
+            <!-- Кнопка выхода -->
+            <a href="#" class="logout-btn" id="logoutBtn">🚪 Выйти</a>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="dashboard-container">
+        <!-- Верхний ряд: карточка пользователя + статистика -->
+        <div class="dashboard-top-row">
+            <!-- Карточка пользователя -->
+            <div class="user-card">
+                <div class="user-avatar">
+                    <img src="images/аватар.png" alt="Аватар" id="userAvatar" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'50\' fill=\'%236d28d9\'/%3E%3Ctext x=\'50\' y=\'70\' font-size=\'40\' text-anchor=\'middle\' fill=\'%23ffffff\' font-family=\'Arial\'%3EA%3C/text%3E%3C/svg%3E'">
+                </div>
+                <div class="user-info">
+                    <h3 class="user-name" id="userFullName">Загрузка...</h3>
+                    <div class="user-nickname" id="userNickname">@загрузка</div>
+                    <div class="user-meta">
+                        <span class="user-date" id="userRegisteredDate">📅 С нами с ...</span>
+                        <span class="user-status" id="userStatus">⭐ FREE</span>
+                    </div>
+                </div>
+                
+                <!-- Кнопка смены пароля в карточке -->
+                <button class="quick-action-btn" onclick="location.href='/change-password'">
+                    <span class="quick-action-icon">🔐</span>
+                    <span class="quick-action-text">Сменить пароль</span>
+                </button>
+            </div>
+
+            <!-- Мини-статистика справа -->
+            <div class="stats-mini">
+                <div class="stat-mini-item">
+                    <div class="stat-mini-value" id="generationsLeft">1/3</div>
+                    <div class="stat-mini-label">сегодня</div>
+                </div>
+                <div class="stat-mini-divider"></div>
+                <div class="stat-mini-item">
+                    <div class="stat-mini-value" id="totalGenerations">1</div>
+                    <div class="stat-mini-label">всего</div>
+                </div>
+                <div class="stat-mini-divider"></div>
+                <div class="stat-mini-item">
+                    <div class="stat-mini-value" id="userCredits">0</div>
+                    <div class="stat-mini-label">кредитов</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Приветствие + Быстрые действия в одной строке -->
+        <div class="welcome-section">
+            <div class="welcome-message">
+                <h1 class="welcome-title">С возвращением, <span class="username" id="userFirstName">...</span>! 👋</h1>
+                <p class="welcome-subtitle" id="welcomeSubtitle">Продолжим подготовку? У вас 3 попытки генерации на сегодня</p>
+            </div>
+        </div>
+
+        <!-- Статистика активности с кнопками -->
+        <div class="stats-section">
+            <h2 class="section-title">Ваша статистика</h2>
+            
+            <div class="stats-grid">
+                <!-- Карточка: Всего генераций -->
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-details">
+                        <span class="stat-value" id="statTotalGenerations">0</span>
+                        <span class="stat-label">Всего генераций</span>
+                    </div>
+                    <button class="stat-card-btn" onclick="location.href='/generate'">
+                        <span>Генерировать</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+                
+                <!-- Карточка: Пройдено уроков -->
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-details">
+                        <span class="stat-value" id="statCompletedLessons">0</span>
+                        <span class="stat-label">Пройдено уроков</span>
+                    </div>
+                    <button class="stat-card-btn" onclick="location.href='/informatics'">
+                        <span>Все уроки</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+                
+                <!-- Карточка: Точность -->
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-details">
+                        <span class="stat-value" id="statAccuracy">0%</span>
+                        <span class="stat-label">Точность</span>
+                    </div>
+                    <button class="stat-card-btn" onclick="location.href='/statistics'">
+                        <span>Статистика</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+                
+                <!-- Карточка: Кредиты -->
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-details">
+                        <span class="stat-value" id="statCredits">0</span>
+                        <span class="stat-label">Кредитов</span>
+                    </div>
+                    <button class="stat-card-btn" onclick="location.href='/buy_credits'">
+                        <span>Купить</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Категории обучения -->
+        <div class="categories-section">
+            <h2 class="section-title">Категории обучения</h2>
+            
+            <div class="categories-grid">
+                <!-- Карточка категории (активная) -->
+                <div class="category-card" data-category="oge-informatika">
+                    <div class="category-icon">💻</div>
+                    <h3 class="category-title">ОГЭ Информатика</h3>
+                    <div class="category-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="informaticsProgressFill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text" id="informaticsProgress">0/18 уроков</span>
+                        <div class="lessons-completed" id="informaticsCompleted"></div>
+                    </div>
+                    <p class="category-description">Подготовка к ОГЭ по информатике</p>
+                    <div class="category-footer">
+                        <span class="category-lessons" id="informaticsTotal">18 уроков</span>
+                        <button class="category-btn" onclick="location.href='/informatics'">Перейти →</button>
+                    </div>
+                </div>
+                
+                <!-- Карточка категории (скоро) -->
+                <div class="category-card coming-soon">
+                    <div class="category-icon">📐</div>
+                    <h3 class="category-title">ОГЭ Математика</h3>
+                    <div class="coming-soon-badge">Скоро</div>
+                    <p class="category-description">Готовим для вас материалы по математике</p>
+                    <div class="category-footer">
+                        <span class="category-lessons">0 уроков</span>
+                        <button class="category-btn disabled" disabled>Скоро →</button>
+                    </div>
+                </div>
+                
+                <!-- Карточка категории (скоро) -->
+                <div class="category-card coming-soon">
+                    <div class="category-icon">🔬</div>
+                    <h3 class="category-title">ЕГЭ Физика</h3>
+                    <div class="coming-soon-badge">Скоро</div>
+                    <p class="category-description">Скоро появится...</p>
+                    <div class="category-footer">
+                        <span class="category-lessons">0 уроков</span>
+                        <button class="category-btn disabled" disabled>Скоро →</button>
+                    </div>
+                </div>
+                
+                <!-- Карточка категории (скоро) -->
+                <div class="category-card coming-soon">
+                    <div class="category-icon">🧪</div>
+                    <h3 class="category-title">ЕГЭ Химия</h3>
+                    <div class="coming-soon-badge">Скоро</div>
+                    <p class="category-description">Скоро появится...</p>
+                    <div class="category-footer">
+                        <span class="category-lessons">0 уроков</span>
+                        <button class="category-btn disabled" disabled>Скоро →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Обучающие материалы -->
+        <div class="materials-section">
+            <h2 class="section-title">Обучающие материалы</h2>
+            
+            <div class="materials-grid">
+                <!-- Премиум материалы -->
+                <div class="material-card premium-locked" id="premiumVideo">
+                    <div class="material-lock-overlay">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-text">PREMIUM</span>
+                    </div>
+                    <div class="material-content blurred">
+                        <div class="material-icon">📹</div>
+                        <h4>Видео-уроки</h4>
+                        <p>Подробные разборы заданий</p>
+                    </div>
+                </div>
+                
+                <div class="material-card premium-locked" id="premiumSolutions">
+                    <div class="material-lock-overlay">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-text">PREMIUM</span>
+                    </div>
+                    <div class="material-content blurred">
+                        <div class="material-icon">📝</div>
+                        <h4>Решения задач</h4>
+                        <p>Пошаговые объяснения</p>
+                    </div>
+                </div>
+                
+                <!-- Бесплатные материалы -->
+                <div class="material-card">
+                    <div class="material-content">
+                        <div class="material-icon">📚</div>
+                        <h4>Теория</h4>
+                        <p>Основы программирования</p>
+                        <button class="material-btn" onclick="alert('Открытие теории...')">Читать →</button>
+                    </div>
+                </div>
+                
+                <div class="material-card">
+                    <div class="material-content">
+                        <div class="material-icon">📊</div>
+                        <h4>Шпаргалки</h4>
+                        <p>Краткие конспекты</p>
+                        <button class="material-btn" onclick="alert('Скачивание шпаргалок...')">Скачать →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно выхода -->
+    <div class="logout-modal" id="logoutModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-image">
+                <img src="images/angry2.png" alt="Злой маскот" class="angry-mascot" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\' viewBox=\'0 0 150 150\'%3E%3Ccircle cx=\'75\' cy=\'75\' r=\'70\' fill=\'%23ff4757\'/%3E%3Ccircle cx=\'55\' cy=\'60\' r=\'10\' fill=\'%23ffffff\'/%3E%3Ccircle cx=\'95\' cy=\'60\' r=\'10\' fill=\'%23ffffff\'/%3E%3Ccircle cx=\'55\' cy=\'60\' r=\'5\' fill=\'%23000000\'/%3E%3Ccircle cx=\'95\' cy=\'60\' r=\'5\' fill=\'%23000000\'/%3E%3Cpath d=\'M50 100 Q75 120 100 100\' stroke=\'%23ffffff\' stroke-width=\'8\' fill=\'none\'/%3E%3C/svg%3E'">
+            </div>
+            <h3 class="modal-title">Точно хотите выйти?</h3>
+            <p class="modal-text">Не забудьте сохранить свои результаты!</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" id="cancelLogout">Остаться</button>
+                <button class="modal-btn confirm" id="confirmLogout">Выйти</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ВЕСЬ JavaScript ЗДЕСЬ (стили не тронуты) -->
+    <script>
+        // Флаг для предотвращения множественных загрузок
+        let isLoading = false;
+        let userData = null;
+        let userProgress = null;
+
+        // Элементы для заполнения данными
+        const elements = {
+            userFullName: document.getElementById('userFullName'),
+            userNickname: document.getElementById('userNickname'),
+            userRegisteredDate: document.getElementById('userRegisteredDate'),
+            userStatus: document.getElementById('userStatus'),
+            premiumIndicator: document.getElementById('premiumIndicator'),
+            userFirstName: document.getElementById('userFirstName'),
+            welcomeSubtitle: document.getElementById('welcomeSubtitle'),
+            generationsLeft: document.getElementById('generationsLeft'),
+            totalGenerations: document.getElementById('totalGenerations'),
+            userCredits: document.getElementById('userCredits'),
+            statTotalGenerations: document.getElementById('statTotalGenerations'),
+            statCompletedLessons: document.getElementById('statCompletedLessons'),
+            statAccuracy: document.getElementById('statAccuracy'),
+            statCredits: document.getElementById('statCredits'),
+            informaticsProgressFill: document.getElementById('informaticsProgressFill'),
+            informaticsProgress: document.getElementById('informaticsProgress'),
+            informaticsCompleted: document.getElementById('informaticsCompleted'),
+            userAvatar: document.getElementById('userAvatar'),
+            completedLessons: document.getElementById('completedLessons')
+        };
+
+        // Загрузка данных при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📊 Dashboard загружен, загружаем данные...');
+            loadDashboardData();
+            
+            // Обработчик кнопки выхода
+            document.getElementById('logoutBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('logoutModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            document.getElementById('cancelLogout').addEventListener('click', () => {
+                document.getElementById('logoutModal').classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            document.getElementById('confirmLogout').addEventListener('click', async () => {
+                const btn = document.getElementById('confirmLogout');
+                btn.textContent = '⏳ Выход...';
+                btn.style.pointerEvents = 'none';
+                
+                try {
+                    await fetch('/logout');
+                    window.location.href = '/login';
+                } catch (error) {
+                    console.error('Ошибка при выходе:', error);
+                    window.location.href = '/login';
+                }
+            });
+
+            // Закрытие по клику на фон
+            document.querySelector('.modal-overlay').addEventListener('click', () => {
+                document.getElementById('logoutModal').classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            // Премиум индикатор
+            setupPremiumIndicator();
+        });
+
+        // Загрузка данных для дашборда
+        async function loadDashboardData() {
+            if (isLoading) {
+                console.log('Загрузка уже выполняется...');
+                return;
+            }
+            
+            isLoading = true;
+            console.log('📥 Загрузка данных для дашборда...');
+            
+            try {
+                // Загружаем данные пользователя
+                const userResponse = await fetch('/api/user/me');
+                
+                if (!userResponse.ok) {
+                    console.log('Не авторизован, редирект на /login');
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                userData = await userResponse.json();
+                console.log('✅ Данные пользователя загружены:', userData);
+                
+                // Загружаем прогресс
+                try {
+                    const progressResponse = await fetch('/api/user/progress');
+                    if (progressResponse.ok) {
+                        userProgress = await progressResponse.json();
+                        console.log('✅ Прогресс загружен');
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Не удалось загрузить прогресс:', e);
+                }
+                
+                // Обновляем весь UI
+                updateDashboardUI();
+                
+            } catch (error) {
+                console.error('❌ Ошибка загрузки данных:', error);
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        // Обновление интерфейса
+        function updateDashboardUI() {
+            if (!userData) return;
+            
+            console.log('🔄 Обновление интерфейса...');
+            
+            // ===== 1. ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ =====
+            const fullName = userData.full_name || userData.username;
+            if (elements.userFullName) elements.userFullName.textContent = fullName;
+            if (elements.userNickname) elements.userNickname.textContent = '@' + userData.username;
+            
+            // Дата регистрации
+            if (elements.userRegisteredDate && userData.registered_at) {
+                const date = new Date(userData.registered_at * 1000);
+                elements.userRegisteredDate.textContent = `📅 С нами с ${date.toLocaleDateString('ru-RU')}`;
+            }
+            
+            // Имя для приветствия
+            if (elements.userFirstName) {
+                const firstName = (userData.full_name || userData.username).split(' ')[0];
+                elements.userFirstName.textContent = firstName;
+            }
+            
+            // Аватар
+            if (elements.userAvatar && userData.username) {
+                elements.userAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.username)}&background=ffb347&color=000&size=100`;
+            }
+            
+            // ===== 2. PREMIUM СТАТУС =====
+            if (userData.is_premium) {
+                if (elements.userStatus) {
+                    elements.userStatus.innerHTML = '⭐ PREMIUM';
+                    elements.userStatus.style.color = '#ffb347';
+                }
+                if (elements.premiumIndicator) {
+                    elements.premiumIndicator.style.display = 'flex';
+                }
+            } else {
+                if (elements.userStatus) {
+                    elements.userStatus.innerHTML = '⭐ FREE';
+                    elements.userStatus.style.color = '#aaa';
+                }
+                if (elements.premiumIndicator) {
+                    elements.premiumIndicator.style.display = 'none';
+                }
+            }
+            
+            // ===== 3. КРЕДИТЫ =====
+            const credits = userData.credits || 0;
+            if (elements.userCredits) elements.userCredits.textContent = credits;
+            if (elements.statCredits) elements.statCredits.textContent = credits;
+            
+            // ===== 4. ГЕНЕРАЦИИ =====
+            const generationsToday = userData.generations_today || 0;
+            const totalGenerations = userData.total_generations || 0;
+            const dailyLimit = userData.is_premium ? 1000 : 3;
+            const remaining = dailyLimit - generationsToday;
+            
+            if (elements.generationsLeft) {
+                elements.generationsLeft.textContent = `${generationsToday}/${dailyLimit}`;
+            }
+            if (elements.totalGenerations) {
+                elements.totalGenerations.textContent = totalGenerations;
+            }
+            if (elements.statTotalGenerations) {
+                elements.statTotalGenerations.textContent = totalGenerations;
+            }
+            
+            // Подпись приветствия
+            if (elements.welcomeSubtitle) {
+                elements.welcomeSubtitle.textContent = 
+                    `Продолжим подготовку? У вас ${remaining} ${getGenerationWord(remaining)} на сегодня`;
+            }
+            
+            // ===== 5. ПРОЙДЕННЫЕ УРОКИ =====
+            // Считаем пройденные уроки из прогресса
+            let completedLessons = 0;
+            let informaticsCompleted = 0;
+            let informaticsTotal = 0;
+            
+            if (userProgress && userProgress.subjects) {
+                // Считаем по всем предметам
+                for (const subject in userProgress.subjects) {
+                    if (userProgress.subjects[subject].completed_lessons) {
+                        completedLessons += userProgress.subjects[subject].completed_lessons;
+                    }
+                    // Для информатики отдельно
+                    if (subject === 'informatics') {
+                        informaticsCompleted = userProgress.subjects[subject].completed_lessons || 0;
+                        informaticsTotal = userProgress.subjects[subject].total_lessons || 18;
+                    }
+                }
+            }
+            
+            if (elements.completedLessons) {
+                elements.completedLessons.textContent = completedLessons;
+            }
+            
+            if (elements.statCompletedLessons) {
+                elements.statCompletedLessons.textContent = completedLessons;
+            }
+            
+            // ===== 6. ПРОГРЕСС ПО ИНФОРМАТИКЕ =====
+            if (userProgress && userProgress.subjects && userProgress.subjects.informatics) {
+                const informatics = userProgress.subjects.informatics;
+                informaticsCompleted = informatics.completed_lessons || 0;
+                informaticsTotal = informatics.total_lessons || 18;
+                const percent = informaticsTotal > 0 ? Math.round((informaticsCompleted / informaticsTotal) * 100) : 0;
+                
+                if (elements.informaticsProgressFill) {
+                    elements.informaticsProgressFill.style.width = percent + '%';
+                }
+                if (elements.informaticsProgress) {
+                    elements.informaticsProgress.textContent = `${informaticsCompleted}/${informaticsTotal} уроков`;
+                }
+                if (elements.informaticsCompleted) {
+                    elements.informaticsCompleted.textContent = `✅ Пройдено: ${informaticsCompleted}`;
+                }
+            }
+            
+            // ===== 7. ТОЧНОСТЬ (из UserData) =====
+            const accuracy = userData.accuracy || 0;
+            if (elements.statAccuracy) elements.statAccuracy.textContent = accuracy + '%';
+            
+            console.log('✅ Интерфейс обновлен');
+        }
+
+        // Склонение слова "генерация"
+        function getGenerationWord(count) {
+            if (count % 10 === 1 && count % 100 !== 11) return 'генерация';
+            if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) return 'генерации';
+            return 'генераций';
+        }
+
+        // Настройка премиум индикатора
+        function setupPremiumIndicator() {
+            const premiumIndicator = document.getElementById('premiumIndicator');
+            if (!premiumIndicator) return;
+            
+            premiumIndicator.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (userData && userData.is_premium) {
+                    showPremiumInfo();
+                } else {
+                    window.location.href = '/upgrade';
+                }
+            });
+        }
+
+        // Показать информацию о премиум
+        function showPremiumInfo() {
+            const premiumModal = document.createElement('div');
+            premiumModal.className = 'logout-modal active';
+            premiumModal.innerHTML = `
+                <div class="modal-overlay"></div>
+                <div class="modal-content">
+                    <div class="modal-image">
+                        <img src="images/деньги1.png" alt="Премиум" class="angry-mascot">
+                    </div>
+                    <h3 class="modal-title" style="color: #ffd700;">✨ PREMIUM АКТИВЕН</h3>
+                    <p class="modal-text">У вас есть доступ ко всем материалам!</p>
+                    <div class="modal-buttons">
+                        <button class="modal-btn confirm" id="closePremiumModal">Отлично!</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(premiumModal);
+            document.body.style.overflow = 'hidden';
+            
+            document.getElementById('closePremiumModal').addEventListener('click', () => {
+                premiumModal.remove();
+                document.body.style.overflow = '';
+            });
+            
+            premiumModal.querySelector('.modal-overlay').addEventListener('click', () => {
+                premiumModal.remove();
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Клик по заблокированным материалам
+        document.querySelectorAll('.premium-locked').forEach(card => {
+            card.addEventListener('click', function() {
+                if (userData && userData.is_premium) {
+                    alert('✨ У вас уже есть премиум! Наслаждайтесь материалами.');
+                } else {
+                    window.location.href = '/upgrade';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

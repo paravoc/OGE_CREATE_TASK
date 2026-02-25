@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Страница не найдена</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #0f1219;  /* твой темный фон */
+            position: relative;
+        }
+
+        /* macOS-подобный эффект размытия */
+        .macos-blur {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* macOS стильная карточка */
+        .error-card {
+            background: rgba(30, 35, 45, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 180, 70, 0.3);
+            border-radius: 40px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 50px rgba(255, 180, 70, 0.2);
+            animation: fadeInUp 0.8s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .error-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffb347, #8b5cf6, #ec4899);
+            animation: gradientMove 3s linear infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* macOS точки */
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .macos-dot.red {
+            background: #ff5f56;
+            border: 1px solid #e0443e;
+        }
+        .macos-dot.yellow {
+            background: #ffbd2e;
+            border: 1px solid #df9f23;
+        }
+        .macos-dot.green {
+            background: #27c93f;
+            border: 1px solid #1aab2f;
+        }
+
+        .macos-dot:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        /* Контент */
+        .error-content {
+            margin-top: 2rem;
+        }
+
+        /* Картинка */
+        .error-image-container {
+            margin: 2rem auto;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: rgba(255, 180, 70, 0.1);
+            border: 3px solid rgba(255, 180, 70, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            animation: glowPulse 3s ease-in-out infinite;
+            box-shadow: 0 0 50px rgba(255, 180, 70, 0.3);
+        }
+
+        .error-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .error-image:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        @keyframes glowPulse {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(255, 180, 70, 0.3);
+                border-color: rgba(255, 180, 70, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 60px rgba(255, 180, 70, 0.6);
+                border-color: #ffb347;
+            }
+        }
+
+        /* Текст */
+        .error-title {
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffb347, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(255, 180, 70, 0.5));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
+            }
+        }
+
+        .error-subtitle {
+            font-size: 1.5rem;
+            color: #aaa;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .error-message {
+            color: #888;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Кнопки */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 180, 70, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 180, 70, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 180, 70, 0.1);
+            border-color: #ffb347;
+            transform: translateY(-3px);
+        }
+
+        /* Статус код */
+        .status-code {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 2rem;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+        }
+
+        /* Анимации */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .error-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .error-title {
+                font-size: 3.5rem;
+            }
+
+            .error-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .error-image-container {
+                width: 180px;
+                height: 180px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .error-title {
+                font-size: 2.5rem;
+            }
+
+            .error-image-container {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-card">
+            <!-- macOS точки -->
+            <div class="macos-dots">
+                <div class="macos-dot red" onclick="window.location.href='/'" title="На главную"></div>
+                <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+                <div class="macos-dot green" onclick="window.history.back()" title="Назад"></div>
+            </div>
+
+            <div class="error-content">
+                <!-- Картинка danobius404.png -->
+                <div class="error-image-container">
+                    <img src="/images/d404.png" alt="404 - Страница не найдена" class="error-image" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'font-size: 80px;\'>😢</div>'">
+                </div>
+
+                <!-- Текст ошибки -->
+                <h1 class="error-title">404</h1>
+                <h2 class="error-subtitle">Страница не найдена</h2>
+                
+                <p class="error-message">
+                    Кажется, Дашенька заблудилась в цифровом пространстве...<br>
+                    Страница, которую ты ищешь, не существует или была перемещена.
+                </p>
+
+                <!-- Кнопки -->
+                <div class="button-group">
+                    <a href="/" class="btn btn-primary">
+                        <span>🏠</span>
+                        На главную
+                    </a>
+                    <a href="javascript:history.back()" class="btn btn-secondary">
+                        <span>←</span>
+                        Вернуться назад
+                    </a>
+                </div>
+
+                <!-- Статус код для гиков -->
+                <div class="status-code">
+                    <span>HTTP 404 | Not Found</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Добавляем немного магии при наведении
+        document.querySelector('.error-image-container').addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const deltaX = (x - centerX) / 20;
+            const deltaY = (y - centerY) / 20;
+            
+            this.querySelector('.error-image').style.transform = 
+                `scale(1.1) rotate(${deltaX}deg) translate(${deltaX}px, ${deltaY}px)`;
+        });
+
+        document.querySelector('.error-image-container').addEventListener('mouseleave', function() {
+            this.querySelector('.error-image').style.transform = 'scale(1) rotate(0deg) translate(0, 0)';
+        });
+
+        // Логируем 404 ошибку (можно отправить на сервер)
+        console.log('404 Error:', window.location.pathname);
+        
+        // Опционально: отправить информацию об ошибке на сервер
+        if (navigator.sendBeacon) {
+            navigator.sendBeacon('/api/log-404', JSON.stringify({
+                url: window.location.pathname,
+                referrer: document.referrer,
+                timestamp: Date.now()
+            }));
+        }
+    </script>
+</body>
+</html>

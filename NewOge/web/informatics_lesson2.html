@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 2: Системы счисления — от пальцев до процессора</title>
+    <style>
+        /* ========== СТИЛИ ПОЛНОСТЬЮ ИЗ ПЕРВОГО УРОКА (СОХРАНЕНЫ) ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #0f1219;
+            color: white;
+        }
+
+        .top-menu {
+            background: rgba(30, 35, 45, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 180, 70, 0.2);
+            padding: 0.8rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .macos-dot.red {
+            background: #ff5f56;
+            border: 1px solid #e0443e;
+        }
+        .macos-dot.yellow {
+            background: #ffbd2e;
+            border: 1px solid #df9f23;
+        }
+        .macos-dot.green {
+            background: #27c93f;
+            border: 1px solid #1aab2f;
+        }
+
+        .macos-dot:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        .menu-content {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .menu-content a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .menu-content a:hover {
+            color: #ffb347;
+        }
+
+        .menu-content a.active {
+            color: #ffb347;
+        }
+
+        .menu-content a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffb347, #ff8c00);
+            border-radius: 2px;
+        }
+
+        .menu-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 180, 70, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .user-name {
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .main-container {
+            margin-top: 64px;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .main-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 180, 70, 0.3);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb:hover {
+            background: #ffb347;
+        }
+
+        .lesson-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(30, 35, 45, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 0.8rem 1.5rem;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            color: #fff;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover:not(.disabled) {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .lesson-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #aaa;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .progress-dot.active {
+            background: #ffb347;
+            box-shadow: 0 0 10px #ffb347;
+        }
+
+        .progress-dot.completed {
+            background: #48bb78;
+        }
+
+        .lesson-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ffb347, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .lesson-header p {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        .theory-card {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+        }
+
+        .theory-card:hover {
+            border-color: rgba(255, 180, 70, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 180, 70, 0.1);
+        }
+
+        .theory-card h2 {
+            color: #ffb347;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .theory-card h3 {
+            color: #8b5cf6;
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .theory-card p {
+            color: #ccc;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .theory-card ul, .theory-card ol {
+            color: #ccc;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        .theory-card li {
+            margin: 0.5rem 0;
+        }
+
+        .theory-card code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            color: #ffb347;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 1rem;
+        }
+
+        .theory-card pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 20px;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            margin: 1rem 0;
+        }
+
+        .theory-card pre code {
+            background: none;
+            padding: 0;
+            color: #8b5cf6;
+        }
+
+        .theory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .theory-table th {
+            background: rgba(255, 180, 70, 0.2);
+            color: #ffb347;
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .theory-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ccc;
+        }
+
+        .theory-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .theory-table tr:hover td {
+            background: rgba(255, 180, 70, 0.05);
+        }
+
+        .example-box {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid #8b5cf6;
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .example-box h4 {
+            color: #8b5cf6;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tasks-section {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tasks-section h2 {
+            color: #ffb347;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .task-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 180, 70, 0.15);
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .task-card:hover {
+            border-color: rgba(255, 180, 70, 0.4);
+            box-shadow: 0 5px 20px rgba(255, 180, 70, 0.1);
+        }
+
+        .task-question {
+            color: white;
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .task-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .task-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #aaa;
+            cursor: pointer;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .task-option:hover {
+            background: rgba(255, 180, 70, 0.1);
+            color: #fff;
+        }
+
+        .task-option input[type="radio"] {
+            accent-color: #ffb347;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .task-submit {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 180, 70, 0.2);
+            font-size: 1rem;
+        }
+
+        .task-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 180, 70, 0.4);
+        }
+
+        .task-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 20px;
+            display: none;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .task-result.correct {
+            background: rgba(72, 187, 120, 0.15);
+            border: 1px solid #48bb78;
+            color: #48bb78;
+        }
+
+        .task-result.incorrect {
+            background: rgba(255, 71, 87, 0.15);
+            border: 1px solid #ff4757;
+            color: #ff4757;
+        }
+
+        .hint-box {
+            background: rgba(255, 180, 70, 0.1);
+            border: 1px dashed #ffb347;
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .hint-box:hover {
+            background: rgba(255, 180, 70, 0.15);
+        }
+
+        .hint-box .hint-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffb347;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .hint-box .hint-content {
+            display: none;
+            color: #ccc;
+            line-height: 1.6;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 180, 70, 0.2);
+        }
+
+        .hint-box.active .hint-content {
+            display: block;
+        }
+
+        /* Стили для изображений */
+        .lesson-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 180, 70, 0.3);
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+
+        .lesson-image:hover {
+            transform: scale(1.02);
+            border-color: #ffb347;
+        }
+
+        .image-caption {
+            text-align: center;
+            color: #aaa;
+            font-style: italic;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            border-radius: 30px;
+            padding: 1rem 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            font-size: 1rem;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .notification-close:hover {
+            color: #ffb347;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 180, 70, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .menu-content {
+                display: none;
+            }
+            .lesson-header h1 {
+                font-size: 1.8rem;
+            }
+            .theory-card, .tasks-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхнее меню (копия из первого урока) -->
+    <div class="top-menu">
+        <div class="menu-left">
+            <div class="macos-dots">
+                <div class="macos-dot red" onclick="window.location.href='/dashboard'" title="На дашборд"></div>
+                <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+                <div class="macos-dot green" onclick="window.history.back()" title="Назад"></div>
+            </div>
+            <div class="menu-content">
+                <a href="/">🏠 Главная</a>
+                <a href="/oge" class="active">📚 ОГЭ</a>
+                <a href="/ege">📖 ЕГЭ</a>
+                <a href="/tasks">📋 Задачи</a>
+                <a href="/generate">⚡ Генератор</a>
+            </div>
+        </div>
+        <div class="menu-right">
+            <div class="user-profile" onclick="window.location.href='/profile'">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Загрузка...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-container">
+        <div class="lesson-container">
+            <!-- Навигация по уроку (акцент на втором уроке) -->
+            <div class="lesson-nav">
+                <a href="/informatics/lesson1" class="nav-btn"><span>←</span> Предыдущий урок (IP-адреса)</a>
+                <div class="lesson-progress">
+                    <span>Урок 2 из 20</span>
+                    <div class="progress-dots">
+                        <div class="progress-dot completed"></div>
+                        <div class="progress-dot active"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                    </div>
+                </div>
+                <a href="/informatics/lesson3" class="nav-btn" id="nextLessonBtn">Следующий урок <span>→</span></a>
+            </div>
+
+            <!-- Заголовок с историческим экскурсом -->
+            <div class="lesson-header">
+                <h1>🔢 Урок 2: Системы счисления — язык чисел</h1>
+                <p>От зарубок на костях до двоичных кодов: как человечество научилось считать</p>
+            </div>
+
+            <!-- Изображение 8: древние способы счета -->
+            <img src="/images/informatics_lesson8.png" alt="Древние системы счисления" class="lesson-image">
+            <p class="image-caption">*Кости Ишанго (20 000 лет до н.э.) — одна из первых математических записей*</p>
+
+            <!-- Кнопка генератора -->
+            <div style="text-align: center;">
+                <button class="generate-btn" onclick="window.location.href='/generate?topic=numeral-systems'">
+                    <span>⚡</span> Сгенерировать задачи по системам счисления
+                </button>
+            </div>
+
+            <!-- ========== ТЕОРИЯ ========== -->
+            <!-- 1. Введение и история -->
+            <div class="theory-card">
+                <h2><span>📜</span> Зачем нужны разные системы счисления?</h2>
+                <p>Человек начал считать задолго до появления письменности. Первым инструментом были пальцы (отсюда десятичная система). Древние шумеры использовали шестидесятеричную систему (деление часа на 60 минут, окружности на 360 градусов). Майя независимо изобрели двадцатеричную систему. С развитием вычислительной техники на первый план вышли двоичная, восьмеричная и шестнадцатеричная системы — они идеально соответствуют логике работы электроники.</p>
+                <p><strong>Система счисления</strong> — это способ записи чисел с помощью ограниченного набора символов (цифр). Позиционная система — значение цифры зависит от её места (разряда).</p>
+
+                <!-- Изображение 9: сравнение систем -->
+                <img src="/images/informatics_lesson9.png" alt="Сравнение систем счисления" class="lesson-image">
+                <p class="image-caption">*Десятичная, двоичная, восьмеричная и шестнадцатеричная системы*</p>
+            </div>
+
+            <!-- 2. Позиционные системы. Основание. -->
+            <div class="theory-card">
+                <h2><span>🧮</span> Основание системы и развёрнутая форма</h2>
+                <p>В позиционной системе с основанием <em>q</em> любое число можно представить в виде суммы произведений цифр на степени основания:</p>
+                <pre><code>N = a<sub>n-1</sub>·q<sup>n-1</sub> + a<sub>n-2</sub>·q<sup>n-2</sub> + ... + a<sub>1</sub>·q<sup>1</sub> + a<sub>0</sub>·q<sup>0</sub> + a<sub>-1</sub>·q<sup>-1</sub> + ...</code></pre>
+                <p>Например, десятичное число 325 = 3·10² + 2·10¹ + 5·10⁰.</p>
+                <p>Для дробной части используются отрицательные степени.</p>
+
+                <div class="example-box">
+                    <h4><span>📌</span> Развёрнутая запись в разных системах</h4>
+                    <p><code>1011₂ = 1·2³ + 0·2² + 1·2¹ + 1·2⁰ = 8 + 0 + 2 + 1 = 11₁₀</code></p>
+                    <p><code>2AF₁₆ = 2·16² + A·16¹ + F·16⁰ = 2·256 + 10·16 + 15·1 = 512 + 160 + 15 = 687₁₀</code></p>
+                </div>
+
+                <!-- Изображение 10: развернутая форма -->
+                <img src="/images/informatics_lesson10.png" alt="Развернутая форма числа" class="lesson-image">
+            </div>
+
+            <!-- 3. Двоичная система — сердце компьютера -->
+            <div class="theory-card">
+                <h2><span>💻</span> Двоичная система счисления</h2>
+                <p>Использует только две цифры: <strong>0</strong> и <strong>1</strong>. Именно эта система лежит в основе работы всех цифровых устройств, потому что её легко реализовать электронно: есть напряжение (1) / нет напряжения (0).</p>
+                <ul>
+                    <li><strong>Бит</strong> — одна двоичная цифра.</li>
+                    <li><strong>Байт</strong> = 8 бит.</li>
+                </ul>
+                <h3>Таблица степеней двойки (нужно знать наизусть до 2¹⁰):</h3>
+                <table class="theory-table">
+                    <thead><tr><th>Степень</th><th>Значение</th><th>Степень</th><th>Значение</th></tr></thead>
+                    <tbody>
+                        <tr><td>2⁰</td><td>1</td><td>2⁶</td><td>64</td></tr>
+                        <tr><td>2¹</td><td>2</td><td>2⁷</td><td>128</td></tr>
+                        <tr><td>2²</td><td>4</td><td>2⁸</td><td>256</td></tr>
+                        <tr><td>2³</td><td>8</td><td>2⁹</td><td>512</td></tr>
+                        <tr><td>2⁴</td><td>16</td><td>2¹⁰</td><td>1024</td></tr>
+                        <tr><td>2⁵</td><td>32</td><td>2¹¹</td><td>2048</td></tr>
+                    </tbody>
+                </table>
+
+                <!-- Изображение 11: биты и байты -->
+                <img src="/images/informatics_lesson11.png" alt="Биты и байты" class="lesson-image">
+            </div>
+
+            <!-- 4. Перевод из любой системы в десятичную -->
+            <div class="theory-card">
+                <h2><span>🔄</span> Перевод в десятичную систему</h2>
+                <p>Достаточно вычислить сумму по развёрнутой форме.</p>
+                <div class="example-box">
+                    <h4><span>📝</span> Примеры:</h4>
+                    <p><code>1101₂ = 1·8 + 1·4 + 0·2 + 1·1 = 13₁₀</code></p>
+                    <p><code>57₈ = 5·8 + 7·1 = 40 + 7 = 47₁₀</code></p>
+                    <p><code>3C₁₆ = 3·16 + 12·1 = 48 + 12 = 60₁₀</code></p>
+                </div>
+            </div>
+
+            <!-- 5. Перевод из десятичной в другие системы -->
+            <div class="theory-card">
+                <h2><span>🔄</span> Перевод из десятичной системы</h2>
+                <p><strong>Правило:</strong> последовательно делить число на основание новой системы, записывая остатки справа налево (для целой части). Для дробной — умножать на основание, записывая целые части.</p>
+                <div class="example-box">
+                    <h4><span>📌</span> Пример: 25₁₀ → двоичная</h4>
+                    <p>25 ÷ 2 = 12 (ост. 1) ↑<br>
+                    12 ÷ 2 = 6 (ост. 0) ↑<br>
+                    6 ÷ 2 = 3 (ост. 0) ↑<br>
+                    3 ÷ 2 = 1 (ост. 1) ↑<br>
+                    1 ÷ 2 = 0 (ост. 1) ↑</p>
+                    <p>Читаем снизу вверх: <strong>11001₂</strong></p>
+                </div>
+                <div class="example-box">
+                    <h4><span>📌</span> Пример: 0.375₁₀ → двоичная</h4>
+                    <p>0.375 × 2 = 0.75 (целая 0) ↓<br>
+                    0.75 × 2 = 1.5 (целая 1) ↓<br>
+                    0.5 × 2 = 1.0 (целая 1) ↓</p>
+                    <p>Читаем сверху вниз: <strong>0.011₂</strong></p>
+                </div>
+
+                <!-- Изображение 12: алгоритм перевода -->
+                <img src="/images/informatics_lesson12.png" alt="Алгоритмы перевода" class="lesson-image">
+            </div>
+
+            <!-- 6. Восьмеричная и шестнадцатеричная системы -->
+            <div class="theory-card">
+                <h2><span>8️⃣</span> Восьмеричная и шестнадцатеричная системы</h2>
+                <p>Используются как компактная запись двоичных чисел. Восьмеричная система (цифры 0–7) удобна тем, что одна восьмеричная цифра заменяет ровно три двоичных (триаду). Шестнадцатеричная (цифры 0–9, A=10, B=11, C=12, D=13, E=14, F=15) заменяет одну цифру на тетраду (4 бита).</p>
+                <p><strong>Таблица соответствия:</strong></p>
+                <table class="theory-table">
+                    <thead><tr><th>Двоичная</th><th>Восьм.</th><th>Десят.</th><th>Шестн.</th></tr></thead>
+                    <tbody>
+                        <tr><td>0000</td><td>0</td><td>0</td><td>0</td></tr>
+                        <tr><td>0001</td><td>1</td><td>1</td><td>1</td></tr>
+                        <tr><td>0010</td><td>2</td><td>2</td><td>2</td></tr>
+                        <tr><td>0011</td><td>3</td><td>3</td><td>3</td></tr>
+                        <tr><td>0100</td><td>4</td><td>4</td><td>4</td></tr>
+                        <tr><td>0101</td><td>5</td><td>5</td><td>5</td></tr>
+                        <tr><td>0110</td><td>6</td><td>6</td><td>6</td></tr>
+                        <tr><td>0111</td><td>7</td><td>7</td><td>7</td></tr>
+                        <tr><td>1000</td><td>10</td><td>8</td><td>8</td></tr>
+                        <tr><td>1001</td><td>11</td><td>9</td><td>9</td></tr>
+                        <tr><td>1010</td><td>12</td><td>10</td><td>A</td></tr>
+                        <tr><td>1011</td><td>13</td><td>11</td><td>B</td></tr>
+                        <tr><td>1100</td><td>14</td><td>12</td><td>C</td></tr>
+                        <tr><td>1101</td><td>15</td><td>13</td><td>D</td></tr>
+                        <tr><td>1110</td><td>16</td><td>14</td><td>E</td></tr>
+                        <tr><td>1111</td><td>17</td><td>15</td><td>F</td></tr>
+                    </tbody>
+                </table>
+
+                <!-- Изображение 13: связь систем -->
+                <img src="/images/informatics_lesson13.png" alt="Связь 2-8-16" class="lesson-image">
+            </div>
+
+            <!-- 7. Арифметические операции в двоичной системе -->
+            <div class="theory-card">
+                <h2><span>➕</span> Двоичная арифметика</h2>
+                <p>Сложение, вычитание, умножение и деление выполняются по тем же правилам, что и в десятичной, но с учётом того, что 1+1 = 10 (перенос в следующий разряд).</p>
+                <div class="example-box">
+                    <h4><span>📌</span> Пример сложения:</h4>
+                    <pre><code>  1011₂ (11)
++ 1101₂ (13)
+---------
+ 11000₂ (24)</code></pre>
+                    <p>Поразрядно: 1+1=10 (0 пишем, 1 в уме); далее 1+0+1(перенос)=10 и т.д.</p>
+                </div>
+                <div class="example-box">
+                    <h4><span>📌</span> Пример вычитания (заём):</h4>
+                    <pre><code>  1100₂ (12)
+- 1011₂ (11)
+---------
+  0001₂ (1)</code></pre>
+                </div>
+            </div>
+
+            <!-- 8. Представление отрицательных чисел (дополнительный код) -->
+            <div class="theory-card">
+                <h2><span>➖</span> Отрицательные числа в двоичной системе</h2>
+                <p>В компьютерах для хранения отрицательных чисел используется <strong>дополнительный код</strong>. Алгоритм получения дополнительного кода для отрицательного числа:</p>
+                <ol>
+                    <li>Записать модуль числа в двоичном виде.</li>
+                    <li>Инвертировать все биты (получить обратный код).</li>
+                    <li>Прибавить 1.</li>
+                </ol>
+                <div class="example-box">
+                    <h4><span>📌</span> Пример: –5 в 8-битном представлении</h4>
+                    <p>5₁₀ = 00000101₂ → инверсия: 11111010₂ → +1 = <strong>11111011₂</strong> (это –5).</p>
+                </div>
+                <!-- Изображение 14: дополнительный код -->
+                <img src="/images/informatics_lesson14.png" alt="Дополнительный код" class="lesson-image">
+            </div>
+
+            <!-- ========== ПРАКТИЧЕСКИЕ ЗАДАЧИ (15 штук) ========== -->
+            <div class="tasks-section">
+                <h2><span>✏️</span> Практические задачи (ОГЭ/ЕГЭ)</h2>
+
+                <!-- Задача 1 (перевод 2→10) -->
+                <div class="task-card">
+                    <div class="task-question">1. Чему равно число 101101₂ в десятичной системе?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task1" value="a"> 45</label>
+                        <label class="task-option"><input type="radio" name="task1" value="b"> 53</label>
+                        <label class="task-option"><input type="radio" name="task1" value="c"> 42</label>
+                        <label class="task-option"><input type="radio" name="task1" value="d"> 37</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(1, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult1"></div>
+                </div>
+
+                <!-- Задача 2 (перевод 10→2) -->
+                <div class="task-card">
+                    <div class="task-question">2. Сколько единиц в двоичной записи числа 37₁₀?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task2" value="a"> 2</label>
+                        <label class="task-option"><input type="radio" name="task2" value="b"> 3</label>
+                        <label class="task-option"><input type="radio" name="task2" value="c"> 4</label>
+                        <label class="task-option"><input type="radio" name="task2" value="d"> 5</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(2, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult2"></div>
+                </div>
+
+                <!-- Задача 3 (восьмеричная) -->
+                <div class="task-card">
+                    <div class="task-question">3. Переведите число 75₈ в десятичную систему.</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task3" value="a"> 57</label>
+                        <label class="task-option"><input type="radio" name="task3" value="b"> 61</label>
+                        <label class="task-option"><input type="radio" name="task3" value="c"> 63</label>
+                        <label class="task-option"><input type="radio" name="task3" value="d"> 67</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(3, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult3"></div>
+                </div>
+
+                <!-- Задача 4 (шестнадцатеричная) -->
+                <div class="task-card">
+                    <div class="task-question">4. Чему равно число 2F₁₆ в десятичной системе?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task4" value="a"> 45</label>
+                        <label class="task-option"><input type="radio" name="task4" value="b"> 47</label>
+                        <label class="task-option"><input type="radio" name="task4" value="c"> 49</label>
+                        <label class="task-option"><input type="radio" name="task4" value="d"> 51</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(4, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult4"></div>
+                </div>
+
+                <!-- Задача 5 (двоичное сложение) -->
+                <div class="task-card">
+                    <div class="task-question">5. Вычислите 1101₂ + 1011₂. Ответ дайте в двоичной системе.</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task5" value="a"> 11000₂</label>
+                        <label class="task-option"><input type="radio" name="task5" value="b"> 10110₂</label>
+                        <label class="task-option"><input type="radio" name="task5" value="c"> 11100₂</label>
+                        <label class="task-option"><input type="radio" name="task5" value="d"> 10010₂</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(5, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult5"></div>
+                </div>
+
+                <!-- Задача 6 (двоичное вычитание) -->
+                <div class="task-card">
+                    <div class="task-question">6. Найдите разность 1100₂ – 101₂. Ответ в двоичной.</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task6" value="a"> 111₂</label>
+                        <label class="task-option"><input type="radio" name="task6" value="b"> 110₂</label>
+                        <label class="task-option"><input type="radio" name="task6" value="c"> 101₂</label>
+                        <label class="task-option"><input type="radio" name="task6" value="d"> 100₂</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(6, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult6"></div>
+                </div>
+
+                <!-- Задача 7 (перевод из двоичной в восьмеричную) -->
+                <div class="task-card">
+                    <div class="task-question">7. Переведите число 1101011₂ в восьмеричную систему.</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task7" value="a"> 153₈</label>
+                        <label class="task-option"><input type="radio" name="task7" value="b"> 145₈</label>
+                        <label class="task-option"><input type="radio" name="task7" value="c"> 165₈</label>
+                        <label class="task-option"><input type="radio" name="task7" value="d"> 124₈</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(7, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult7"></div>
+                </div>
+
+                <!-- Задача 8 (из двоичной в 16-ю) -->
+                <div class="task-card">
+                    <div class="task-question">8. Переведите 111011₂ в шестнадцатеричную систему.</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task8" value="a"> 3B₁₆</label>
+                        <label class="task-option"><input type="radio" name="task8" value="b"> 3A₁₆</label>
+                        <label class="task-option"><input type="radio" name="task8" value="c"> 3C₁₆</label>
+                        <label class="task-option"><input type="radio" name="task8" value="d"> 3D₁₆</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(8, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult8"></div>
+                </div>
+
+                <!-- Задача 9 (максимальное число для n бит) -->
+                <div class="task-card">
+                    <div class="task-question">9. Какое максимальное число можно записать с помощью 5 бит (без знака)?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task9" value="a"> 31</label>
+                        <label class="task-option"><input type="radio" name="task9" value="b"> 32</label>
+                        <label class="task-option"><input type="radio" name="task9" value="c"> 63</label>
+                        <label class="task-option"><input type="radio" name="task9" value="d"> 15</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(9, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult9"></div>
+                </div>
+
+                <!-- Задача 10 (дополнительный код) -->
+                <div class="task-card">
+                    <div class="task-question">10. Как выглядит число –6 в 8-битном дополнительном коде?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task10" value="a"> 11111010₂</label>
+                        <label class="task-option"><input type="radio" name="task10" value="b"> 11111001₂</label>
+                        <label class="task-option"><input type="radio" name="task10" value="c"> 11111011₂</label>
+                        <label class="task-option"><input type="radio" name="task10" value="d"> 11110110₂</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(10, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult10"></div>
+                </div>
+
+                <!-- Задача 11 (сравнение в разных системах) -->
+                <div class="task-card">
+                    <div class="task-question">11. Какое из чисел наибольшее: 1100₂, 13₈, B₁₆?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task11" value="a"> 1100₂</label>
+                        <label class="task-option"><input type="radio" name="task11" value="b"> 13₈</label>
+                        <label class="task-option"><input type="radio" name="task11" value="c"> B₁₆</label>
+                        <label class="task-option"><input type="radio" name="task11" value="d"> все равны</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(11, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult11"></div>
+                </div>
+
+                <!-- Задача 12 (количество единиц) -->
+                <div class="task-card">
+                    <div class="task-question">12. Сколько единиц в двоичной записи числа 2F₁₆?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task12" value="a"> 3</label>
+                        <label class="task-option"><input type="radio" name="task12" value="b"> 4</label>
+                        <label class="task-option"><input type="radio" name="task12" value="c"> 5</label>
+                        <label class="task-option"><input type="radio" name="task12" value="d"> 6</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(12, 'd')">Проверить</button>
+                    <div class="task-result" id="taskResult12"></div>
+                </div>
+
+                <!-- Задача 13 (перевод дробного) -->
+                <div class="task-card">
+                    <div class="task-question">13. Чему равно 0.101₂ в десятичной дроби?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task13" value="a"> 0.625</label>
+                        <label class="task-option"><input type="radio" name="task13" value="b"> 0.5</label>
+                        <label class="task-option"><input type="radio" name="task13" value="c"> 0.75</label>
+                        <label class="task-option"><input type="radio" name="task13" value="d"> 0.125</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(13, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult13"></div>
+                </div>
+
+                <!-- Задача 14 (основание системы) -->
+                <div class="task-card">
+                    <div class="task-question">14. В какой системе счисления 3 + 3 = 10?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task14" value="a"> двоичная</label>
+                        <label class="task-option"><input type="radio" name="task14" value="b"> троичная</label>
+                        <label class="task-option"><input type="radio" name="task14" value="c"> шестеричная</label>
+                        <label class="task-option"><input type="radio" name="task14" value="d"> восьмеричная</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(14, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult14"></div>
+                </div>
+
+                <!-- Задача 15 (объем памяти) -->
+                <div class="task-card">
+                    <div class="task-question">15. Сколько различных чисел можно закодировать с помощью 10 бит?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task15" value="a"> 128</label>
+                        <label class="task-option"><input type="radio" name="task15" value="b"> 256</label>
+                        <label class="task-option"><input type="radio" name="task15" value="c"> 512</label>
+                        <label class="task-option"><input type="radio" name="task15" value="d"> 1024</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(15, 'd')">Проверить</button>
+                    <div class="task-result" id="taskResult15"></div>
+                </div>
+            </div>
+
+            <!-- Подсказки (2 шт) -->
+            <div class="hint-box" onclick="toggleHint(this)">
+                <div class="hint-title"><span>💭</span> Нужна помощь? Нажмите для подсказки</div>
+                <div class="hint-content">
+                    <p><strong>Для перевода 2→10:</strong> умножай цифру на 2<sup>позиция</sup> (справа налево, начиная с 0).</p>
+                    <p><strong>Для перевода 10→2:</strong> дели на 2, записывай остатки справа налево.</p>
+                    <p><strong>2→8:</strong> группируй по 3 бита справа налево.</p>
+                    <p><strong>2→16:</strong> группируй по 4 бита.</p>
+                </div>
+            </div>
+            <div class="hint-box" onclick="toggleHint(this)">
+                <div class="hint-title"><span>💡</span> Полезные формулы</div>
+                <div class="hint-content">
+                    <p>2<sup>10</sup> ≈ 1024 (килобайт). 2<sup>n</sup> — количество чисел для n бит.</p>
+                    <p>Дополнительный код: инверсия + 1.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div class="notification" id="notification">
+        <div class="notification-icon" id="notificationIcon">✅</div>
+        <div class="notification-content">
+            <div class="notification-title" id="notificationTitle">Успешно</div>
+            <div class="notification-message" id="notificationMessage"></div>
+        </div>
+        <button class="notification-close" onclick="closeNotification()">×</button>
+    </div>
+
+    <script>
+        // Те же функции, что и в первом уроке, с небольшим расширением
+        let userData = window.USER_DATA || null;
+        let userCredits = userData?.credits || 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (userData) {
+                document.getElementById('userName').textContent = userData.username || 'Пользователь';
+                document.getElementById('userAvatar').textContent = userData.username ? userData.username.charAt(0).toUpperCase() : '?';
+            }
+            checkNextLesson();
+        });
+
+        async function checkNextLesson() {
+            if (!userData) return;
+            try {
+                const response = await fetch('/api/user/progress');
+                const progress = await response.json();
+                if (progress && progress.subjects && progress.subjects.informatics) {
+                    const lesson3 = progress.subjects.informatics.lessons.find(l => l.lesson_id === 3);
+                    if (lesson3 && (lesson3.status === 'available' || lesson3.status === 'completed')) {
+                        document.getElementById('nextLessonBtn').classList.remove('disabled');
+                    } else {
+                        document.getElementById('nextLessonBtn').classList.add('disabled');
+                    }
+                }
+            } catch (e) {
+                console.warn('Не удалось проверить следующий урок', e);
+            }
+        }
+
+        function checkTask(taskNum, correctAnswer) {
+            const selected = document.querySelector(`input[name="task${taskNum}"]:checked`);
+            const resultDiv = document.getElementById(`taskResult${taskNum}`);
+            if (!selected) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'task-result incorrect';
+                resultDiv.textContent = '❌ Выберите ответ';
+                return;
+            }
+            if (selected.value === correctAnswer) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'task-result correct';
+                resultDiv.textContent = '✅ Правильно! +10 кредитов';
+
+                if (taskNum === 1) {
+                    completeLesson();
+                }
+
+                fetch('/api/add-credits', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: 10 })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('+10 кредитов', 'Кредиты начислены', '💰');
+                    }
+                })
+                .catch(err => console.error('Ошибка начисления кредитов:', err));
+
+            } else {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'task-result incorrect';
+                resultDiv.textContent = '❌ Неправильно. Попробуйте еще раз.';
+            }
+        }
+
+        function completeLesson() {
+            fetch('/api/complete-lesson', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    lessonId: 2,
+                    subject: 'informatics',
+                    score: 100,
+                    timeSpent: 12
+                })
+            })
+            .then(() => {
+                showNotification('Урок пройден!', 'Урок 2 отмечен как завершённый', '✅');
+                document.getElementById('nextLessonBtn').classList.remove('disabled');
+            })
+            .catch(err => console.error('Ошибка при завершении урока:', err));
+        }
+
+        function toggleHint(element) {
+            element.classList.toggle('active');
+        }
+
+        function showNotification(title, message, icon = '✅') {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationIcon').textContent = icon;
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function closeNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

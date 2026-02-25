@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок 3: Кодирование, криптография и защита данных</title>
+    <style>
+        /* ========== СТИЛИ ПОЛНОСТЬЮ ИЗ ПЕРВОГО УРОКА (СОХРАНЕНЫ) ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #0f1219;
+            color: white;
+        }
+
+        .top-menu {
+            background: rgba(30, 35, 45, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 180, 70, 0.2);
+            padding: 0.8rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .macos-dot.red {
+            background: #ff5f56;
+            border: 1px solid #e0443e;
+        }
+        .macos-dot.yellow {
+            background: #ffbd2e;
+            border: 1px solid #df9f23;
+        }
+        .macos-dot.green {
+            background: #27c93f;
+            border: 1px solid #1aab2f;
+        }
+
+        .macos-dot:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        .menu-content {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .menu-content a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .menu-content a:hover {
+            color: #ffb347;
+        }
+
+        .menu-content a.active {
+            color: #ffb347;
+        }
+
+        .menu-content a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffb347, #ff8c00);
+            border-radius: 2px;
+        }
+
+        .menu-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 180, 70, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .user-name {
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .main-container {
+            margin-top: 64px;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .main-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 180, 70, 0.3);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb:hover {
+            background: #ffb347;
+        }
+
+        .lesson-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(30, 35, 45, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 0.8rem 1.5rem;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            color: #fff;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover:not(.disabled) {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .lesson-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #aaa;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .progress-dot.active {
+            background: #ffb347;
+            box-shadow: 0 0 10px #ffb347;
+        }
+
+        .progress-dot.completed {
+            background: #48bb78;
+        }
+
+        .lesson-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .lesson-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ffb347, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .lesson-header p {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        .theory-card {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+        }
+
+        .theory-card:hover {
+            border-color: rgba(255, 180, 70, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 180, 70, 0.1);
+        }
+
+        .theory-card h2 {
+            color: #ffb347;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .theory-card h3 {
+            color: #8b5cf6;
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .theory-card p {
+            color: #ccc;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .theory-card ul, .theory-card ol {
+            color: #ccc;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        .theory-card li {
+            margin: 0.5rem 0;
+        }
+
+        .theory-card code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            color: #ffb347;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 1rem;
+        }
+
+        .theory-card pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 20px;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            margin: 1rem 0;
+        }
+
+        .theory-card pre code {
+            background: none;
+            padding: 0;
+            color: #8b5cf6;
+        }
+
+        .theory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .theory-table th {
+            background: rgba(255, 180, 70, 0.2);
+            color: #ffb347;
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .theory-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ccc;
+        }
+
+        .theory-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .theory-table tr:hover td {
+            background: rgba(255, 180, 70, 0.05);
+        }
+
+        .example-box {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid #8b5cf6;
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .example-box h4 {
+            color: #8b5cf6;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tasks-section {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tasks-section h2 {
+            color: #ffb347;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .task-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 180, 70, 0.15);
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .task-card:hover {
+            border-color: rgba(255, 180, 70, 0.4);
+            box-shadow: 0 5px 20px rgba(255, 180, 70, 0.1);
+        }
+
+        .task-question {
+            color: white;
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .task-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .task-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #aaa;
+            cursor: pointer;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .task-option:hover {
+            background: rgba(255, 180, 70, 0.1);
+            color: #fff;
+        }
+
+        .task-option input[type="radio"] {
+            accent-color: #ffb347;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .task-submit {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 180, 70, 0.2);
+            font-size: 1rem;
+        }
+
+        .task-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 180, 70, 0.4);
+        }
+
+        .task-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 20px;
+            display: none;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .task-result.correct {
+            background: rgba(72, 187, 120, 0.15);
+            border: 1px solid #48bb78;
+            color: #48bb78;
+        }
+
+        .task-result.incorrect {
+            background: rgba(255, 71, 87, 0.15);
+            border: 1px solid #ff4757;
+            color: #ff4757;
+        }
+
+        .hint-box {
+            background: rgba(255, 180, 70, 0.1);
+            border: 1px dashed #ffb347;
+            border-radius: 30px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .hint-box:hover {
+            background: rgba(255, 180, 70, 0.15);
+        }
+
+        .hint-box .hint-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffb347;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .hint-box .hint-content {
+            display: none;
+            color: #ccc;
+            line-height: 1.6;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 180, 70, 0.2);
+        }
+
+        .hint-box.active .hint-content {
+            display: block;
+        }
+
+        /* Стили для изображений */
+        .lesson-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 180, 70, 0.3);
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+
+        .lesson-image:hover {
+            transform: scale(1.02);
+            border-color: #ffb347;
+        }
+
+        .image-caption {
+            text-align: center;
+            color: #aaa;
+            font-style: italic;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            border-radius: 30px;
+            padding: 1rem 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            font-size: 1rem;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .notification-close:hover {
+            color: #ffb347;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 180, 70, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .menu-content {
+                display: none;
+            }
+            .lesson-header h1 {
+                font-size: 1.8rem;
+            }
+            .theory-card, .tasks-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхнее меню (копия из первого урока) -->
+    <div class="top-menu">
+        <div class="menu-left">
+            <div class="macos-dots">
+                <div class="macos-dot red" onclick="window.location.href='/dashboard'" title="На дашборд"></div>
+                <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+                <div class="macos-dot green" onclick="window.history.back()" title="Назад"></div>
+            </div>
+            <div class="menu-content">
+                <a href="/">🏠 Главная</a>
+                <a href="/oge" class="active">📚 ОГЭ</a>
+                <a href="/ege">📖 ЕГЭ</a>
+                <a href="/tasks">📋 Задачи</a>
+                <a href="/generate">⚡ Генератор</a>
+            </div>
+        </div>
+        <div class="menu-right">
+            <div class="user-profile" onclick="window.location.href='/profile'">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Загрузка...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-container">
+        <div class="lesson-container">
+            <!-- Навигация по уроку -->
+            <div class="lesson-nav">
+                <a href="/informatics/lesson2" class="nav-btn"><span>←</span> Предыдущий урок (Системы счисления)</a>
+                <div class="lesson-progress">
+                    <span>Урок 3 из 20</span>
+                    <div class="progress-dots">
+                        <div class="progress-dot completed"></div>
+                        <div class="progress-dot completed"></div>
+                        <div class="progress-dot active"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                    </div>
+                </div>
+                <a href="/informatics/lesson4" class="nav-btn" id="nextLessonBtn">Следующий урок <span>→</span></a>
+            </div>
+
+            <!-- Заголовок -->
+            <div class="lesson-header">
+                <h1>🔐 Урок 3: Кодирование, криптография и защита данных</h1>
+                <p>Как информация превращается в код, шифруется и защищается от изменений</p>
+            </div>
+
+            <!-- Изображение 15: история кодирования -->
+            <img src="/images/informatics_lesson15.png" alt="История кодирования" class="lesson-image">
+            <p class="image-caption">*От азбуки Морзе до современных криптоалгоритмов*</p>
+
+            <!-- Кнопка генератора -->
+            <div style="text-align: center;">
+                <button class="generate-btn" onclick="window.location.href='/generate?topic=coding'">
+                    <span>⚡</span> Сгенерировать задачи по кодированию
+                </button>
+            </div>
+
+            <!-- ========== ТЕОРИЯ ========== -->
+            <!-- 1. Введение в кодирование -->
+            <div class="theory-card">
+                <h2><span>📝</span> Что такое кодирование?</h2>
+                <p><strong>Кодирование</strong> — это преобразование информации из одной формы представления в другую, удобную для хранения, передачи или обработки. Обратный процесс называется <strong>декодированием</strong>.</p>
+                <p>Любое сообщение можно представить в виде последовательности символов некоторого алфавита. <strong>Код</strong> — это правило (алгоритм) сопоставления каждому символу или группе символов определённой кодовой комбинации.</p>
+                <p>Примеры кодировок, с которыми мы сталкиваемся ежедневно:</p>
+                <ul>
+                    <li><strong>Азбука Морзе</strong> — точки и тире.</li>
+                    <li><strong>ASCII</strong> — американский стандартный код для обмена информацией (7 бит на символ).</li>
+                    <li><strong>Unicode (UTF-8)</strong> — современный стандарт, поддерживающий все языки мира.</li>
+                    <li><strong>Base64</strong> — кодирование двоичных данных для передачи через текстовые протоколы.</li>
+                </ul>
+
+                <!-- Изображение 16: ASCII таблица -->
+                <img src="/images/informatics_lesson16.png" alt="Таблица ASCII" class="lesson-image">
+                <p class="image-caption">*Таблица ASCII — основа цифрового текста*</p>
+            </div>
+
+            <!-- 2. Кодирование символов. ASCII и Unicode -->
+            <div class="theory-card">
+                <h2><span>🔤</span> Кодировки текста: от ASCII до Unicode</h2>
+                <p><strong>ASCII</strong> (1963 год) использует 7 бит для кодирования 128 символов: латинские буквы, цифры, знаки препинания и управляющие символы. Позже появились расширения (8-битные) для национальных алфавитов — например, Windows-1251 для кириллицы.</p>
+                <p>Проблема: разные 8-битные кодировки несовместимы. Решение — <strong>Unicode</strong>. Unicode присваивает каждому символу уникальный номер (кодовую точку), а способы представления в байтах задают <strong>UTF-8</strong>, <strong>UTF-16</strong>.</p>
+                <p><strong>UTF-8</strong> — самый популярный: символы ASCII занимают 1 байт, кириллица — 2 байта, редкие иероглифы — 3 или 4 байта.</p>
+                <div class="example-box">
+                    <h4><span>📌</span> Пример кодировки в UTF-8</h4>
+                    <p>Символ 'A' (код U+0041) → <code>01000001</code> (1 байт)</p>
+                    <p>Символ 'Я' (код U+042F) → <code>11010000 10101111</code> (2 байта)</p>
+                </div>
+
+                <!-- Изображение 17: сравнение UTF-8 и UTF-16 -->
+                <img src="/images/informatics_lesson17.png" alt="UTF-8 vs UTF-16" class="lesson-image">
+            </div>
+
+            <!-- 3. Криптография: основные понятия -->
+            <div class="theory-card">
+                <h2><span>🔒</span> Криптография — наука о тайне</h2>
+                <p><strong>Криптография</strong> занимается методами шифрования — преобразования информации для сокрытия от посторонних. Обратный процесс — <strong>расшифровка</strong>.</p>
+                <p>Основные термины:</p>
+                <ul>
+                    <li><strong>Открытый текст</strong> — исходное сообщение.</li>
+                    <li><strong>Шифротекст</strong> — зашифрованное сообщение.</li>
+                    <li><strong>Ключ</strong> — секретная информация, управляющая шифрованием.</li>
+                </ul>
+                <h3>Исторические шифры</h3>
+                <ul>
+                    <li><strong>Шифр Цезаря</strong> — сдвиг букв по алфавиту (например, A→D, B→E).</li>
+                    <li><strong>Шифр Виженера</strong> — использование ключевого слова.</li>
+                    <li><strong>Энигма</strong> — роторная машина Второй мировой.</li>
+                </ul>
+                <div class="example-box">
+                    <h4><span>📌</span> Шифр Цезаря со сдвигом 3</h4>
+                    <p>HELLO → KHOOR</p>
+                </div>
+
+                <!-- Изображение 18: шифр Цезаря и диск -->
+                <img src="/images/informatics_lesson18.png" alt="Шифр Цезаря" class="lesson-image">
+            </div>
+
+            <!-- 4. Современная криптография: симметричная и асимметричная -->
+            <div class="theory-card">
+                <h2><span>🔑</span> Симметричное и асимметричное шифрование</h2>
+                <p><strong>Симметричное шифрование</strong>: один и тот же ключ используется и для шифрования, и для расшифровки. Примеры: AES, ГОСТ 28147-89. Проблема — нужно безопасно передать ключ.</p>
+                <p><strong>Асимметричное шифрование</strong>: используются два ключа — открытый (для шифрования) и закрытый (для расшифровки). Открытый ключ можно передавать по открытому каналу. Примеры: RSA, ECC.</p>
+                <p><strong>Электронная подпись</strong> — асимметричное шифрование наоборот: подписываем закрытым ключом, проверяем открытым. Гарантирует авторство и целостность.</p>
+
+                <!-- Изображение 19: симметричное vs асимметричное -->
+                <img src="/images/informatics_lesson19.png" alt="Симметричное и асимметричное шифрование" class="lesson-image">
+            </div>
+
+            <!-- 5. Хеширование и контроль целостности -->
+            <div class="theory-card">
+                <h2><span>🔍</span> Хеш-функции и проверка целостности</h2>
+                <p><strong>Хеш-функция</strong> преобразует входные данные произвольной длины в выходное значение фиксированной длины (хеш, дайджест). Свойства хорошей хеш-функции:</p>
+                <ul>
+                    <li>Необратимость (по хешу нельзя восстановить данные).</li>
+                    <li>Лавинный эффект (малейшее изменение данных сильно меняет хеш).</li>
+                    <li>Коллизионная стойкость (трудно найти два разных сообщения с одинаковым хешем).</li>
+                </ul>
+                <p>Популярные хеш-функции: <strong>MD5</strong> (устарела, есть коллизии), <strong>SHA-1</strong> (слабые коллизии), <strong>SHA-2 (SHA-256)</strong>, <strong>SHA-3</strong>.</p>
+                <div class="example-box">
+                    <h4><span>📌</span> Пример SHA-256</h4>
+                    <p><code>"Hello"</code> → <code>185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969</code></p>
+                    <p><code>"Hello!"</code> → совершенно другой хеш.</p>
+                </div>
+                <p><strong>Контроль целостности</strong>: сравнивая хеш полученного файла с известным оригинальным хешем, можно обнаружить изменения (случайные или злонамеренные).</p>
+
+                <!-- Изображение 20: схема хеширования -->
+                <img src="/images/informatics_lesson20.png" alt="Хеш-функция" class="lesson-image">
+            </div>
+
+            <!-- 6. Алгоритм Хаффмана — сжатие без потерь -->
+            <div class="theory-card">
+                <h2><span>🗜️</span> Алгоритм Хаффмана</h2>
+                <p>Один из первых и самых известных алгоритмов сжатия без потерь (1952 год). Идея: часто встречающиеся символы кодируются короткими кодами, редкие — длинными. Коды строятся так, чтобы ни один код не был префиксом другого (префиксное кодирование).</p>
+                <h3>Построение дерева Хаффмана:</h3>
+                <ol>
+                    <li>Подсчитать частоту каждого символа.</li>
+                    <li>Создать узлы для каждого символа с весом = частоте.</li>
+                    <li>Повторять, пока не останется один корень: взять два узла с наименьшими весами, создать родительский узел с суммой весов, присоединить эти узлы как левого и правого потомка.</li>
+                    <li>Пометка рёбер: левое = 0, правое = 1 (или наоборот).</li>
+                    <li>Код символа — путь от корня к листу.</li>
+                </ol>
+                <div class="example-box">
+                    <h4><span>📌</span> Пример для строки "abracadabra"</h4>
+                    <p>Частоты: a=5, b=2, r=2, c=1, d=1.</p>
+                    <p>Возможные коды: a:0, b:10, r:110, c:1110, d:1111 (зависит от построения).</p>
+                </div>
+
+                <!-- Изображение 21: дерево Хаффмана -->
+                <img src="/images/informatics_lesson21.png" alt="Дерево Хаффмана" class="lesson-image">
+            </div>
+
+            <!-- 7. Кодирование и помехоустойчивость -->
+            <div class="theory-card">
+                <h2><span>📡</span> Помехоустойчивое кодирование</h2>
+                <p>При передаче данных по каналам связи возникают ошибки. Для их обнаружения и исправления используются специальные коды:</p>
+                <ul>
+                    <li><strong>Бит чётности</strong> — добавляется бит, чтобы общее количество единиц было чётным. Позволяет обнаружить одиночную ошибку.</li>
+                    <li><strong>Код Хемминга</strong> — позволяет исправлять одиночные ошибки.</li>
+                    <li><strong>CRC (Cyclic Redundancy Check)</strong> — циклический избыточный код, широко используется в сетях и хранилищах.</li>
+                </ul>
+                <div class="example-box">
+                    <h4><span>📌</span> Контроль чётности</h4>
+                    <p>Данные: 1011 (три единицы → нечётно). Добавляем бит чётности 1 → 11011 (теперь четыре единицы, чётно). Если при передаче один бит изменится, чётность нарушится.</p>
+                </div>
+            </div>
+
+            <!-- ========== ПРАКТИЧЕСКИЕ ЗАДАЧИ (15 штук) ========== -->
+            <div class="tasks-section">
+                <h2><span>✏️</span> Практические задачи (ОГЭ/ЕГЭ)</h2>
+
+                <!-- Задача 1 (кодирование текста) -->
+                <div class="task-card">
+                    <div class="task-question">1. Сколько бит требуется для кодирования одного символа в ASCII?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task1" value="a"> 5</label>
+                        <label class="task-option"><input type="radio" name="task1" value="b"> 6</label>
+                        <label class="task-option"><input type="radio" name="task1" value="c"> 7</label>
+                        <label class="task-option"><input type="radio" name="task1" value="d"> 8</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(1, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult1"></div>
+                </div>
+
+                <!-- Задача 2 (UTF-8) -->
+                <div class="task-card">
+                    <div class="task-question">2. Сколько байт занимает символ 'Ф' в UTF-8 (код U+0424)?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task2" value="a"> 1</label>
+                        <label class="task-option"><input type="radio" name="task2" value="b"> 2</label>
+                        <label class="task-option"><input type="radio" name="task2" value="c"> 3</label>
+                        <label class="task-option"><input type="radio" name="task2" value="d"> 4</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(2, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult2"></div>
+                </div>
+
+                <!-- Задача 3 (шифр Цезаря) -->
+                <div class="task-card">
+                    <div class="task-question">3. Зашифруйте слово "ИНФОРМАТИКА" шифром Цезаря со сдвигом +3 (алфавит русский, 33 буквы).</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task3" value="a"> ЛРЧСУПГХЛГ</label>
+                        <label class="task-option"><input type="radio" name="task3" value="b"> КРЧТУПДХКД</label>
+                        <label class="task-option"><input type="radio" name="task3" value="c"> ЛСЧТУПГХЛГ</label>
+                        <label class="task-option"><input type="radio" name="task3" value="d"> МТШУФРГЦМГ</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(3, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult3"></div>
+                </div>
+
+                <!-- Задача 4 (бит чётности) -->
+                <div class="task-card">
+                    <div class="task-question">4. Какое значение должен иметь бит чётности (even parity) для байта 1011001 (7 бит данных)?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task4" value="a"> 0</label>
+                        <label class="task-option"><input type="radio" name="task4" value="b"> 1</label>
+                        <label class="task-option"><input type="radio" name="task4" value="c"> не нужен</label>
+                        <label class="task-option"><input type="radio" name="task4" value="d"> зависит от протокола</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(4, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult4"></div>
+                </div>
+
+                <!-- Задача 5 (хеш-функция) -->
+                <div class="task-card">
+                    <div class="task-question">5. Какое свойство НЕ является обязательным для криптографической хеш-функции?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task5" value="a"> Необратимость</label>
+                        <label class="task-option"><input type="radio" name="task5" value="b"> Фиксированная длина выхода</label>
+                        <label class="task-option"><input type="radio" name="task5" value="c"> Возможность расшифровки</label>
+                        <label class="task-option"><input type="radio" name="task5" value="d"> Лавинный эффект</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(5, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult5"></div>
+                </div>
+
+                <!-- Задача 6 (алгоритм Хаффмана - частота) -->
+                <div class="task-card">
+                    <div class="task-question">6. В строке "aaabbc" какие символы получат самые короткие коды при оптимальном кодировании Хаффмана?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task6" value="a"> a</label>
+                        <label class="task-option"><input type="radio" name="task6" value="b"> b</label>
+                        <label class="task-option"><input type="radio" name="task6" value="c"> c</label>
+                        <label class="task-option"><input type="radio" name="task6" value="d"> все одинаковые</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(6, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult6"></div>
+                </div>
+
+                <!-- Задача 7 (длина кода Хаффмана) -->
+                <div class="task-card">
+                    <div class="task-question">7. Для строки "abacabad" символ 'a' встречается 4 раза. Какова минимальная возможная длина кода для 'a'?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task7" value="a"> 1</label>
+                        <label class="task-option"><input type="radio" name="task7" value="b"> 2</label>
+                        <label class="task-option"><input type="radio" name="task7" value="c"> 3</label>
+                        <label class="task-option"><input type="radio" name="task7" value="d"> 4</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(7, 'a')">Проверить</button>
+                    <div class="task-result" id="taskResult7"></div>
+                </div>
+
+                <!-- Задача 8 (симметричное шифрование) -->
+                <div class="task-card">
+                    <div class="task-question">8. Какой алгоритм является симметричным?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task8" value="a"> RSA</label>
+                        <label class="task-option"><input type="radio" name="task8" value="b"> AES</label>
+                        <label class="task-option"><input type="radio" name="task8" value="c"> Эль-Гамаля</label>
+                        <label class="task-option"><input type="radio" name="task8" value="d"> ECC</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(8, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult8"></div>
+                </div>
+
+                <!-- Задача 9 (асимметричное шифрование) -->
+                <div class="task-card">
+                    <div class="task-question">9. В асимметричной криптографии открытый ключ используется для:</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task9" value="a"> расшифровки</label>
+                        <label class="task-option"><input type="radio" name="task9" value="b"> шифрования</label>
+                        <label class="task-option"><input type="radio" name="task9" value="c"> и шифрования, и расшифровки</label>
+                        <label class="task-option"><input type="radio" name="task9" value="d"> только для подписи</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(9, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult9"></div>
+                </div>
+
+                <!-- Задача 10 (контроль целостности) -->
+                <div class="task-card">
+                    <div class="task-question">10. Какая технология гарантирует, что файл не был изменён?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task10" value="a"> шифрование</label>
+                        <label class="task-option"><input type="radio" name="task10" value="b"> хеширование</label>
+                        <label class="task-option"><input type="radio" name="task10" value="c"> сжатие</label>
+                        <label class="task-option"><input type="radio" name="task10" value="d"> кодирование</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(10, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult10"></div>
+                </div>
+
+                <!-- Задача 11 (MD5) -->
+                <div class="task-card">
+                    <div class="task-question">11. Какова длина хеша MD5 в битах?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task11" value="a"> 64</label>
+                        <label class="task-option"><input type="radio" name="task11" value="b"> 128</label>
+                        <label class="task-option"><input type="radio" name="task11" value="c"> 160</label>
+                        <label class="task-option"><input type="radio" name="task11" value="d"> 256</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(11, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult11"></div>
+                </div>
+
+                <!-- Задача 12 (префиксный код) -->
+                <div class="task-card">
+                    <div class="task-question">12. Какой из наборов кодов является префиксным (ни один код не является началом другого)?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task12" value="a"> {0, 01, 001}</label>
+                        <label class="task-option"><input type="radio" name="task12" value="b"> {1, 01, 001}</label>
+                        <label class="task-option"><input type="radio" name="task12" value="c"> {0, 10, 11}</label>
+                        <label class="task-option"><input type="radio" name="task12" value="d"> {0, 1, 00}</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(12, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult12"></div>
+                </div>
+
+                <!-- Задача 13 (код Хемминга) -->
+                <div class="task-card">
+                    <div class="task-question">13. Сколько дополнительных бит нужно для кода Хемминга, исправляющего одиночную ошибку в 4 битах данных?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task13" value="a"> 2</label>
+                        <label class="task-option"><input type="radio" name="task13" value="b"> 3</label>
+                        <label class="task-option"><input type="radio" name="task13" value="c"> 4</label>
+                        <label class="task-option"><input type="radio" name="task13" value="d"> 5</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(13, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult13"></div>
+                </div>
+
+                <!-- Задача 14 (Base64) -->
+                <div class="task-card">
+                    <div class="task-question">14. Сколько символов содержит алфавит Base64?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task14" value="a"> 32</label>
+                        <label class="task-option"><input type="radio" name="task14" value="b"> 64</label>
+                        <label class="task-option"><input type="radio" name="task14" value="c"> 128</label>
+                        <label class="task-option"><input type="radio" name="task14" value="d"> 256</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(14, 'b')">Проверить</button>
+                    <div class="task-result" id="taskResult14"></div>
+                </div>
+
+                <!-- Задача 15 (энтропия) -->
+                <div class="task-card">
+                    <div class="task-question">15. Какая строка имеет наибольшую энтропию (максимальную информационную ёмкость)?</div>
+                    <div class="task-options">
+                        <label class="task-option"><input type="radio" name="task15" value="a"> AAAAAA</label>
+                        <label class="task-option"><input type="radio" name="task15" value="b"> ABABAB</label>
+                        <label class="task-option"><input type="radio" name="task15" value="c"> ABCDEF</label>
+                        <label class="task-option"><input type="radio" name="task15" value="d"> AABBCC</label>
+                    </div>
+                    <button class="task-submit" onclick="checkTask(15, 'c')">Проверить</button>
+                    <div class="task-result" id="taskResult15"></div>
+                </div>
+            </div>
+
+            <!-- Подсказки -->
+            <div class="hint-box" onclick="toggleHint(this)">
+                <div class="hint-title"><span>💭</span> Нужна помощь? Нажмите для подсказки</div>
+                <div class="hint-content">
+                    <p><strong>Шифр Цезаря:</strong> сдвиг по алфавиту. Для русского: А→Г, Я→В (после Я идём на А).</p>
+                    <p><strong>Хеш-функции:</strong> MD5=128 бит, SHA-1=160, SHA-256=256.</p>
+                    <p><strong>Префиксный код:</strong> ни один код не начинается с другого кода.</p>
+                </div>
+            </div>
+            <div class="hint-box" onclick="toggleHint(this)">
+                <div class="hint-title"><span>💡</span> Полезные формулы</div>
+                <div class="hint-content">
+                    <p><strong>Бит чётности:</strong> для even parity добавляем бит, чтобы общее число единиц было чётным.</p>
+                    <p><strong>Код Хемминга:</strong> для m бит данных нужно r бит контроля, где 2<sup>r</sup> ≥ m + r + 1.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div class="notification" id="notification">
+        <div class="notification-icon" id="notificationIcon">✅</div>
+        <div class="notification-content">
+            <div class="notification-title" id="notificationTitle">Успешно</div>
+            <div class="notification-message" id="notificationMessage"></div>
+        </div>
+        <button class="notification-close" onclick="closeNotification()">×</button>
+    </div>
+
+    <script>
+        // Те же функции, что и в предыдущих уроках
+        let userData = window.USER_DATA || null;
+        let userCredits = userData?.credits || 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (userData) {
+                document.getElementById('userName').textContent = userData.username || 'Пользователь';
+                document.getElementById('userAvatar').textContent = userData.username ? userData.username.charAt(0).toUpperCase() : '?';
+            }
+            checkNextLesson();
+        });
+
+        async function checkNextLesson() {
+            if (!userData) return;
+            try {
+                const response = await fetch('/api/user/progress');
+                const progress = await response.json();
+                if (progress && progress.subjects && progress.subjects.informatics) {
+                    const lesson4 = progress.subjects.informatics.lessons.find(l => l.lesson_id === 4);
+                    if (lesson4 && (lesson4.status === 'available' || lesson4.status === 'completed')) {
+                        document.getElementById('nextLessonBtn').classList.remove('disabled');
+                    } else {
+                        document.getElementById('nextLessonBtn').classList.add('disabled');
+                    }
+                }
+            } catch (e) {
+                console.warn('Не удалось проверить следующий урок', e);
+            }
+        }
+
+        function checkTask(taskNum, correctAnswer) {
+            const selected = document.querySelector(`input[name="task${taskNum}"]:checked`);
+            const resultDiv = document.getElementById(`taskResult${taskNum}`);
+            if (!selected) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'task-result incorrect';
+                resultDiv.textContent = '❌ Выберите ответ';
+                return;
+            }
+            if (selected.value === correctAnswer) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'task-result correct';
+                resultDiv.textContent = '✅ Правильно! +10 кредитов';
+
+                if (taskNum === 1) {
+                    completeLesson();
+                }
+
+                fetch('/api/add-credits', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: 10 })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('+10 кредитов', 'Кредиты начислены', '💰');
+                    }
+                })
+                .catch(err => console.error('Ошибка начисления кредитов:', err));
+
+            } else {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'task-result incorrect';
+                resultDiv.textContent = '❌ Неправильно. Попробуйте еще раз.';
+            }
+        }
+
+        function completeLesson() {
+            fetch('/api/complete-lesson', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    lessonId: 3,
+                    subject: 'informatics',
+                    score: 100,
+                    timeSpent: 15
+                })
+            })
+            .then(() => {
+                showNotification('Урок пройден!', 'Урок 3 отмечен как завершённый', '✅');
+                document.getElementById('nextLessonBtn').classList.remove('disabled');
+            })
+            .catch(err => console.error('Ошибка при завершении урока:', err));
+        }
+
+        function toggleHint(element) {
+            element.classList.toggle('active');
+        }
+
+        function showNotification(title, message, icon = '✅') {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationIcon').textContent = icon;
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function closeNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

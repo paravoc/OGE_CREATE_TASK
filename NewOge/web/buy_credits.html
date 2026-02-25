@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Покупка кредитов и Premium</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #0f1219;
+            color: white;
+        }
+
+        /* macOS стильное верхнее меню */
+        .top-menu {
+            background: rgba(30, 35, 45, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 180, 70, 0.2);
+            padding: 0.8rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .macos-dot.red {
+            background: #ff5f56;
+            border: 1px solid #e0443e;
+        }
+        .macos-dot.yellow {
+            background: #ffbd2e;
+            border: 1px solid #df9f23;
+        }
+        .macos-dot.green {
+            background: #27c93f;
+            border: 1px solid #1aab2f;
+        }
+
+        .macos-dot:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        .menu-content {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .menu-content a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .menu-content a:hover {
+            color: #ffb347;
+        }
+
+        .menu-content a.active {
+            color: #ffb347;
+        }
+
+        .menu-content a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffb347, #ff8c00);
+            border-radius: 2px;
+        }
+
+        .menu-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 180, 70, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .user-name {
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        /* Основной контент */
+        .main-container {
+            margin-top: 64px;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .main-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 180, 70, 0.3);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb:hover {
+            background: #ffb347;
+        }
+
+        .credits-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Заголовок */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #ffb347, #ff8c00, #ff5f56);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+
+        /* Баланс */
+        .balance-card {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 180, 70, 0.3);
+            border-radius: 60px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 180, 70, 0.2);
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffb347, #ff8c00, #ff5f56);
+            animation: gradientMove 3s linear infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .balance-label {
+            color: #aaa;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .balance-amount {
+            font-size: 4.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .balance-currency {
+            font-size: 2rem;
+            color: #aaa;
+            margin-left: 0.5rem;
+        }
+
+        /* Табы для переключения */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 0.8rem 2rem;
+            background: rgba(30, 35, 45, 0.7);
+            border: 2px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            color: #aaa;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            border-color: #ffb347;
+            color: #ffb347;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border-color: transparent;
+        }
+
+        /* Секции */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Сетка тарифов */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .plan-card {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: #ffb347;
+            box-shadow: 0 30px 50px rgba(255, 180, 70, 0.3);
+        }
+
+        .plan-card.popular {
+            border-color: #ffb347;
+            box-shadow: 0 0 30px rgba(255, 180, 70, 0.3);
+        }
+
+        .plan-card.popular::before {
+            content: '🔥 ПОПУЛЯРНОЕ';
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            padding: 0.5rem 3rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .plan-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .plan-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffb347;
+            margin-bottom: 1rem;
+        }
+
+        .plan-price small {
+            font-size: 1rem;
+            color: #aaa;
+            font-weight: 400;
+        }
+
+        .plan-old-price {
+            color: #aaa;
+            text-decoration: line-through;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .plan-discount {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .plan-features li {
+            color: #ccc;
+            margin: 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: #ffb347;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .plan-btn {
+            background: rgba(255, 180, 70, 0.1);
+            border: 2px solid #ffb347;
+            color: #ffb347;
+            padding: 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .plan-card:hover .plan-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border-color: transparent;
+        }
+
+        /* Premium карточка */
+        .premium-card {
+            background: linear-gradient(135deg, rgba(10, 9, 6, 0.436), rgba(255, 140, 0, 0.15));
+            backdrop-filter: blur(10px);
+            border: 2px solid #ffd700;
+            border-radius: 40px;
+            padding: 2.5rem;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+        }
+
+        .premium-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 215, 0, 0.1),
+                transparent
+            );
+            animation: shine 8s infinite linear;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .premium-icon {
+            font-size: 5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            animation: starPulse 2s infinite;
+        }
+
+        @keyframes starPulse {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 20px #ffd700; }
+            50% { transform: scale(1.1); text-shadow: 0 0 40px #ffd700; }
+        }
+
+        .premium-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            text-align: center;
+            background: linear-gradient(135deg, #ffd700, #ffb347, #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .premium-price {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 30px #ffd700;
+        }
+
+        .premium-price small {
+            font-size: 1.2rem;
+            color: #aaa;
+            text-shadow: none;
+        }
+
+        .premium-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .premium-feature {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 30px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .premium-feature:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .premium-feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .premium-feature-text {
+            color: #ffd700;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .premium-feature-desc {
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+
+        .premium-btn {
+            background: linear-gradient(135deg, #ffd700, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 1.5rem 3rem;
+            border-radius: 60px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .premium-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(255, 215, 0, 0.6);
+        }
+
+        /* ЮKassa секция */
+        .payment-section {
+            background: rgba(30, 35, 45, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 40px;
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .payment-section h3 {
+            color: #ffb347;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-methods {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .payment-method {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 180, 70, 0.2);
+            border-radius: 20px;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ccc;
+            transition: all 0.3s;
+        }
+
+        .payment-method:hover {
+            border-color: #ffb347;
+            background: rgba(255, 180, 70, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Навигация */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            color: #fff;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 180, 70, 0.2);
+            border-color: #ffb347;
+            transform: translateY(-2px);
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(30, 35, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 180, 70, 0.3);
+            border-radius: 30px;
+            padding: 1rem 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            font-size: 1rem;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .notification-close:hover {
+            color: #ffb347;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .menu-content {
+                display: none;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .balance-amount {
+                font-size: 3rem;
+            }
+            
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .premium-title {
+                font-size: 2rem;
+            }
+
+            .premium-price {
+                font-size: 2.5rem;
+            }
+
+            .premium-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхнее меню -->
+    <div class="top-menu">
+        <div class="menu-left">
+            <div class="macos-dots">
+                <div class="macos-dot red" onclick="window.location.href='/dashboard'" title="На дашборд"></div>
+                <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+                <div class="macos-dot green" onclick="window.history.back()" title="Назад"></div>
+            </div>
+            <div class="menu-content">
+                <a href="/">🏠 Главная</a>
+                <a href="/oge">📚 ОГЭ</a>
+                <a href="/ege">📖 ЕГЭ</a>
+                <a href="/tasks">📋 Задачи</a>
+                <a href="/generate">⚡ Генератор</a>
+            </div>
+        </div>
+        <div class="menu-right">
+            <div class="user-profile" onclick="window.location.href='/profile'">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Загрузка...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-container">
+        <div class="credits-container">
+            <!-- СТРАНИЦА ПОКУПКИ (всегда показываем эту страницу) -->
+            <div class="page-header">
+                <h1>💰 Пополнение баланса</h1>
+                <p>Выберите способ пополнения</p>
+            </div>
+
+            <!-- Текущий баланс (будет обновляться через JS) -->
+            <div class="balance-card">
+                <div class="balance-label">Ваш текущий баланс</div>
+                <div class="balance-amount">
+                    <span id="currentBalance">0</span><span class="balance-currency">кред.</span>
+                </div>
+            </div>
+
+            <!-- Табы для переключения -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('credits', this)">💎 Кредиты</div>
+                <div class="tab" onclick="switchTab('premium', this)">⭐ PREMIUM</div>
+            </div>
+
+            <!-- Секция с кредитами -->
+            <div id="credits-section" class="section active">
+                <div class="plans-grid">
+                    <!-- Тариф 1: 100 кредитов -->
+                    <a href="#" onclick="buyCredits(100)" class="plan-card">
+                        <div class="plan-icon">💎</div>
+                        <div class="plan-name">Стартовый</div>
+                        <div class="plan-price">100 ₽</div>
+                        <ul class="plan-features">
+                            <li>100 кредитов</li>
+                            <li>Подходит для 1 урока</li>
+                            <li>Без скидки</li>
+                        </ul>
+                        <div class="plan-btn">Выбрать</div>
+                    </a>
+
+                    <!-- Тариф 2: 500 кредитов (ПОПУЛЯРНЫЙ) -->
+                    <a href="#" onclick="buyCredits(500)" class="plan-card popular">
+                        <div class="plan-icon">💎💎</div>
+                        <div class="plan-name">Оптимальный</div>
+                        <div class="plan-old-price">500 ₽</div>
+                        <div class="plan-price">450 ₽</div>
+                        <div class="plan-discount">-10%</div>
+                        <ul class="plan-features">
+                            <li>500 кредитов</li>
+                            <li>Экономия 50 ₽</li>
+                            <li>5 уроков в подарок</li>
+                            <li>Лучшее соотношение</li>
+                        </ul>
+                        <div class="plan-btn">Выбрать</div>
+                    </a>
+
+                    <!-- Тариф 3: 1000 кредитов -->
+                    <a href="#" onclick="buyCredits(1000)" class="plan-card">
+                        <div class="plan-icon">💎💎💎</div>
+                        <div class="plan-name">Максимальный</div>
+                        <div class="plan-old-price">1000 ₽</div>
+                        <div class="plan-price">800 ₽</div>
+                        <div class="plan-discount">-20%</div>
+                        <ul class="plan-features">
+                            <li>1000 кредитов</li>
+                            <li>Экономия 200 ₽</li>
+                            <li>12 уроков в подарок</li>
+                            <li>Премиум статус на месяц</li>
+                        </ul>
+                        <div class="plan-btn">Выбрать</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Секция с Premium -->
+            <div id="premium-section" class="section">
+                <div class="premium-card">
+                    <div class="premium-icon">⭐</div>
+                    <div class="premium-title">PREMIUM подписка</div>
+                    <div class="premium-price">1 500 ₽ <small>/мес</small></div>
+                    
+                    <div class="premium-features">
+                        <div class="premium-feature">
+                            <div class="premium-feature-icon">🚀</div>
+                            <div class="premium-feature-text">Безлимитные генерации</div>
+                            <div class="premium-feature-desc">Никаких ограничений, сколько угодно вариантов</div>
+                        </div>
+                        <div class="premium-feature">
+                            <div class="premium-feature-icon">🔓</div>
+                            <div class="premium-feature-text">Все уроки открыты</div>
+                            <div class="premium-feature-desc">Доступ к любой теме и любому уроку</div>
+                        </div>
+                        <div class="premium-feature">
+                            <div class="premium-feature-icon">⚡</div>
+                            <div class="premium-feature-text">1 урок в день бесплатно</div>
+                            <div class="premium-feature-desc">Каждый день один платный урок бесплатно</div>
+                        </div>
+                        <div class="premium-feature">
+                            <div class="premium-feature-icon">🎯</div>
+                            <div class="premium-feature-text">Приоритетная поддержка</div>
+                            <div class="premium-feature-desc">Отвечаем в течение 30 минут</div>
+                        </div>
+                    </div>
+
+                    <button class="premium-btn" onclick="buyPremium()">
+                        ⭐ Активировать Premium
+                    </button>
+                </div>
+            </div>
+
+            <!-- Информация о ЮKassa -->
+            <div class="payment-section">
+                <h3>💳 Способы оплаты</h3>
+                <div class="payment-methods">
+                    <div class="payment-method">
+                        <span>💳</span>
+                        Банковская карта
+                    </div>
+                    <div class="payment-method">
+                        <span>📱</span>
+                        СБП
+                    </div>
+                    <div class="payment-method">
+                        <span>🏦</span>
+                        ЮMoney
+                    </div>
+                    <div class="payment-method">
+                        <span>📱</span>
+                        Мобильный платеж
+                    </div>
+                </div>
+                <p style="color: #aaa; font-size: 0.9rem;">
+                    🔒 Безопасная оплата через ЮKassa. Все платежи защищены.
+                </p>
+            </div>
+
+            <!-- Навигация -->
+            <div class="navigation">
+                <a href="/profile" class="nav-btn">
+                    <span>←</span>
+                    Назад в профиль
+                </a>
+                <a href="/dashboard" class="nav-btn">
+                    <span>📊</span>
+                    Дашборд
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div class="notification" id="notification">
+        <div class="notification-icon" id="notificationIcon">✅</div>
+        <div class="notification-content">
+            <div class="notification-title" id="notificationTitle">Успешно</div>
+            <div class="notification-message" id="notificationMessage"></div>
+        </div>
+        <button class="notification-close" onclick="closeNotification()">×</button>
+    </div>
+
+    <script>
+        // Данные пользователя из window.USER_DATA (будут вставлены сервером)
+        let userData = window.USER_DATA || null;
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            // Обновляем информацию о пользователе
+            if (userData) {
+                document.getElementById('userName').textContent = userData.username || 'Пользователь';
+                document.getElementById('userAvatar').textContent = userData.username ? userData.username.charAt(0).toUpperCase() : '?';
+                document.getElementById('currentBalance').textContent = userData.credits || 0;
+            } else {
+                // Если нет userData, загружаем через API
+                loadUserData();
+            }
+        });
+
+        // Загрузка данных пользователя через API
+        async function loadUserData() {
+            try {
+                const response = await fetch('/api/user/me');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('currentBalance').textContent = data.credits || 0;
+                    document.getElementById('userName').textContent = data.username || 'Пользователь';
+                    document.getElementById('userAvatar').textContent = data.username ? data.username.charAt(0).toUpperCase() : '?';
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+            }
+        }
+
+        // Переключение табов
+        function switchTab(tab, element) {
+            // Обновляем классы табов
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Показываем соответствующую секцию
+            document.getElementById('credits-section').classList.remove('active');
+            document.getElementById('premium-section').classList.remove('active');
+            
+            if (tab === 'credits') {
+                document.getElementById('credits-section').classList.add('active');
+            } else {
+                document.getElementById('premium-section').classList.add('active');
+            }
+        }
+
+        // Покупка кредитов
+        function buyCredits(amount) {
+            // Перенаправляем на C++ метод для создания платежа
+            window.location.href = `/api/create-payment?amount=${amount}&type=credits`;
+        }
+
+        // Покупка Premium
+        function buyPremium() {
+            // Перенаправляем на C++ метод для создания платежа
+            window.location.href = `/api/create-payment?amount=1500&type=premium&period=month`;
+        }
+
+        // Уведомления
+        function showNotification(title, message, icon = '✅') {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationIcon').textContent = icon;
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function closeNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+
+        // Проверяем параметры URL для отображения результата
+        const urlParams = new URLSearchParams(window.location.search);
+        const success = urlParams.get('success');
+        const amount = urlParams.get('amount');
+        const type = urlParams.get('type');
+
+        if (success === '1') {
+            if (type === 'premium') {
+                showNotification('✅ Premium активирован!', 'Добро пожаловать в клуб избранных', '⭐');
+            } else {
+                showNotification('✅ Оплата успешна!', `+${amount} кредитов зачислено`, '💰');
+            }
+            // Обновляем баланс
+            loadUserData();
+        }
+    </script>
+</body>
+</html>
