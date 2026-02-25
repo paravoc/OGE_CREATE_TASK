@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои варианты — Подготовка к экзаменам</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            background: #0f1219;
+            color: white;
+        }
+
+        /* macOS стильное верхнее меню */
+        .top-menu {
+            background: rgba(22, 26, 35, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 200, 80, 0.15);
+            padding: 0.8rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .macos-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .macos-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .macos-dot.red {
+            background: #ff5f56;
+            border: 1px solid #e0443e;
+        }
+        .macos-dot.yellow {
+            background: #ffbd2e;
+            border: 1px solid #df9f23;
+        }
+        .macos-dot.green {
+            background: #27c93f;
+            border: 1px solid #1aab2f;
+        }
+
+        .macos-dot:hover {
+            transform: scale(1.2);
+            filter: brightness(1.2);
+        }
+
+        .menu-content {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .menu-content a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .menu-content a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ffb347, #ff8c00);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .menu-content a:hover {
+            color: #ffb347;
+        }
+
+        .menu-content a:hover::after {
+            width: 80%;
+        }
+
+        .menu-content a.active {
+            color: #ffb347;
+        }
+
+        .menu-content a.active::after {
+            width: 80%;
+        }
+
+        .menu-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .yandex-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .yandex-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 180, 70, 0.3);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 200, 80, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 200, 80, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-profile:hover {
+            background: rgba(255, 200, 80, 0.2);
+            border-color: #ffb347;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .user-name {
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        /* Основной контент */
+        .main-container {
+            margin-top: 64px;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .main-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 200, 80, 0.3);
+            border-radius: 10px;
+        }
+
+        .main-container::-webkit-scrollbar-thumb:hover {
+            background: #ffb347;
+        }
+
+        .variants-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #ffb347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .variants-stats {
+            background: rgba(30, 35, 45, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 200, 80, 0.15);
+            border-radius: 30px;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stats-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #aaa;
+        }
+
+        .stats-value {
+            color: #ffb347;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .warning-badge {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            border: 1px solid #ff4757;
+        }
+
+        /* Сетка вариантов */
+        .variants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .variant-card {
+            background: rgba(30, 35, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 200, 80, 0.15);
+            border-radius: 30px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .variant-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffb347;
+            box-shadow: 0 20px 40px rgba(255, 180, 70, 0.15);
+        }
+
+        .variant-card.new {
+            animation: glow 2s ease-in-out;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 180, 70, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 180, 70, 0.8); }
+        }
+
+        .variant-date {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .variant-badge {
+            background: rgba(72, 187, 120, 0.2);
+            color: #48bb78;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            border: 1px solid #48bb78;
+        }
+
+        .variant-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .variant-topics {
+            margin-bottom: 1rem;
+        }
+
+        .topic-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 200, 80, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .topic-item:last-child {
+            border-bottom: none;
+        }
+
+        .topic-name {
+            color: #ccc;
+        }
+
+        .topic-count {
+            color: #ffb347;
+            font-weight: 600;
+            background: rgba(255, 180, 70, 0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+        }
+
+        .variant-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 200, 80, 0.2);
+        }
+
+        .variant-stats {
+            display: flex;
+            gap: 1rem;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .variant-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .variant-btn {
+            background: rgba(255, 180, 70, 0.1);
+            border: 1px solid #ffb347;
+            color: #ffb347;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .variant-btn:hover {
+            background: #ffb347;
+            color: #000;
+        }
+
+        .variant-btn.delete {
+            border-color: #ff4757;
+            color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .variant-btn.delete:hover {
+            background: #ff4757;
+            color: #fff;
+        }
+
+        /* Пустое состояние */
+        .empty-state {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: rgba(30, 35, 45, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 200, 80, 0.15);
+            border-radius: 60px;
+            margin-top: 2rem;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #aaa;
+        }
+
+        .empty-text {
+            color: #aaa;
+            margin-bottom: 2rem;
+        }
+
+        .empty-btn {
+            background: linear-gradient(135deg, #ffb347, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .empty-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 180, 70, 0.3);
+        }
+
+        /* Лоадер */
+        .loader {
+            text-align: center;
+            padding: 3rem;
+            color: #aaa;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 180, 70, 0.3);
+            border-top-color: #ffb347;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .menu-content {
+                display: none;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .variants-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Верхнее меню -->
+    <div class="top-menu">
+        <div class="menu-left">
+            <div class="macos-dots">
+                <div class="macos-dot red" onclick="window.location.href='/dashboard'" title="На дашборд"></div>
+                <div class="macos-dot yellow" onclick="window.location.reload()" title="Обновить"></div>
+                <div class="macos-dot green" onclick="window.history.back()" title="Назад"></div>
+            </div>
+            <div class="menu-content">
+                <a href="/">Главная</a>
+                <a href="/informatics">Информатика</a>
+                <a href="/ege">ЕГЭ</a>
+                <a href="/generate">Генератор</a>
+                <a href="/my-variants" class="active">Мои варианты</a>
+            </div>
+        </div>
+        <div class="menu-right">
+            <button class="yandex-btn" onclick="window.location.href='/generate'">
+                <span>✨</span>
+                Новый вариант
+            </button>
+            <div class="user-profile" onclick="window.location.href='/profile'">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Загрузка...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-container">
+        <div class="variants-container">
+            <div class="page-header">
+                <h1>📚 Мои варианты</h1>
+                <div class="variants-stats">
+                    <div class="stats-item">
+                        <span>📊</span>
+                        <span class="stats-value" id="totalVariants">0</span>
+                        <span>/10</span>
+                    </div>
+                    <div class="stats-item">
+                        <span>💰</span>
+                        <span class="stats-value" id="totalSpent">0</span>
+                        <span>кредитов</span>
+                    </div>
+                    <div id="storageWarning" class="warning-badge" style="display: none;">
+                        ⚠️ Старые варианты будут удалены
+                    </div>
+                </div>
+            </div>
+
+            <!-- Сетка вариантов -->
+            <div id="variantsGrid" class="variants-grid"></div>
+
+            <!-- Лоадер -->
+            <div id="loader" class="loader" style="display: none;">
+                <div class="spinner"></div>
+                <div>Загрузка вариантов...</div>
+            </div>
+
+            <!-- Пустое состояние -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-icon">📭</div>
+                <div class="empty-title">У вас пока нет вариантов</div>
+                <div class="empty-text">Сгенерируйте первый вариант и он появится здесь</div>
+                <a href="/generate" class="empty-btn">✨ Создать вариант</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для просмотра варианта (iframe) -->
+    <div class="modal" id="variantModal" style="display: none;">
+        <div class="modal-overlay" onclick="closeVariantModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeVariantModal()">×</button>
+            <iframe id="variantFrame" class="variant-frame" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <style>
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ff4757;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            transform: scale(1.1);
+            background: #ff5f56;
+        }
+
+        .variant-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+
+    <script>
+        let userData = null;
+        let variants = [];
+        let currentPage = 1;
+        let hasMore = true;
+        let loading = false;
+        let totalSpent = 0;
+
+        // Загрузка данных при старте
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            loadVariants();
+        });
+
+        // Загрузка данных пользователя
+        async function loadUserData() {
+            try {
+                const response = await fetch('/api/user/me');
+                if (!response.ok) {
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                userData = await response.json();
+                document.getElementById('userName').textContent = userData.username || 'Пользователь';
+                document.getElementById('userAvatar').textContent = userData.username ? userData.username.charAt(0).toUpperCase() : '?';
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+            }
+        }
+
+        // Загрузка вариантов
+        async function loadVariants(reset = false) {
+            if (loading) return;
+            
+            if (reset) {
+                currentPage = 1;
+                hasMore = true;
+                variants = [];
+                document.getElementById('variantsGrid').innerHTML = '';
+                totalSpent = 0;
+            }
+
+            loading = true;
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+
+            try {
+                const response = await fetch(`/api/my-variants?page=${currentPage}&limit=10`);
+                const data = await response.json();
+                
+                if (data.variants && data.variants.length > 0) {
+                    variants = [...variants, ...data.variants];
+                    renderVariants(data.variants, currentPage === 1 && variants.length > 10);
+                    
+                    // Подсчитываем потраченные кредиты
+                    data.variants.forEach(v => {
+                        if (v.topics && Array.isArray(v.topics)) {
+                            v.topics.forEach(t => {
+                                totalSpent += t.cost || 0;
+                            });
+                        }
+                    });
+                    
+                    document.getElementById('totalSpent').textContent = totalSpent;
+                    
+                    currentPage++;
+                    hasMore = data.hasMore;
+                    
+                    // Проверяем лимит
+                    if (variants.length >= 10) {
+                        document.getElementById('storageWarning').style.display = 'inline-block';
+                    }
+                } else if (variants.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                }
+                
+                document.getElementById('totalVariants').textContent = variants.length;
+
+            } catch (error) {
+                console.error('Ошибка загрузки вариантов:', error);
+            } finally {
+                loading = false;
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+
+        // Рендер вариантов
+        function renderVariants(newVariants, showWarning) {
+            const grid = document.getElementById('variantsGrid');
+            
+            newVariants.forEach((variant, index) => {
+                const date = new Date(variant.created_at * 1000);
+                const formattedDate = date.toLocaleDateString('ru-RU', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const card = document.createElement('div');
+                card.className = `variant-card ${index === 0 && showWarning ? 'new' : ''}`;
+                
+                // Формируем список тем
+                let topicsHtml = '';
+                if (variant.topics && Array.isArray(variant.topics)) {
+                    variant.topics.forEach(topic => {
+                        const difficultyText = {
+                            'easy': '🟢',
+                            'medium': '🟡',
+                            'hard': '🔴'
+                        }[topic.difficulty] || '🟡';
+                        
+                        topicsHtml += `
+                            <div class="topic-item">
+                                <span class="topic-name">${topic.title}</span>
+                                <span class="topic-count">${topic.count} ${difficultyText}</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                card.innerHTML = `
+                    <div class="variant-date">
+                        <span>📅 ${formattedDate}</span>
+                        ${index === 0 && showWarning ? '<span class="variant-badge">Новый</span>' : ''}
+                    </div>
+                    <div class="variant-title">${variant.title || 'Вариант'}</div>
+                    <div class="variant-topics">
+                        ${topicsHtml || '<div class="topic-item">Нет тем</div>'}
+                    </div>
+                    <div class="variant-footer">
+                        <div class="variant-stats">
+                            <div class="stat">
+                                <span>📊</span>
+                                <span>${variant.total_questions || 0}</span>
+                            </div>
+                            <div class="stat">
+                                <span>💰</span>
+                                <span>${variant.topics ? variant.topics.reduce((sum, t) => sum + (t.cost || 0), 0) : 0}</span>
+                            </div>
+                        </div>
+                        <div class="variant-actions">
+                            <button class="variant-btn" onclick="openVariant('${variant.html_path}')">Открыть</button>
+                            <button class="variant-btn delete" onclick="deleteVariant('${variant._id}')">Удалить</button>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+
+            // Проверяем скролл для подгрузки
+            checkScroll();
+        }
+
+        // Открытие варианта в модальном окне
+        function openVariant(htmlPath) {
+            const modal = document.getElementById('variantModal');
+            const frame = document.getElementById('variantFrame');
+            
+            // Используем fetch для получения HTML без показа пути
+            fetch(htmlPath)
+                .then(response => response.text())
+                .then(html => {
+                    // Вставляем HTML в iframe через srcdoc (путь не виден)
+                    frame.srcdoc = html;
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                })
+                .catch(error => {
+                    console.error('Ошибка загрузки варианта:', error);
+                    alert('Не удалось загрузить вариант');
+                });
+        }
+
+        // Закрытие модального окна
+        function closeVariantModal() {
+            document.getElementById('variantModal').style.display = 'none';
+            document.getElementById('variantFrame').srcdoc = '';
+            document.body.style.overflow = '';
+        }
+
+        // Удаление варианта
+        async function deleteVariant(variantId) {
+            if (!confirm('Удалить этот вариант?')) return;
+            
+            try {
+                const response = await fetch(`/api/variant/${variantId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    // Перезагружаем список
+                    variants = [];
+                    currentPage = 1;
+                    document.getElementById('variantsGrid').innerHTML = '';
+                    loadVariants();
+                }
+            } catch (error) {
+                console.error('Ошибка удаления:', error);
+            }
+        }
+
+        // Проверка скролла для подгрузки
+        function checkScroll() {
+            window.addEventListener('scroll', () => {
+                if (loading || !hasMore) return;
+                
+                const scrollPosition = window.scrollY + window.innerHeight;
+                const pageHeight = document.documentElement.scrollHeight;
+                
+                if (scrollPosition > pageHeight - 500) {
+                    loadVariants();
+                }
+            });
+        }
+
+        // Закрытие модального окна по Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeVariantModal();
+            }
+        });
+    </script>
+</body>
+</html>
