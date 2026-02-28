@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Ваш сервис</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <script src="/js/auth.js" defer></script>
+</head>
+<body class="h-full bg-gray-900">
+    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+            <img class="mx-auto h-10 w-auto" src="/images/logo.svg" alt="Логотип">
+            <h2 class="mt-10 text-center text-2xl font-bold tracking-tight text-white">Вход в аккаунт</h2>
+        </div>
+
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <form class="space-y-6" id="login-form" method="POST">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-200">Email</label>
+                    <div class="mt-2">
+                        <input type="email" name="email" id="email" required 
+                               class="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-white border-0 focus:ring-2 focus:ring-indigo-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-200">Пароль</label>
+                    <div class="mt-2">
+                        <input type="password" name="password" id="password" required 
+                               class="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-white border-0 focus:ring-2 focus:ring-indigo-600">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" name="remember" class="h-4 w-4 rounded bg-gray-800 border-gray-600 text-indigo-600">
+                        <label for="remember" class="ml-2 block text-sm text-gray-300">Запомнить меня</label>
+                    </div>
+                    <div class="text-sm">
+                        <a href="/forgot-password" class="font-semibold text-indigo-400 hover:text-indigo-300">Забыли пароль?</a>
+                    </div>
+                </div>
+
+                <div id="error-message" class="text-red-500 text-sm hidden"></div>
+
+                <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500">
+                    Войти
+                </button>
+            </form>
+
+            <p class="mt-10 text-center text-sm text-gray-400">
+                Нет аккаунта?
+                <a href="/register" class="font-semibold text-indigo-400 hover:text-indigo-300">Зарегистрируйтесь</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

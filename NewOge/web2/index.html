@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная - Ваш сервис</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/main.js" defer></script>
+</head>
+<body class="h-full bg-gray-900">
+    <!-- Шапка с меню -->
+    <header class="absolute inset-x-0 top-0 z-50">
+        <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+            <div class="flex lg:flex-1">
+                <a href="/" class="-m-1.5 p-1.5">
+                    <span class="sr-only">Ваш сервис</span>
+                    <img src="/images/logo.svg" alt="Логотип" class="h-8 w-auto">
+                </a>
+            </div>
+            
+            <!-- Десктопное меню -->
+            <div class="hidden lg:flex lg:gap-x-12">
+                <div class="relative" id="products-menu">
+                    <button type="button" class="flex items-center gap-x-1 text-sm font-semibold text-white" aria-expanded="false">
+                        Продукты
+                        <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div class="absolute -left-8 top-full z-10 mt-3 w-56 rounded-xl bg-gray-800 p-2 shadow-lg ring-1 ring-white/10 hidden" id="products-dropdown">
+                        <a href="/generate" class="block rounded-lg px-3 py-2 text-sm text-white hover:bg-white/5">Генерация вариантов</a>
+                        <a href="/variant" class="block rounded-lg px-3 py-2 text-sm text-white hover:bg-white/5">Мои варианты</a>
+                        <a href="/tasks" class="block rounded-lg px-3 py-2 text-sm text-white hover:bg-white/5">Задания</a>
+                    </div>
+                </div>
+                
+                <a href="/features" class="text-sm font-semibold text-white">Возможности</a>
+                <a href="/pricing" class="text-sm font-semibold text-white">Тарифы</a>
+                <a href="/about" class="text-sm font-semibold text-white">О нас</a>
+            </div>
+
+            <!-- Кнопки авторизации -->
+            <div class="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4" id="auth-buttons">
+                <!-- Будут заполнены через JS -->
+            </div>
+
+            <!-- Мобильное меню кнопка -->
+            <div class="flex lg:hidden">
+                <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-200" id="mobile-menu-button">
+                    <span class="sr-only">Открыть меню</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Мобильное меню -->
+        <div class="lg:hidden hidden" id="mobile-menu">
+            <div class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-gray-900 px-6 py-6 sm:max-w-sm">
+                <div class="flex items-center justify-between">
+                    <a href="/" class="-m-1.5 p-1.5">
+                        <img src="/images/logo.svg" alt="Логотип" class="h-8 w-auto">
+                    </a>
+                    <button type="button" class="-m-2.5 rounded-md p-2.5 text-gray-200" id="close-mobile-menu">
+                        <span class="sr-only">Закрыть меню</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="mt-6 flow-root">
+                    <div class="space-y-2 py-6">
+                        <a href="/generate" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-white hover:bg-white/5">Генерация</a>
+                        <a href="/variant" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-white hover:bg-white/5">Мои варианты</a>
+                        <a href="/features" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-white hover:bg-white/5">Возможности</a>
+                        <a href="/pricing" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-white hover:bg-white/5">Тарифы</a>
+                        <a href="/about" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-white hover:bg-white/5">О нас</a>
+                    </div>
+                    <div class="py-6 space-y-2" id="mobile-auth-buttons">
+                        <!-- Будут заполнены через JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main>
+        <!-- Герой секция -->
+        <div class="relative isolate px-6 pt-14 lg:px-8">
+            <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+                <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
+            </div>
+
+            <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+                        Генерация уникальных заданий ОГЭ
+                    </h1>
+                    <p class="mt-6 text-lg leading-8 text-gray-300">
+                        Создавайте бесконечное количество вариантов для подготовки. 
+                        Индивидуальный подход к каждому ученику.
+                    </p>
+                    
+                    <!-- Кнопка "Начать" с пошаговой инструкцией -->
+                    <div class="mt-10 flex flex-col items-center gap-4">
+                        <button id="start-button" class="rounded-md bg-indigo-600 px-8 py-4 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all transform hover:scale-105">
+                            Начать работу
+                        </button>
+                        
+                        <!-- Пошаговая инструкция (изначально скрыта) -->
+                        <div id="step-guide" class="mt-8 w-full max-w-2xl bg-gray-800/50 rounded-2xl p-6 hidden">
+                            <h3 class="text-xl font-semibold text-white mb-4">Как начать работу:</h3>
+                            <div class="grid gap-4 md:grid-cols-2">
+                                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                                    <div class="text-indigo-400 text-2xl font-bold mb-2">1</div>
+                                    <h4 class="text-white font-medium">Регистрация</h4>
+                                    <p class="text-gray-400 text-sm">Создайте аккаунт за 1 минуту</p>
+                                </div>
+                                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                                    <div class="text-indigo-400 text-2xl font-bold mb-2">2</div>
+                                    <h4 class="text-white font-medium">Выбор тарифа</h4>
+                                    <p class="text-gray-400 text-sm">Бесплатный или премиум доступ</p>
+                                </div>
+                                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                                    <div class="text-indigo-400 text-2xl font-bold mb-2">3</div>
+                                    <h4 class="text-white font-medium">Генерация</h4>
+                                    <p class="text-gray-400 text-sm">Создайте первый вариант</p>
+                                </div>
+                                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+                                    <div class="text-indigo-400 text-2xl font-bold mb-2">4</div>
+                                    <h4 class="text-white font-medium">Обучение</h4>
+                                    <p class="text-gray-400 text-sm">Начинайте подготовку</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция с преимуществами -->
+        <div class="bg-gray-900 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                <div class="mx-auto max-w-2xl text-center">
+                    <h2 class="text-base font-semibold text-indigo-400">Возможности</h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                        Всё для эффективной подготовки
+                    </p>
+                </div>
+                <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+                    <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
+                        <div class="relative pl-16">
+                            <dt class="text-base font-semibold text-white">
+                                <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
+                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linecap="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                </div>
+                                Быстрая генерация
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-400">Создавайте варианты за секунды с помощью нашей нейросети</dd>
+                        </div>
+                        <div class="relative pl-16">
+                            <dt class="text-base font-semibold text-white">
+                                <div class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
+                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linecap="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
+                                </div>
+                                Уникальные задания
+                            </dt>
+                            <dd class="mt-2 text-base text-gray-400">Каждый вариант уникален, никаких повторений</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Шаблоны для авторизованных/неавторизованных пользователей -->
+    <template id="auth-buttons-template">
+        <div class="flex items-center gap-4">
+            <span class="text-sm text-gray-300" id="user-status"></span>
+            <a href="/dashboard" class="text-sm font-semibold text-white">Личный кабинет</a>
+            <a href="/logout" class="text-sm font-semibold text-indigo-400">Выйти</a>
+        </div>
+    </template>
+
+    <template id="guest-buttons-template">
+        <div class="flex items-center gap-4">
+            <a href="/login" class="text-sm font-semibold text-white">Войти</a>
+            <a href="/register" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Регистрация</a>
+        </div>
+    </template>
+</body>
+</html>

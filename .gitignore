@@ -1,5 +1,4 @@
 *.exe
-*.html
 *.dll
 *.so
 *.dylib
