@@ -834,7 +834,7 @@
                 <span>📚</span>
                 Мои варианты
             </button>
-            <div class="user-profile" onclick="window.location.href='/profile'">
+            <div class="user-profile" onclick="window.location.href='/dashboard'">
                 <div class="user-avatar" id="userAvatar">?</div>
                 <span class="user-name" id="userName">Загрузка...</span>
             </div>
@@ -1242,88 +1242,91 @@
             document.getElementById(cardId).classList.toggle('expanded');
         }
 
-        // Генерация варианта
-        function generateVariant() {
-            const selectedTopics = [];
-            const totalQuestions = parseInt(document.getElementById('totalQuestions').textContent);
-            const totalCost = parseInt(document.getElementById('totalCost').textContent);
+        // Функция генерации варианта (обновлённая)
+function generateVariant() {
+    const selectedTopics = [];
+    const totalQuestions = parseInt(document.getElementById('totalQuestions').textContent);
+    const totalCost = parseInt(document.getElementById('totalCost').textContent);
 
-            if (totalQuestions === 0) {
-                showNotification('❌ Ошибка', 'Выберите хотя бы одну тему', '⚠️');
-                return;
-            }
+    if (totalQuestions === 0) {
+        showNotification('❌ Ошибка', 'Выберите хотя бы одну тему', '⚠️');
+        return;
+    }
 
-            if (userVariantsCount >= 10) {
-                showNotification('❌ Ошибка', 'Достигнут лимит вариантов (максимум 10)', '📦');
-                return;
-            }
+    if (userVariantsCount >= 10) {
+        showNotification('❌ Ошибка', 'Достигнут лимит вариантов (максимум 10)', '📦');
+        return;
+    }
 
-            if (userData && userData.credits < totalCost) {
-                showNotification('❌ Ошибка', 'Недостаточно кредитов', '💰');
-                return;
-            }
+    if (userData && userData.credits < totalCost) {
+        showNotification('❌ Ошибка', 'Недостаточно кредитов', '💰');
+        return;
+    }
 
-            // Собираем настройки для генерации
-            const variantConfig = {
-                title: `Вариант от ${new Date().toLocaleDateString()}`,
-                topics: [],
-                totalQuestions: totalQuestions,
-                totalCost: totalCost
-            };
+    // Собираем настройки для генерации
+    const variantConfig = {
+        title: `Вариант от ${new Date().toLocaleDateString()}`,
+        topics: [],
+        totalQuestions: totalQuestions,
+        totalCost: totalCost
+    };
 
-            generationSettings.forEach((settings, index) => {
-                if (settings.count > 0 && settings.isAvailable) {
-                    variantConfig.topics.push({
-                        lessonId: lessons[index].id,
-                        title: lessons[index].title,
-                        count: settings.count,
-                        difficulty: settings.difficulty,
-                        price: lessons[index].price,
-                        free: lessons[index].free,
-                        cost: calculateCost(lessons[index], settings.count)
-                    });
-                }
-            });
-
-            console.log('Генерируем вариант:', variantConfig);
-
-            // Отправляем на сервер
-            fetch('/api/generate-variant', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(variantConfig)
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification('✨ Успешно', 'Вариант поставлен в очередь на генерацию', '🚀');
-                    
-                    // Обновляем баланс
-                    if (userData) {
-                        userData.credits -= totalCost;
-                        document.getElementById('userCredits').textContent = userData.credits;
-                    }
-                    
-                    // Увеличиваем счётчик вариантов
-                    userVariantsCount++;
-                    document.getElementById('variantsCount').textContent = userVariantsCount;
-                    updateGlobalStats();
-                    
-                    // Сбрасываем настройки после успешной генерации
-                    setTimeout(() => {
-                        if (confirm('Вариант успешно создан! Очистить настройки?')) {
-                            resetSettings();
-                        }
-                    }, 500);
-                } else {
-                    showNotification('❌ Ошибка', data.error || 'Не удалось сгенерировать вариант', '❌');
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                showNotification('❌ Ошибка', 'Проблема с соединением', '❌');
+    generationSettings.forEach((settings, index) => {
+        if (settings.count > 0 && settings.isAvailable) {
+            variantConfig.topics.push({
+                lessonId: lessons[index].id,
+                title: lessons[index].title,
+                count: settings.count,
+                difficulty: settings.difficulty,
+                price: lessons[index].price,
+                free: lessons[index].free,
+                cost: calculateCost(lessons[index], settings.count)
             });
         }
+    });
+
+    console.log('Генерируем вариант:', variantConfig);
+
+    // Показываем уведомление о начале генерации
+    showNotification('⏳ Генерация', 'Вариант ставится в очередь...', '🚀');
+
+    // Отправляем на сервер
+    fetch('/api/studio-generate', {  // ← ИЗМЕНЁННЫЙ URL
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(variantConfig)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('✨ Успешно', data.message || 'Вариант поставлен в очередь', '✅');
+            
+            // Обновляем баланс
+            if (userData) {
+                userData.credits = data.newBalance;
+                document.getElementById('userCredits').textContent = data.newBalance;
+            }
+            
+            // Увеличиваем счётчик вариантов
+            userVariantsCount++;
+            document.getElementById('variantsCount').textContent = userVariantsCount;
+            updateGlobalStats();
+            
+            // Предлагаем перейти к вариантам
+            setTimeout(() => {
+                if (confirm('✅ Вариант создан! Перейти к списку вариантов?')) {
+                    window.location.href = '/my-variants';
+                }
+            }, 500);
+        } else {
+            showNotification('❌ Ошибка', data.error || 'Не удалось сгенерировать вариант', '❌');
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        showNotification('❌ Ошибка', 'Проблема с соединением', '❌');
+    });
+}
 
         // Сброс настроек
         function resetSettings() {

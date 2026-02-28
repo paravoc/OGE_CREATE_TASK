@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Р’Р°СЂРёР°РЅС‚ РѕС‚ 28.02.2026</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Верхнее меню в стиле macOS -->
+        <div class="top-menu">
+            <div class="menu-left">
+                <div class="macos-dots">
+                    <div class="macos-dot red" onclick="window.location.href='/dashboard'"></div>
+                    <div class="macos-dot yellow" onclick="window.location.reload()"></div>
+                    <div class="macos-dot green" onclick="window.history.back()"></div>
+                </div>
+                <div class="menu-content">
+                    <a href="/">Главная</a>
+                    <a href="/informatics">Информатика</a>
+                    <a href="/ege">ЕГЭ</a>
+                    <a href="/generate">Генератор</a>
+                    <a href="/my-variants">Мои варианты</a>
+                </div>
+            </div>
+            <div class="menu-right">
+                <button class="yandex-btn" onclick="window.location.href='/generate'">
+                    <span>?</span>
+                    Новый вариант
+                </button>
+                <div class="user-profile" onclick="window.location.href='/profile'">
+                    <div class="user-avatar" id="userAvatar">?</div>
+                    <span class="user-name" id="userName">Пользователь</span>
+                </div>
+            </div>
+        </div>
+        <!-- Заголовок страницы -->
+        <div class="header">
+            <h1>Р’Р°СЂРёР°РЅС‚ РѕС‚ 28.02.2026</h1>
+            <p>Сгенерировано: <span id="generation-date">28.02.2026 12:56</span></p>
+            
+            <!-- Прогресс-бар -->
+            <div class="progress-container" style="margin-top: 20px;">
+                <div class="progress-bar" style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                    <div id="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ffb347, #ff8c00); transition: width 0.3s;"></div>
+                </div>
+                <div id="progress-text" style="text-align: right; margin-top: 5px; color: #aaa; font-size: 0.9rem;">0/4 решено</div>
+            </div>
+        </div>
+        <!-- Сетка задач -->
+        <div class="problems-grid">
+            <!-- Задача 1 -->
+            <div class="problem-wrapper" data-task-id="ip_restore_59414_1772272602">
+                <div class="problem-header">
+                    <span class="problem-number">Задача #1</span>
+                    <span class="problem-score">15 баллов</span>
+                </div>
+                
+                <div class="problem-content">
+                    <div class='ip-restore'><p>Восстановите IP-адрес. В ответе укажите последовательность букв.</p><table class='parts-table'><tr><td><strong>А</strong><br>6.126</td><td><strong>Б</strong><br>1.21</td><td><strong>В</strong><br>218</td><td><strong>Г</strong><br>.58</td></tr></table></div>
+                </div>
+
+                <div class="answer-area">
+                    <input type="text" class="answer-input" placeholder="Ваш ответ" 
+                           data-correct-answer="ГАБВ" data-score="15" data-solved="false">
+                    <button class="check-btn">Проверить</button>
+                </div>
+
+                <div class="solution-section">
+                    <button class="solution-toggle-btn">?? Показать решение</button>
+                    <div class="solution-content" style="display: none;">
+                        <h4>Решение:</h4><p>Правильный IP-адрес: <strong>58.60.126.218</strong></p><p>Последовательность букв: <strong>ГАБВ</strong></p>
+                    </div>
+                </div>
+
+                <div class="hint-section">
+                    <details>
+                        <summary>?? Подсказка</summary>
+                        <div class="hint-content">
+                            <p>IP-адрес состоит из 4 чисел от 0 до 255, разделенных точками.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <!-- Задача 2 -->
+            <div class="problem-wrapper" data-task-id="ip_validate_70687_1772272602">
+                <div class="problem-header">
+                    <span class="problem-number">Задача #2</span>
+                    <span class="problem-score">15 баллов</span>
+                </div>
+                
+                <div class="problem-content">
+                    <div class='ip-validate'><p>Даны 5 IP-адресов. Найдите номер строки с корректным адресом:</p><ol class='variants-list'><li>130.198.140.178.163</li><li>97.255.193</li><li>33.40.178.222</li><li>14.157.76</li><li>77.170.118</li></ol></div>
+                </div>
+
+                <div class="answer-area">
+                    <input type="text" class="answer-input" placeholder="Ваш ответ" 
+                           data-correct-answer="3" data-score="15" data-solved="false">
+                    <button class="check-btn">Проверить</button>
+                </div>
+
+                <div class="solution-section">
+                    <button class="solution-toggle-btn">?? Показать решение</button>
+                    <div class="solution-content" style="display: none;">
+                        <h4>Решение:</h4><p>Правильный IP-адрес должен состоять из 4 чисел от 0 до 255.</p><ul><li>1. 130.198.140.178.163 — некорректный</li><li>2. 97.255.193 — некорректный</li><li>3. 33.40.178.222 — <strong>корректный</strong></li><li>4. 14.157.76 — некорректный</li><li>5. 77.170.118 — некорректный</li></ul><p><strong>Ответ:</strong> 3</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Задача 3 -->
+            <div class="problem-wrapper" data-task-id="ip_network_35981_1772272602">
+                <div class="problem-header">
+                    <span class="problem-number">Задача #3</span>
+                    <span class="problem-score">20 баллов</span>
+                </div>
+                
+                <div class="problem-content">
+                    <div class='ip-network'><p>Даны IP-адреса. Определите, какие из них находятся в одной сети.</p><p><strong>Маска подсети:</strong> /24 (255.255.255.0)</p><ol class='variants-list'><li>216.66.140.195</li><li>216.66.140.39</li><li>216.66.140.159</li><li>216.66.156.113</li><li>216.66.132.21</li></ol><p>В ответе укажите номера IP через запятую.</p></div>
+                </div>
+
+                <div class="answer-area">
+                    <input type="text" class="answer-input" placeholder="Ваш ответ" 
+                           data-correct-answer="1,2,3" data-score="20" data-solved="false">
+                    <button class="check-btn">Проверить</button>
+                </div>
+
+                <div class="solution-section">
+                    <button class="solution-toggle-btn">?? Показать решение</button>
+                    <div class="solution-content" style="display: none;">
+                        <h4>Решение:</h4><p>Маска: 24 бит (255.255.255.0)</p><p>Адрес сети: 216.66.140.0</p><ul><li>1. 216.66.140.195 ? сеть 216.66.140.0 <strong>(в одной сети)</strong></li><li>2. 216.66.140.39 ? сеть 216.66.140.0 <strong>(в одной сети)</strong></li><li>3. 216.66.140.159 ? сеть 216.66.140.0 <strong>(в одной сети)</strong></li><li>4. 216.66.156.113 ? сеть 216.66.156.0</li><li>5. 216.66.132.21 ? сеть 216.66.132.0</li></ul><p><strong>Ответ:</strong> 1,2,3</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Задача 4 -->
+            <div class="problem-wrapper" data-task-id="ip_class_23030_1772272602">
+                <div class="problem-header">
+                    <span class="problem-number">Задача #4</span>
+                    <span class="problem-score">15 баллов</span>
+                </div>
+                
+                <div class="problem-content">
+                    <div class='ip-class'><p>Определите класс IP-адреса <strong>198.223.123.131</strong>.</p><ol class='variants-list' type='A'><li value='А'>Класс D</li><li value='Б'>Класс C</li><li value='В'>Класс A</li><li value='Г'>Класс E</li><li value='Д'>Класс B</li></ol><p>В ответе укажите букву.</p></div>
+                </div>
+
+                <div class="answer-area">
+                    <input type="text" class="answer-input" placeholder="Ваш ответ" 
+                           data-correct-answer="Б" data-score="15" data-solved="false">
+                    <button class="check-btn">Проверить</button>
+                </div>
+
+                <div class="solution-section">
+                    <button class="solution-toggle-btn">?? Показать решение</button>
+                    <div class="solution-content" style="display: none;">
+                        <h4>Решение:</h4><p>Первый октет: 198</p><p>Класс C</p><p><strong>Ответ:</strong> Б</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Устанавливаем дату генерации
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateElement = document.getElementById('generation-date');
+            if (dateElement) {
+                const now = new Date();
+                const formatted = now.toLocaleDateString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }).replace(',', '');
+                dateElement.textContent = formatted;
+            }
+
+            // Загружаем данные пользователя (если есть)
+            fetch('/api/user/me')
+                .then(response => response.json())
+                .then(data => {
+                    const userNameEl = document.getElementById('userName');
+                    const userAvatarEl = document.getElementById('userAvatar');
+                    if (userNameEl) userNameEl.textContent = data.username || 'Пользователь';
+                    if (userAvatarEl) userAvatarEl.textContent = (data.username || '?').charAt(0).toUpperCase();
+                })
+                .catch(() => {
+                    // Не авторизован - оставляем как есть
+                });
+        });
+    </script>
+</body>
+</html>
